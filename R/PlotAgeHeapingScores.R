@@ -46,15 +46,15 @@ PlotAgeHeapingScores <- function(data,
                                     Myers.age.max=Myers.age.max)
   
   # make plots
-  ## five_year_roughness
-  g_five_year_roughness <- ggplot(data=data_with_age_heaping_long,
+  ## roughness
+  g_roughness <- ggplot(data=data_with_age_heaping_long,
                                   aes(x=get(name.disaggregations),
-                                      y=five_year_roughness)) +
+                                      y=roughness)) +
                            geom_point(aes(col=sex,
                                           shape=date)) +
     labs(x=name.disaggregations,
-         y="five_year_roughness",
-         title=paste0("five_year_roughness \n", "by ", name.disaggregations)) +
+         y="roughness",
+         title=paste0("roughness \n", "by ", name.disaggregations)) +
     scale_colour_discrete(name=name.disaggregations)
   ## zero_pref_sawtooth
   g_zero_pref_sawtooth <- ggplot(data=data_with_age_heaping_long,
@@ -97,7 +97,7 @@ PlotAgeHeapingScores <- function(data,
          title=paste0("Noumbissi's digit heaping index \n", "by ", name.disaggregations)) +
     scale_colour_discrete(name=name.disaggregations)
   
-  list_plots <- list(g_five_year_roughness,
+  list_plots <- list(g_roughness,
                      g_zero_pref_sawtooth,
                      g_Whipple,
                      g_Noumbissi,

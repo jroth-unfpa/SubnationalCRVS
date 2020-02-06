@@ -45,9 +45,9 @@ FormatOutputDDM <- function(result_ddm_females,
 }
 
 
-## DemoTools::five_year_roughness modified to just return NA whenever there are any missing population counts
+## DemoTools::check_heaping_roughness modified to just return NA whenever there are any missing population counts
 ## rewrite as one function eith 4 options (argument: stat ="five_year", etc.) so code isn't dup;licated
-myFiveYearRoughness <- function(Value, 
+myRoughness <- function(Value, 
                            Age,
                            ageMin,
                            ageMax) {
@@ -60,7 +60,7 @@ myFiveYearRoughness <- function(Value,
      if (is.null(ageMax)) {
       ageMax <-  max(Age[Age%%5 == 0]) ## default from DemoTools::five_year_roughness()
      }
-     result <- five_year_roughness(Value=Value,
+     result <- check_heaping_roughness(Value=Value,
                          Age=Age,
                          ageMin=ageMin,
                          ageMax=ageMax)

@@ -60,8 +60,8 @@ ComputeAgeHeapingScores <- function(data,
   # compute age heaping statistics based on data in long format
   data_with_age_heaping_long <- data_long %>%
                            group_by(date, sex, province) %>% 
-                           summarise("five_year_roughness"= 
-                             myFiveYearRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                           summarise("roughness"= 
+                             myRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                                       Age=age,
                                       ageMin=roughness.age.min,
                                       ageMax=roughness.age.max),
