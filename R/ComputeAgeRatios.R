@@ -1,3 +1,21 @@
+#' Compute age ratios for adjacent five-year age groups
+#'
+#' asdf
+#' 
+#' @param data asdf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @examples
+#' @import dplyr
+#' @export
+
 ComputeAgeRatios <- function(data, 
                              name.disaggregations,
                              name.age,

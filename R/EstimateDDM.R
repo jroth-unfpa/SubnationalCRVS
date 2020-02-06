@@ -1,3 +1,30 @@
+#' Estimate death registration between two Census years with a wrapper of the ddm() function from the DDM
+#'
+#' asdf
+#' 
+#' @param data asdf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param deaths.summed asdf
+#' @param show_age_range_sensitivity asdf
+#' @param min.age.in.search asdf
+#' @param max.age.in.search asdf
+#' @param min.number.of.ages asdf
+#' @param exact.ages.to.use asdf
+#' @param largest.lower.limit.sensitivity asdf
+#' @param smallest.upper.limit.sensitivity asdf
+#' @param life.expectancy.in.open.group asdf
+#' @examples
+#' @import dplyr
+#' @export
+
 EstimateDDM <- function(data, 
                         name.disaggregations,
                         name.age,

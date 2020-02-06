@@ -1,13 +1,48 @@
+#' Plot sex ratios
+#'
+#' asdf
+#' @param data sadf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param ylim.disaggregated=NULL,
+#' @param ylim.overall=NULL,
+#' @param line.size.disaggregated=0.8,
+#' @param line.size.overall=0.8,
+#' @param line.size=1.1,
+#' @param fig.nrow=3,
+#' @param fig.ncol=2,
+#' @param print.disaggregated=TRUE,
+#' @param save.disaggregated=TRUE,
+#' @param save.name_disaggregated=NULL,
+#' @param print.overall=TRUE,
+#' @param save.overall=TRUE,
+#' @param save.name_overall=NULL,
+#' @param plots.dir="
+#' @examples 
+#' @import dplyr
+#' @import ggplot2
+#' @import ggpubr
+#' @import gridExtra
+#' @export
+
+
 PlotSexRatios <- function(data, 
                           name.disaggregations,
                           name.age,
                           name.sex,
                           name.males,
                           name.females,
-                          name.population.year1,
-                          name.population.year2,
                           name.date1,
                           name.date2,
+                          name.population.year1,
+                          name.population.year2,
                           ylim.disaggregated=NULL,
                           ylim.overall=NULL,
                           line.size.disaggregated=0.8,
@@ -144,5 +179,5 @@ PlotSexRatios <- function(data,
     print(overall)
     graphics.off()
   }
-  return(list("data_with_sex_ratio"=data_with_sex_ratio))
+  return(data_with_sex_ratio)
 }

@@ -1,3 +1,6 @@
+#' @import dplyr
+#' @import DemoTools
+
 FormatVariablesDDM <- function(data, 
                               name.disaggregations,
                               name.age,
@@ -68,20 +71,20 @@ myRoughness <- function(Value,
   return(result)
 }
 
-myZeroPrefSawtooth <- function(Value, 
-                                Age,
-                                ageMin,
-                                ageMax) {
+mySawtooth <- function(Value, 
+                       Age,
+                       ageMin,
+                       ageMax) {
   if (sum(is.na(Value)) != 0) {
     result <- NA 
   } else {
     if (is.null(ageMin)) {
-      ageMin <- 40  ## default from DemoTools::zero_pref_sawtooth()
+      ageMin <- 40  ## default from DemoTools::check_heaping_sawtooth()
     } 
     if (is.null(ageMax)) {
-      ageMax = max(Age[Age%%5== 0]) - 10 ## default from DemoTools::zero_pref_sawtooth()
+      ageMax = max(Age[Age%%5== 0]) - 10 ## default from DemoTools::check_heaping_sawtooth()
     }
-    result <- zero_pref_sawtooth(Value=Value,
+    result <- check_heaping_sawtooth(Value=Value,
                                   Age=Age,
                                   ageMin=ageMin,
                                   ageMax=ageMax)
@@ -101,16 +104,16 @@ myWhipple <- function(Value,
     result <- NA 
   } else {
     if (is.null(ageMin)) {
-      ageMin <- 25  ## default from DemoTools::Whipple()
+      ageMin <- 25  ## default from DemoTools::check_heaping_whipple()
     } 
     if (is.null(ageMax)) {
-      ageMax <- 65 ## default from DemoTools::Whipple()
+      ageMax <- 65 ## default from DemoTools::check_heaping_whipple()
     }
-    result <- Whipple(Value=Value,
-                      Age=Age,
-                      ageMin=ageMin,
-                      ageMax=ageMax,
-                      digit=digit)
+    result <- check_heaping_whipple(Value=Value,
+                                    Age=Age,
+                                    ageMin=ageMin,
+                                    ageMax=ageMax,
+                                    digit=digit)
   }
   return(result)
 }
@@ -123,15 +126,15 @@ myMyers <- function(Value,
     result <- NA 
   } else {
     if (is.null(ageMin)) {
-      ageMin <- 10  ## default from DemoTools::Myers()
+      ageMin <- 10  ## default from DemoTools::check_heaping_myers()
     } 
     if (is.null(ageMax)) {
-      ageMax <-  max(Age) ## default from DemoTools::Myers()
+      ageMax <-  max(Age) ## default from DemoTools::check_heaping_myers()
     }
-    result <- Myers(Value=Value,
-                      Age=Age,
-                      ageMin=ageMin,
-                      ageMax=ageMax)
+    result <- check_heaping_myers(Value=Value,
+                                  Age=Age,
+                                  ageMin=ageMin,
+                                  ageMax=ageMax)
   }
   return(result)
 }
@@ -148,17 +151,37 @@ myNoumbissi <- function(Value,
     result <- NA 
   } else {
     if (is.null(ageMin)) {
-      ageMin <- 20  ## default from DemoTools::Noumbissi()
+      ageMin <- 20  ## default from DemoTools::check_heaping_noumbissi()
     } 
     if (is.null(ageMax)) {
-      ageMax <- 64 ## default from DemoTools::Noumbissi()
+      ageMax <- 64 ## default from DemoTools::check_heaping_noumbissi()
     }
-    result <- Noumbissi(Value=Value,
-                        Age=Age,
-                        ageMin=ageMin,
-                        ageMax=ageMax,
-                        digit=digit)
+    result <- check_heaping_noumbissi(Value=Value,
+                                      Age=Age,
+                                      ageMin=ageMin,
+                                      ageMax=ageMax,
+                                      digit=digit)
   }
   return(result)
 }
 
+GetOneAgeRatio <- function(vec_ages,
+                           vec_counts) {
+  n_age_groups <- length(vec_ages)
+  vec_age_ratios <- rep(NA, n_age_groups)
+  for (v in 1:n_age_groups) {
+    one_age <- vec_ages[v]
+    one_idx <- which(vec_ages == one_age)
+    if (length(one_idx) != 0) {
+      if (one_idx != 1 & one_idx != n_age_groups) {
+        vec_age_ratios[one_idx] <- 2 * vec_counts[one_idx] / 
+          (vec_counts[(one_idx - 1)] + vec_counts[(one_idx + 1)])
+      } else {
+        vec_age_ratios[one_idx] <- NA
+      }
+    } else {
+      vec_age_ratios[one_idx] <- NA
+    }
+  }
+  return(100*vec_age_ratios)
+}

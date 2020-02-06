@@ -1,3 +1,37 @@
+#' Plot age ratios
+#'
+#' asdf
+#' @param data sadf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param ylim.disaggregated asdf
+#' @param ylim.overall asdf
+#' @param line.size.disaggregated asdf
+#' @param line.size.overall asdf
+#' @param fig.nrow.disaggregated asdf
+#' @param fig.ncol.disaggregated asdf
+#' @param fig.nrow.overall asdf
+#' @param fig.ncol.overall asdf
+#' @param print.disaggregated asdf 
+#' @param save.disaggregated asdf
+#' @param save.name_disaggregated=NULL,
+#' @param print.overall=TRUE,
+#' @param save.overall=TRUE,
+#' @param save.name_overall=NULL,
+#' @param plots.dir asdf
+#' @import dplyr
+#' @import ggplot2
+#' @import ggpubr
+#' @import gridExtra
+#' @export
+
 PlotAgeRatios <- function(data, 
                           name.disaggregations,
                           name.age,
@@ -209,5 +243,7 @@ PlotAgeRatios <- function(data,
   if (print.overall == TRUE) {
     print(overall)
   } 
-  return(list("data_with_age_ratio"=data_with_age_ratio))
+  return(data_with_age_ratio)
 }
+
+

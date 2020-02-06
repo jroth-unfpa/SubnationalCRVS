@@ -1,3 +1,34 @@
+#' Compute summary statistics for single-year age heaping
+#'
+#' asdf
+#' 
+#' @param data asdf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param roughness.age.min=NULL asdf
+#' @param roughness.age.max=NULL asdf
+#' @param sawtooth.age.min=NULL asdf
+#' @param sawtooth.age.max=NULL asdf
+#' @param Whipple.age.min=NULL asdf
+#' @param Whipple.age.max=NULL asdf
+#' @param Whipple.digit=NULL asdf
+#' @param Myers.age.min=NULL asdf
+#' @param Myers.age.max=NULL asdf
+#' @param Noumbissi.age.min=NULL asdf
+#' @param Noumbissi.age.max=NULL asdf
+#' @param Noumbissi.digit=NULL asdf
+#' @examples
+#' @import dplyr
+#' @import DemoTools
+#' @export
+
 ComputeAgeHeapingScores <- function(data, 
                           name.disaggregations,
                           name.age,
@@ -65,8 +96,8 @@ ComputeAgeHeapingScores <- function(data,
                                       Age=age,
                                       ageMin=roughness.age.min,
                                       ageMax=roughness.age.max),
-                                      "zero_pref_sawtooth"=
-                              myZeroPrefSawtooth(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                                      "sawtooth"=
+                              mySawtooth(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                                       Age=age,
                                       ageMin=sawtooth.age.min,
                                       ageMax=sawtooth.age.max),

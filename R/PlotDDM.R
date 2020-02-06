@@ -1,3 +1,24 @@
+#' Plot DDM estimates and their sensitivity to choice of age range
+#'
+#' asdf
+#' @param ddm_results asdf
+#' @param size.text.sensitivity
+#' @param fig.nrow
+#' @param fig.ncol
+#' @param print.plot.point.estimates
+#' @param save.plot.point.estimates
+#' @param save.name.plot.point.estimates
+#' @param print.plots.sensitivity
+#' @param save.plots.sensitivity
+#' @param plots.dir
+#' @examples
+#' @import DDM
+#' @import dplyr
+#' @import ggplot2
+#' @import ggpubr
+#' @import gridExtra
+#' @export
+
 PlotDDM <- function(ddm_results,
                     size.text.sensitivity=8,
                     fig.nrow=2,
@@ -61,7 +82,7 @@ PlotDDM <- function(ddm_results,
                                  y="Estimated completeness (GGB-SEG)",
                                  title=paste(name_disaggregations,
                                               one_level,
-                                              " -- Females"),
+                                              "\n-- Females"),
                                  col="Upper limit of age range") +
                              theme(text = element_text(size=size.text.sensitivity),
                                    legend.box="vertical",
@@ -90,7 +111,7 @@ PlotDDM <- function(ddm_results,
                                   y="Estimated completeness (GGB-SEG)",
                                   title=paste(name_disaggregations,
                                               one_level,
-                                              " -- Males"),
+                                              "\n-- Males"),
                                   col="Upper limit of age range") +
                              theme(text = element_text(size=size.text.sensitivity),
                                    legend.box="vertical",

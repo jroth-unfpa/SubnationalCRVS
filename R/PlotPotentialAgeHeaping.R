@@ -1,3 +1,40 @@
+#' Plot counts of single-year ages to reveal potential age heaping
+#'
+#' asdf
+#' @param data sadf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param mark_multiples_of_5_disaggregated asdf
+#' @param mark_multiples_of_5_overall asdf
+#' @param ylim.disaggregated asdf
+#' @param ylim.overall asdf
+#' @param line.size.disaggregated asdf
+#' @param line.size.overall asdf
+#' @param fig.nrow.disaggregated asdf
+#' @param fig.ncol.disaggregated asdf
+#' @param fig.nrow.overall asdf
+#' @param fig.ncol.overall asdf
+#' @param print.disaggregated asdf
+#' @param save.disaggregated asdf
+#' @param save.name_disaggregated asdf
+#' @param print.overall asdf
+#' @param save.overall asdf
+#' @param save.name_overall asdf
+#' @param plots.dir asdf
+#' @examples 
+#' @import dplyr
+#' @import ggplot2
+#' @import ggpubr
+#' @import gridExtra
+#' @export
+
 PlotPotentialAgeHeaping <- function(data, 
                           name.disaggregations,
                           name.age,
@@ -241,5 +278,4 @@ PlotPotentialAgeHeaping <- function(data,
   if (print.overall == TRUE) {
     print(overall)
   } 
-  return(list("data"=data))
 }

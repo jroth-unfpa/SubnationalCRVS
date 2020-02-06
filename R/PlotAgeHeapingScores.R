@@ -1,3 +1,38 @@
+#' Plot age heaping scores
+#'
+#' asdf
+#' @param data sadf
+#' @param name.disaggregations asdf
+#' @param name.age asdf
+#' @param name.sex asdf
+#' @param name.males asdf
+#' @param name.females asdf
+#' @param name.date1 asdf
+#' @param name.date2 asdf
+#' @param name.population.year1 asdf
+#' @param name.population.year2 asdf
+#' @param roughness.age.min asdf
+#' @param roughness.age.max asdf
+#' @param sawtooth.age.min asdf
+#' @param sawtooth.age.max asdf
+#' @param Whipple.age.min asdf
+#' @param Whipple.age.max asdf
+#' @param Whipple.digit asdf
+#' @param Myers.age.min asdf
+#' @param Myers.age.max asdf
+#' @param fig.nrow asdf
+#' @param fig.ncol asdf
+#' @param print.plots asdf
+#' @param save.plots asdf
+#' @param save.name.plots asdf
+#' @param plots.dir asdf
+#' @examples
+#' @import dplyr
+#' @import ggplot2
+#' @import ggpubr
+#' @import gridExtra
+#' @export
+
 PlotAgeHeapingScores <- function(data, 
                           name.disaggregations,
                           name.age,
@@ -56,15 +91,15 @@ PlotAgeHeapingScores <- function(data,
          y="roughness",
          title=paste0("roughness \n", "by ", name.disaggregations)) +
     scale_colour_discrete(name=name.disaggregations)
-  ## zero_pref_sawtooth
-  g_zero_pref_sawtooth <- ggplot(data=data_with_age_heaping_long,
+  ## sawtooth
+  g_sawtooth <- ggplot(data=data_with_age_heaping_long,
                                   aes(x=get(name.disaggregations),
-                                      y=zero_pref_sawtooth)) +
+                                      y=sawtooth)) +
                           geom_point(aes(col=sex,
                                          shape=date)) +
     labs(x=name.disaggregations,
-         y="zero_pref_sawtooth",
-         title=paste0("zero_pref_sawtooth \n", "by ", name.disaggregations)) +
+         y="sawtooth",
+         title=paste0("sawtooth \n", "by ", name.disaggregations)) +
     scale_colour_discrete(name=name.disaggregations)
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
@@ -98,7 +133,7 @@ PlotAgeHeapingScores <- function(data,
     scale_colour_discrete(name=name.disaggregations)
   
   list_plots <- list(g_roughness,
-                     g_zero_pref_sawtooth,
+                     g_sawtooth,
                      g_Whipple,
                      g_Noumbissi,
                      g_Myers)
