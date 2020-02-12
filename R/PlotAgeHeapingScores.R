@@ -1,7 +1,7 @@
 #' Plot age heaping scores
 #'
 #' asdf
-#' @param data sadf
+#' @param data asdf
 #' @param name.disaggregations asdf
 #' @param name.age asdf
 #' @param name.sex asdf
@@ -85,12 +85,12 @@ PlotAgeHeapingScores <- function(data,
   g_roughness <- ggplot(data=data_with_age_heaping_long,
                                   aes(x=get(name.disaggregations),
                                       y=roughness)) +
-                           geom_point(aes(col=sex,
+                           geom_point(aes(col=get(name.sex),
                                           shape=date)) +
     labs(x=name.disaggregations,
          y="roughness",
          title=paste0("roughness \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.sex)
   ## sawtooth
   g_sawtooth <- ggplot(data=data_with_age_heaping_long,
                                   aes(x=get(name.disaggregations),
@@ -100,7 +100,7 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="sawtooth",
          title=paste0("sawtooth \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.sex)
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
                                  aes(x=get(name.disaggregations),
@@ -110,7 +110,7 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="Whipple's index",
          title=paste0("Whipple's index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.sex)
   ## Myers
   g_Myers <- ggplot(data=data_with_age_heaping_long,
                       aes(x=get(name.disaggregations),
@@ -120,7 +120,7 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="Myers' blendex index",
          title=paste0("Myers' blended index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.sex)
   ## Noumbissi
   g_Noumbissi <- ggplot(data=data_with_age_heaping_long,
                     aes(x=get(name.disaggregations),
@@ -130,7 +130,7 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="Noumbissi's digit heaping index",
          title=paste0("Noumbissi's digit heaping index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.sex)
   
   list_plots <- list(g_roughness,
                      g_sawtooth,

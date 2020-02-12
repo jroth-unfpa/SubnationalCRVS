@@ -132,7 +132,7 @@ PlotAgeRatios <- function(data,
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
            y="age ratio",
-           title=paste("age ratio in", name.disaggregations, one_level))
+           title=paste("age ratio in\n", one_level))
     
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL

@@ -130,7 +130,9 @@ EstimateDDM <- function(data,
       sensitivity_ddm_estimates <- rbind(sensitivity_ddm_estimates,
                                          one_ddm_estimates)
     }
-    sensitivity_ddm_estimates <- sensitivity_ddm_estimates[-1, ]
+    sensitivity_ddm_estimates <- as.data.frame(sensitivity_ddm_estimates[-1, ])
+    sensitivity_ddm_estimates <- arrange(sensitivity_ddm_estimates,
+                                         sex, cod)
     return(list("show_age_range_sensitivity"=show_age_range_sensitivity,
                 "name_disaggregations"=name.disaggregations,
                 "sensitivity_ddm_estimates"=sensitivity_ddm_estimates,

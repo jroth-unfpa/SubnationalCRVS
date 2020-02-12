@@ -107,7 +107,7 @@ PlotSexRatios <- function(data,
                  coord_cartesian(ylim=ylim.disaggregated) +
                  labs(x=name.age,
                       y="Sex ratio",
-                      title=paste("Sex ratio in", name.disaggregations, one_level)) +
+                      title=paste("Sex ratio in\n", one_level)) +
                   scale_colour_manual(name="", 
                                       values=c("orange"="orange",
                                                "blue"="blue"), 

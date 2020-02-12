@@ -1,9 +1,13 @@
-#' Compute summary statistics for single-year age heaping
+#' Compute summaries of age heaping (wrapper for DemoTools::check_heaping_*)
 #'
-#' asdf
-#' 
-#' @param data asdf
-#' @param name.disaggregations asdf
+#' This function serves as a wrapper for five DemoTools functions -- 
+#' check_heaping_roughness(), check_heaping_sawtooth(), check_heaping_whipple(), check_heaping_myers(), check_heaping_noumbissi() -- 
+#' and returns the five summary statistics within specified levels of disaggregation in a given dataset 
+#' (which must contain single-year age counts) separately for males and females.
+#' @param data data frame that contains at least seven columns representing: age, sex, population counts collected at two differn (typically
+#' adjacent Census years), and level of subnational disaggregation (e.g. a geographic unit such as a province/state or a sociodemographic
+#' category such as education level). 
+#' @param name.disaggregations Name
 #' @param name.age asdf
 #' @param name.sex asdf
 #' @param name.males asdf
@@ -73,8 +77,7 @@ ComputeAgeHeapingScores <- function(data,
            name.age,
            name.population.year1,
            name.date1) %>%
-    rename(sex=name.sex,
-           pop=pop1,
+    rename(pop=pop1,
            date=date1)
   
   long_year2 <- data %>% 
@@ -83,14 +86,13 @@ ComputeAgeHeapingScores <- function(data,
            name.age,
            name.population.year2,
            name.date2) %>%
-    rename(sex=name.sex,
-           pop=pop2,
+    rename(pop=pop2,
            date=date2)
   data_long <- rbind(long_year1, long_year2)
   
   # compute age heaping statistics based on data in long format
   data_with_age_heaping_long <- data_long %>%
-                           group_by(date, sex, province) %>% 
+                           group_by(date, get(name.sex), get(name.disaggregations)) %>% 
                            summarise("roughness"= 
                              myRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                                       Age=age,
@@ -119,5 +121,8 @@ ComputeAgeHeapingScores <- function(data,
                                        ageMax=Noumbissi.age.max,
                                        digit=Noumbissi.digit)) %>%
                               as.data.frame()
+  names(data_with_age_heaping_long)[names(data_with_age_heaping_long) == "get(name.sex)"] = name.sex
+  names(data_with_age_heaping_long)[names(data_with_age_heaping_long) == "get(name.disaggregations)"] = name.disaggregations
+
   return(data_with_age_heaping_long)
 }

@@ -80,9 +80,9 @@ PlotDDM <- function(ddm_results,
                                                   values=c(1,1)) +
                             labs(x="Lower limit of age range",
                                  y="Estimated completeness (GGB-SEG)",
-                                 title=paste(name_disaggregations,
+                                 title=paste("Estimated completeness in\n",
                                               one_level,
-                                              "\n-- Females"),
+                                              "-- Females"),
                                  col="Upper limit of age range") +
                              theme(text = element_text(size=size.text.sensitivity),
                                    legend.box="vertical",
@@ -109,9 +109,9 @@ PlotDDM <- function(ddm_results,
                                                    values=c(1,1)) +
                              labs(x="Lower limit of age range",
                                   y="Estimated completeness (GGB-SEG)",
-                                  title=paste(name_disaggregations,
+                                  title=paste("Estimated completeness in\n",
                                               one_level,
-                                              "\n-- Males"),
+                                              "-- Males"),
                                   col="Upper limit of age range") +
                              theme(text = element_text(size=size.text.sensitivity),
                                    legend.box="vertical",

@@ -1,7 +1,9 @@
-#' Compute age ratios for adjacent five-year age groups
+#' Compute age-ratios for adjacent five-year age groups
 #'
-#' asdf
-#' 
+#' This function computes an age ratio, defined as
+#' @details
+#' \deqn{\frac{1}{2} x^2_n}
+#' where , for adjacent age groups
 #' @param data asdf
 #' @param name.disaggregations asdf
 #' @param name.age asdf
@@ -15,6 +17,7 @@
 #' @examples
 #' @import dplyr
 #' @export
+#' @md
 
 ComputeAgeRatios <- function(data, 
                              name.disaggregations,

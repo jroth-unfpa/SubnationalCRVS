@@ -131,7 +131,7 @@ PlotPotentialAgeHeaping <- function(data,
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
            y="estimated population",
-           title=paste("estimated population by age in", name.disaggregations, one_level))
+           title=paste("estimated population by age \n in", one_level))
     
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
