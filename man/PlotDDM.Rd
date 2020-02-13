@@ -19,8 +19,62 @@ PlotDDM(
 )
 }
 \arguments{
-\item{ddm_results}{asdf}
+\item{ddm_results}{The object returned by the `EstimateDDM()` function}
+
+\item{size.text.sensitivity}{An integer fed to `ggplot2::theme(text = element_text())` for the sensitivity plots. Defaults to 8}
+
+\item{fig.nrow}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows of plots should appear in the visualizations of the sensitivity results by level of disaggregation (males and females in a given level of disaggregation will always be included in the same row). Defaults to 2}
+
+\item{fig.ncol}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many times the side-by-side male/female sensitivity plots should appear in each of `fig.nrow` rows. Defaults to 1}
+
+\item{print.plot.point.estimates}{A logical indicating whether the plot of point estimates across the levels of disaggregation should be printed in the R session. Defaults to TRUE}
+
+\item{save.plot.point.estimates}{A logical indicating whether the plot of point estaimtes across the levels of disaggregation should be saved on the local file system. Defaults to TRUE}
+
+\item{save.name.plot.point.estimates}{A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
+
+\item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
+
+\item{print.plot.sensitivity}{A logical indicating whether the plots of sensitivity across the levels of disaggregation should be printed in the R session. Defaults to FALSE}
+
+\item{save.plot.point.sensitivity}{A logical indicating whether the plots of sensitivity estimates across the levels of disaggregation should be saved on the local file system. Defaults to TRUE}
+
+\item{save.name.plot.point.sensitivity}{A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 }
 \description{
 asdf
+}
+\examples{
+# It takes about 45 seconds to run this example with show.age.range.sensitivity=TRUE; to run in under 5 seconds please instead use show.age.range.sensitivity=FALSE
+ecuador_ddm_results_with_sensitivity <- EstimateDDM(data=example_data_ecuador, 
+                                                    name.disaggregations="province_name",
+                                                    name.age="age",
+                                                    name.sex="sex",
+                                                    name.males="m",
+                                                    name.females="f",
+                                                    name.date1="date1",
+                                                    name.date2="date2",
+                                                    name.population.year1="pop1",
+                                                    name.population.year2="pop2",
+                                                    name.deaths="deaths",
+                                                    deaths.summed=TRUE,
+                                                    show.age.range.sensitivity=TRUE)
+PlotDDM(ddm_results=ecuador_ddm_results_with_sensitivity,
+        save.plot.point.estimates=FALSE)
+# Example with show.age.range.sensitivity=FALSE. Also better to use "province_name_short" as disaggregations name here to prevent overcrowding of x-axis.
+ecuador_ddm_results_no_sensitivity <- EstimateDDM(data=example_data_ecuador, 
+                                                  name.disaggregations="province_name_short",
+                                                  name.age="age",
+                                                  name.sex="sex",
+                                                  name.males="m",
+                                                  name.females="f",
+                                                  name.date1="date1",
+                                                  name.date2="date2",
+                                                  name.population.year1="pop1",
+                                                  name.population.year2="pop2",
+                                                  name.deaths="deaths",
+                                                  deaths.summed=TRUE,
+                                                  show.age.range.sensitivity=FALSE)
+PlotDDM(ddm_results=ecuador_ddm_results_no_sensitivity,
+        save.plot.point.estimates=TRUE)
 }

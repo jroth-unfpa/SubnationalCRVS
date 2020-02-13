@@ -18,30 +18,45 @@ ComputeAgeRatios(
 )
 }
 \arguments{
-\item{data}{asdf}
+\item{data}{data frame that contains at least seven columns representing: (1) five-year age groups,
+(2) sex,
+(3, 4) population counts collected at two different time points (typically adjacent Census years)
+(5, 6) dates of two different time points
+(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state,
+a sociodemographic category such as education level, or combinations thereof).}
 
-\item{name.disaggregations}{asdf}
+\item{name.disaggregations}{Character string providing the name of the variable in \code{data} that represents the levels of subnational disaggregation}
 
-\item{name.age}{asdf}
+\item{name.age}{Character string providing the name of the variable in \code{data} that represents age}
 
-\item{name.sex}{asdf}
+\item{name.sex}{Character string providing the name of the variable in \code{data} that represents sex}
 
-\item{name.males}{asdf}
+\item{name.males}{Character string providing the name of the value of \code{name.sex} variable that represents males}
 
-\item{name.females}{asdf}
+\item{name.females}{Character string providing the name of the value of \code{name.sex} variable that represents females}
 
-\item{name.date1}{asdf}
+\item{name.date1}{Character string providing the name of the variable in \code{data} that represents the earlier time period}
 
-\item{name.date2}{asdf}
+\item{name.date2}{Character string providing the name of the variable in \code{data} that represents the later time period}
 
-\item{name.population.year1}{asdf}
+\item{name.population.year1}{Character string providing the name of the variable in \code{data} that represents the population count in the earlier time period}
 
-\item{name.population.year2}{asdf}
+\item{name.population.year2}{Character string providing the name of the variable in \code{data} that represents the population count in the later time period}
 }
 \description{
-This function computes an age ratio, defined as
+This function computes an age ratio, defined as asdf
 }
-\details{
-\deqn{\frac{1}{2} x^2_n}
-where , for adjacent age groups
+\examples{
+ecuador_age_ratios <- ComputeAgeRatios(data=example_data_ecuador,
+                                       name.disaggregations="province_name_short",
+                                       name.age="age",
+                                       name.sex="sex",
+                                       name.males="m",
+                                       name.females="f",
+                                       name.population.year1="pop1",
+                                       name.population.year2="pop2",
+                                       name.date1="date1",
+                                       name.date2="date2")
+head(ecuador_age_ratios)
+tail(ecuador_age_ratios)
 }

@@ -19,7 +19,6 @@ PlotSexRatios(
   ylim.overall = NULL,
   line.size.disaggregated = 0.8,
   line.size.overall = 0.8,
-  line.size = 1.1,
   fig.nrow = 3,
   fig.ncol = 2,
   print.disaggregated = TRUE,
@@ -32,26 +31,75 @@ PlotSexRatios(
 )
 }
 \arguments{
-\item{data}{sadf}
+\item{data}{data frame that contains at least seven columns representing: (1) five-year age groups,
+(2) sex,
+(3, 4) population counts collected at two different time points (typically adjacent Census years)
+(5, 6) dates of two different time points
+(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+a sociodemographic category such as education level, or combinations thereof).}
 
-\item{name.disaggregations}{asdf}
+\item{name.disaggregations}{Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation}
 
-\item{name.age}{asdf}
+\item{name.age}{Character string providing the name of the variable in `data` that represents age}
 
-\item{name.sex}{asdf}
+\item{name.sex}{Character string providing the name of the variable in `data` that represents sex}
 
-\item{name.males}{asdf}
+\item{name.males}{Character string providing the name of the value of `name.sex` variable that represents males}
 
-\item{name.females}{asdf}
+\item{name.females}{Character string providing the name of the value of `name.sex` variable that represents females}
 
-\item{name.date1}{asdf}
+\item{name.date1}{Character string providing the name of the variable in `data` that represents the earlier time period}
 
-\item{name.date2}{asdf}
+\item{name.date2}{Character string providing the name of the variable in `data` that represents the later time period}
 
-\item{name.population.year1}{asdf}
+\item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
-\item{name.population.year2}{asdf}
+\item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{ylim.disaggregated}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the sex ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest sex ratios within each level}
+
+\item{ylim.overall}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall sex ratio where all levels of disaggregation are plotted on the same graph. Defaults to NULL,which uses the smallest and largest sex ratios in the entire dataset}
+
+\item{line.size.disaggregated}{Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. sex ratio plotted separately within each level). Defaults to 0.8}
+
+\item{line.size.overall}{Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. sex ratios from all levels plotted on the same graph). Defaults to 0.8}
+
+\item{print.disaggregated}{A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE}
+
+\item{save.disaggregated}{A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE}
+
+\item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE}
+
+\item{save.overall}{A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE}
+
+\item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
+
+\item{fig.nrow.disaggregated}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the disaggregated plots. Defaults to 3}
+
+\item{fig.ncol.disaggregated}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the disaggregated plots. Defaults to 2}
+
+\item{fig.nrow.overall}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2}
+
+\item{fig.ncol.overall}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1}
+
+\item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
+
+\item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 }
 \description{
 asdf
+}
+\examples{
+ecuador_plot_sex_ratios <- PlotSexRatios(data=example_data_ecuador,
+                                         name.disaggregations="province_name",
+                                         name.males="m",
+                                         name.females="f",
+                                         name.age="age",
+                                         name.sex="sex",
+                                         name.date1="date1",
+                                         name.date2="date2",
+                                         name.population.year1="pop1",
+                                         name.population.year2="pop2")
+head(ecuador_plot_sex_ratios)
+tail(ecuador_plot_sex_ratios)
 }

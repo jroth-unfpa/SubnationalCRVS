@@ -2,17 +2,34 @@
 #'
 #' asdf
 #' 
-#' @param data asdf
-#' @param name.disaggregations asdf
-#' @param name.age asdf
-#' @param name.sex asdf
-#' @param name.males asdf
-#' @param name.females asdf
-#' @param name.date1 asdf
-#' @param name.date2 asdf
-#' @param name.population.year1 asdf
-#' @param name.population.year2 asdf
+#' @param data data frame that contains at least seven columns representing: (1) five-year age groups, 
+#' (2) sex,
+#' (3, 4) population counts collected at two different time points (typically adjacent Census years)
+#' (5, 6) dates of two different time points
+#' (7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+#' a sociodemographic category such as education level, or combinations thereof). 
+#' @param name.disaggregations Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation
+#' @param name.age Character string providing the name of the variable in `data` that represents age
+#' @param name.sex Character string providing the name of the variable in `data` that represents sex
+#' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
+#' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
+#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time period
+#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
+#' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
+#' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
 #' @examples
+#' ecuador_sex_ratios <- ComputeSexRatios(data=example_data_ecuador,
+#'                                        name.disaggregations="province",
+#'                                        name.males="m",
+#'                                        name.females="f",
+#'                                        name.age="age",
+#'                                        name.sex="sex",
+#'                                        name.date1="date1",
+#'                                        name.date2="date2",
+#'                                        name.population.year1="pop1",
+#'                                        name.population.year2="pop2")
+#' head(ecuador_sex_ratios)
+#' tail(ecuador_sex_ratios)
 #' @import dplyr
 #' @export
 

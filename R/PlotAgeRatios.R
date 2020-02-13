@@ -1,31 +1,50 @@
 #' Plot age ratios
 #'
 #' asdf
-#' @param data sadf
-#' @param name.disaggregations asdf
-#' @param name.age asdf
-#' @param name.sex asdf
-#' @param name.males asdf
-#' @param name.females asdf
-#' @param name.date1 asdf
-#' @param name.date2 asdf
-#' @param name.population.year1 asdf
-#' @param name.population.year2 asdf
-#' @param ylim.disaggregated asdf
-#' @param ylim.overall asdf
-#' @param line.size.disaggregated asdf
-#' @param line.size.overall asdf
-#' @param fig.nrow.disaggregated asdf
-#' @param fig.ncol.disaggregated asdf
-#' @param fig.nrow.overall asdf
-#' @param fig.ncol.overall asdf
-#' @param print.disaggregated asdf 
-#' @param save.disaggregated asdf
-#' @param save.name_disaggregated=NULL,
-#' @param print.overall=TRUE,
-#' @param save.overall=TRUE,
-#' @param save.name_overall=NULL,
-#' @param plots.dir asdf
+#' 
+#' @param data data frame that contains at least seven columns representing: (1) five-year age groups,
+#' (2) sex,
+#' (3, 4) population counts collected at two different time points (typically adjacent Census years)
+#' (5, 6) dates of two different time points
+#' (7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+#' a sociodemographic category such as education level, or combinations thereof). 
+#' @param name.disaggregations Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation
+#' @param name.age Character string providing the name of the variable in `data` that represents age
+#' @param name.sex Character string providing the name of the variable in `data` that represents sex
+#' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
+#' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
+#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time period
+#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
+#' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
+#' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest age ratios within each level
+#' @param ylim.overall A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall age ratio where all levels of disaggregation are plotted on the same graph. Defaults to NULL,which uses the smallest and largest age ratios in the entire dataset
+#' @param line.size.disaggregated Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. age ratio plotted separately within each level). Defaults to 0.6
+#' @param line.size.overall Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. age ratios from all levels plotted on the same graph). Defaults to 0.6
+#' @param fig.nrow.disaggregated An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the disaggregated plots. Defaults to 3
+#' @param fig.ncol.disaggregated An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the disaggregated plots. Defaults to 2
+#' @param fig.nrow.overall An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2
+#' @param fig.ncol.overall An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1
+#' @param print.disaggregated A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE
+#' @param save.disaggregated A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE
+#' @param save.name.disaggregated A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
+#' @param print.overall A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE
+#' @param save.overall A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE
+#' @param save.name.overall A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
+#' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
+#' @examples 
+#' ecuador_plot_age_ratios <- PlotAgeRatios(data=example_data_ecuador,
+#'                                          name.disaggregations="province_name",
+#'                                          name.males="m",
+#'                                          name.females="f",
+#'                                          name.age="age",
+#'                                          name.sex="sex",
+#'                                          name.date1="date1",
+#'                                          name.date2="date2",
+#'                                          name.population.year1="pop1",
+#'                                          name.population.year2="pop2")
+#' head(ecuador_plot_age_ratios)
+#' tail(ecuador_plot_age_ratios)
 #' @import dplyr
 #' @import ggplot2
 #' @import ggpubr
@@ -44,18 +63,18 @@ PlotAgeRatios <- function(data,
                           name.population.year2,
                           ylim.disaggregated=NULL,
                           ylim.overall=NULL,
-                          line.size.disaggregated=0.8,
-                          line.size.overall=0.8,
+                          line.size.disaggregated=0.6,
+                          line.size.overall=0.6,
                           fig.nrow.disaggregated=3,
                           fig.ncol.disaggregated=2,
                           fig.nrow.overall=2,
                           fig.ncol.overall=1,
-                          print.disaggregated=TRUE,
+                          print.disaggregated=FALSE,
                           save.disaggregated=TRUE,
-                          save.name_disaggregated=NULL,
+                          save.name.disaggregated=NULL,
                           print.overall=TRUE,
                           save.overall=TRUE,
-                          save.name_overall=NULL,
+                          save.name.overall=NULL,
                           plots.dir="") {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
@@ -216,8 +235,8 @@ PlotAgeRatios <- function(data,
   # print/save plots according to specified arguments
   graphics.off()
   if (save.disaggregated == TRUE) {
-    if (is.null(save.name_disaggregated) == FALSE) {
-      pdf(paste0(save.name_disaggregated, ".pdf")) 
+    if (is.null(save.name.disaggregated) == FALSE) {
+      pdf(paste0(save.name.disaggregated, ".pdf")) 
     } else {
       pdf(paste0(plots.dir, "age_ratios_by_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
@@ -227,8 +246,8 @@ PlotAgeRatios <- function(data,
   }
   graphics.off()
   if (save.overall == TRUE) {
-    if (is.null(save.name_overall) == FALSE) {
-      pdf(paste0(save.name_overall, ".pdf")) 
+    if (is.null(save.name.overall) == FALSE) {
+      pdf(paste0(save.name.overall, ".pdf")) 
     } else {
       pdf(paste0(plots.dir, "age_ratios_combined_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))

@@ -2,26 +2,51 @@
 #'
 #' asdf
 #' 
-#' @param data asdf
-#' @param name.disaggregations asdf
-#' @param name.age asdf
-#' @param name.sex asdf
-#' @param name.males asdf
-#' @param name.females asdf
-#' @param name.date1 asdf
-#' @param name.date2 asdf
-#' @param name.population.year1 asdf
-#' @param name.population.year2 asdf
-#' @param deaths.summed asdf
-#' @param show_age_range_sensitivity asdf
-#' @param min.age.in.search asdf
-#' @param max.age.in.search asdf
-#' @param min.number.of.ages asdf
-#' @param exact.ages.to.use asdf
-#' @param largest.lower.limit.sensitivity asdf
-#' @param smallest.upper.limit.sensitivity asdf
-#' @param life.expectancy.in.open.group asdf
+#' @param data data frame that contains at least seven columns representing: (1) five-year age groups, 
+#' (2) sex,
+#' (3, 4) population counts collected at two different time points (typically adjacent Census years)
+#' (5, 6) dates of two different time points
+#' (7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+#' a sociodemographic category such as education level, or combinations thereof). 
+#' @param name.disaggregations Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation
+#' @param name.age Character string providing the name of the variable in `data` that represents age
+#' @param name.sex Character string providing the name of the variable in `data` that represents sex
+#' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
+#' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
+#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time point
+#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time point
+#' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time point
+#' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time point
+#' @param name.deaths Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points
+#' @param deaths.summed A logical equivalent to the `deaths.summed` argument of `DDM::ddm()`, which indicates whether `name.deaths` provides the total count (TRUE) or annual average count (FALSE) of deaths between the two time points
+#' @param show.age.range.sensitivity A logical equal to TRUE if the DDM estimates are provided for every possible age range (obeying the `min.age.in.search`, `max.age.in.search`, and `min.number.of.ages` arguments) and equal to FALSE are only provided for the optimal age range based on the search performed by ddm(). Defaults to TRUE
+#' @param min.age.in.search A numeric equivalent to the `minA` argument of `DDM:ddm()`. Defaults to 15
+#' @param max.age.in.search A numeric equivalent to the `maxA` argument of `DDM:ddm()`. Defaults to 75
+#' @param min.number.of.ages A numeric equivalent to the `minAges` argument of `DDM:ddm()`. Defaults to 8
+#' @param exact.ages.to.use A numeric vector equivalent to `exact.ages`. Defaults to NULL, which feeds the default value of NULL to `DDM:ddm()`
+#' @param largest.lower.limit.sensitivity A numeric the indicates the largest value of `min.age.in.search` that should be considered in the sensitivity analysis (the smallest one considered will be the one specified originally with `min.age.in.search`). Defaults to 45
+#' @param smallest.upper.limit.sensitivity A numeric the indicates the smallest value of `max.age.in.search` that should be considered in the sensitivity analysis (the largest one considered will be the one specified originally with `max.age.in.search`). Defaults to 50
+#' @param life.expectancy.in.open.group A numeric equivalent to the `eOpen` argument of `DDM:ddm()`. Defaults to NULL
 #' @examples
+#' ddm_results <- EstimateDDM(data=example_data_ecuador, 
+#'                            name.disaggregations="province_name",
+#'                            name.age="age",
+#'                            name.sex="sex",
+#'                            name.males="m",
+#'                            name.females="f",
+#'                            name.date1="date1",
+#'                            name.date2="date2",
+#'                            name.population.year1="pop1",
+#'                            name.population.year2="pop2",
+#'                            name.deaths="deaths",
+#'                            deaths.summed=TRUE,
+#'                            min.age.in.search=15,
+#'                            max.age.in.search=75,
+#'                            min.number.of.ages=8,
+#'                            life.expectancy.in.open.group=NULL,
+#'                            exact.ages.to.use=NULL,
+#'                            show.age.range.sensitivity=FALSE)
+#' ddm_results$ddm_estimates                            
 #' @import dplyr
 #' @export
 
@@ -37,7 +62,7 @@ EstimateDDM <- function(data,
                         name.population.year2,
                         name.deaths,
                         deaths.summed, # should not have a default
-                        show_age_range_sensitivity=TRUE,
+                        show.age.range.sensitivity=TRUE,
                         min.age.in.search=15,
                         max.age.in.search=75,
                         min.number.of.ages=8,
@@ -87,7 +112,7 @@ EstimateDDM <- function(data,
   # summarize and refomat results of call to ddm()
   ddm_estimates <- FormatOutputDDM(result_ddm_females=result_ddm_females,
                                    result_ddm_males=result_ddm_males)
-  if (show_age_range_sensitivity == TRUE) {
+  if (show.age.range.sensitivity == TRUE) {
     # perform DDM estimation for a sequence of age-range parameters to give a sense of estimation sensitivity
     # setting up before loop
     data_for_ddm_females <- data_formatted$data_for_ddm_females
@@ -133,9 +158,13 @@ EstimateDDM <- function(data,
     sensitivity_ddm_estimates <- as.data.frame(sensitivity_ddm_estimates[-1, ])
     sensitivity_ddm_estimates <- arrange(sensitivity_ddm_estimates,
                                          sex, cod)
-    return(list("show_age_range_sensitivity"=show_age_range_sensitivity,
+    return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
                 "sensitivity_ddm_estimates"=sensitivity_ddm_estimates,
+                "ddm_estimates"=ddm_estimates))
+  } else {
+    return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
+                "name_disaggregations"=name.disaggregations,
                 "ddm_estimates"=ddm_estimates))
   }
 }

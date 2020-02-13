@@ -17,7 +17,7 @@ EstimateDDM(
   name.population.year2,
   name.deaths,
   deaths.summed,
-  show_age_range_sensitivity = TRUE,
+  show.age.range.sensitivity = TRUE,
   min.age.in.search = 15,
   max.age.in.search = 75,
   min.number.of.ages = 8,
@@ -28,44 +28,72 @@ EstimateDDM(
 )
 }
 \arguments{
-\item{data}{asdf}
+\item{data}{data frame that contains at least seven columns representing: (1) five-year age groups, 
+(2) sex,
+(3, 4) population counts collected at two different time points (typically adjacent Census years)
+(5, 6) dates of two different time points
+(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+a sociodemographic category such as education level, or combinations thereof).}
 
-\item{name.disaggregations}{asdf}
+\item{name.disaggregations}{Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation}
 
-\item{name.age}{asdf}
+\item{name.age}{Character string providing the name of the variable in `data` that represents age}
 
-\item{name.sex}{asdf}
+\item{name.sex}{Character string providing the name of the variable in `data` that represents sex}
 
-\item{name.males}{asdf}
+\item{name.males}{Character string providing the name of the value of `name.sex` variable that represents males}
 
-\item{name.females}{asdf}
+\item{name.females}{Character string providing the name of the value of `name.sex` variable that represents females}
 
-\item{name.date1}{asdf}
+\item{name.date1}{Character string providing the name of the variable in `data` that represents the earlier time point}
 
-\item{name.date2}{asdf}
+\item{name.date2}{Character string providing the name of the variable in `data` that represents the later time point}
 
-\item{name.population.year1}{asdf}
+\item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time point}
 
-\item{name.population.year2}{asdf}
+\item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time point}
 
-\item{deaths.summed}{asdf}
+\item{name.deaths}{Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points}
 
-\item{show_age_range_sensitivity}{asdf}
+\item{deaths.summed}{A logical equivalent to the `deaths.summed` argument of `DDM::ddm()`, which indicates whether `name.deaths` provides the total count (TRUE) or annual average count (FALSE) of deaths between the two time points}
 
-\item{min.age.in.search}{asdf}
+\item{show.age.range.sensitivity}{A logical equal to TRUE if the DDM estimates are provided for every possible age range (obeying the `min.age.in.search`, `max.age.in.search`, and `min.number.of.ages` arguments) and equal to FALSE are only provided for the optimal age range based on the search performed by ddm(). Defaults to TRUE}
 
-\item{max.age.in.search}{asdf}
+\item{min.age.in.search}{A numeric equivalent to the `minA` argument of `DDM:ddm()`. Defaults to 15}
 
-\item{min.number.of.ages}{asdf}
+\item{max.age.in.search}{A numeric equivalent to the `maxA` argument of `DDM:ddm()`. Defaults to 75}
 
-\item{exact.ages.to.use}{asdf}
+\item{min.number.of.ages}{A numeric equivalent to the `minAges` argument of `DDM:ddm()`. Defaults to 8}
 
-\item{largest.lower.limit.sensitivity}{asdf}
+\item{exact.ages.to.use}{A numeric vector equivalent to `exact.ages`. Defaults to NULL, which feeds the default value of NULL to `DDM:ddm()`}
 
-\item{smallest.upper.limit.sensitivity}{asdf}
+\item{largest.lower.limit.sensitivity}{A numeric the indicates the largest value of `min.age.in.search` that should be considered in the sensitivity analysis (the smallest one considered will be the one specified originally with `min.age.in.search`). Defaults to 45}
 
-\item{life.expectancy.in.open.group}{asdf}
+\item{smallest.upper.limit.sensitivity}{A numeric the indicates the smallest value of `max.age.in.search` that should be considered in the sensitivity analysis (the largest one considered will be the one specified originally with `max.age.in.search`). Defaults to 50}
+
+\item{life.expectancy.in.open.group}{A numeric equivalent to the `eOpen` argument of `DDM:ddm()`. Defaults to NULL}
 }
 \description{
 asdf
+}
+\examples{
+ddm_results <- EstimateDDM(data=example_data_ecuador, 
+                           name.disaggregations="province_name",
+                           name.age="age",
+                           name.sex="sex",
+                           name.males="m",
+                           name.females="f",
+                           name.date1="date1",
+                           name.date2="date2",
+                           name.population.year1="pop1",
+                           name.population.year2="pop2",
+                           name.deaths="deaths",
+                           deaths.summed=TRUE,
+                           min.age.in.search=15,
+                           max.age.in.search=75,
+                           min.number.of.ages=8,
+                           life.expectancy.in.open.group=NULL,
+                           exact.ages.to.use=NULL,
+                           show.age.range.sensitivity=FALSE)
+ddm_results$ddm_estimates                            
 }

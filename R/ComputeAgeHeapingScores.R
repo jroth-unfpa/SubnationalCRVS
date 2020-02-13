@@ -4,31 +4,46 @@
 #' check_heaping_roughness(), check_heaping_sawtooth(), check_heaping_whipple(), check_heaping_myers(), check_heaping_noumbissi() -- 
 #' and returns the five summary statistics within specified levels of disaggregation in a given dataset 
 #' (which must contain single-year age counts) separately for males and females.
-#' @param data data frame that contains at least seven columns representing: age, sex, population counts collected at two differn (typically
-#' adjacent Census years), and level of subnational disaggregation (e.g. a geographic unit such as a province/state or a sociodemographic
-#' category such as education level). 
-#' @param name.disaggregations Name
-#' @param name.age asdf
-#' @param name.sex asdf
-#' @param name.males asdf
-#' @param name.females asdf
-#' @param name.date1 asdf
-#' @param name.date2 asdf
-#' @param name.population.year1 asdf
-#' @param name.population.year2 asdf
-#' @param roughness.age.min=NULL asdf
-#' @param roughness.age.max=NULL asdf
-#' @param sawtooth.age.min=NULL asdf
-#' @param sawtooth.age.max=NULL asdf
-#' @param Whipple.age.min=NULL asdf
-#' @param Whipple.age.max=NULL asdf
-#' @param Whipple.digit=NULL asdf
-#' @param Myers.age.min=NULL asdf
-#' @param Myers.age.max=NULL asdf
-#' @param Noumbissi.age.min=NULL asdf
-#' @param Noumbissi.age.max=NULL asdf
-#' @param Noumbissi.digit=NULL asdf
+#' @param data data frame that contains at least seven columns representing: (1) single-year age,
+#' (2) sex,
+#' (3, 4) population counts collected at two different time points (typically adjacent Census years)
+#' (5, 6) dates of two different time points
+#' (7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+#' a sociodemographic category such as education level, or combinations thereof). 
+#' @param name.disaggregations Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation
+#' @param name.age Character string providing the name of the variable in `data` that represents age
+#' @param name.sex Character string providing the name of the variable in `data` that represents sex
+#' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
+#' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
+#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time period
+#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
+#' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
+#' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
+#' @param roughness.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
+#' @param sawtooth.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40
+#' @param sawtooth.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
+#' @param Whipple.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25
+#' @param Whipple.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 65
+#' @param Whipple.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of c(0, 5)
+#' @param Myers.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10
+#' @param Myers.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89
+#' @param Noumbissi.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20
+#' @param Noumbissi.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64
+#' @param Noumbissi.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0
 #' @examples
+#' ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_age_tabulation,
+#'                                               name.disaggregations="province",
+#'                                               name.males="m",
+#'                                               name.females="f",
+#'                                               name.age="age",
+#'                                               name.sex="sex",
+#'                                               name.date1="date1",
+#'                                               name.date2="date2",
+#'                                               name.population.year1="pop1",
+#'                                               name.population.year2="pop2")
+#' head(ecuador_age_heaping_scores)
+#' tail(ecuador_age_heaping_scores)
 #' @import dplyr
 #' @import DemoTools
 #' @export

@@ -33,56 +33,81 @@ PlotAgeHeapingScores(
 )
 }
 \arguments{
-\item{data}{sadf}
+\item{data}{data frame that contains at least seven columns representing: (1) single-year age,
+(2) sex,
+(3, 4) population counts collected at two different time points (typically adjacent Census years)
+(5, 6) dates of two different time points
+(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+a sociodemographic category such as education level, or combinations thereof).}
 
-\item{name.disaggregations}{asdf}
+\item{name.disaggregations}{Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation}
 
-\item{name.age}{asdf}
+\item{name.age}{Character string providing the name of the variable in `data` that represents age}
 
-\item{name.sex}{asdf}
+\item{name.sex}{Character string providing the name of the variable in `data` that represents sex}
 
-\item{name.males}{asdf}
+\item{name.males}{Character string providing the name of the value of `name.sex` variable that represents males}
 
-\item{name.females}{asdf}
+\item{name.females}{Character string providing the name of the value of `name.sex` variable that represents females}
 
-\item{name.date1}{asdf}
+\item{name.date1}{Character string providing the name of the variable in `data` that represents the earlier time period}
 
-\item{name.date2}{asdf}
+\item{name.date2}{Character string providing the name of the variable in `data` that represents the later time period}
 
-\item{name.population.year1}{asdf}
+\item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
-\item{name.population.year2}{asdf}
+\item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
-\item{roughness.age.min}{asdf}
+\item{fig.nrow}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots}
 
-\item{roughness.age.max}{asdf}
+\item{fig.ncol}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots}
 
-\item{sawtooth.age.min}{asdf}
+\item{print.plots}{A logical indicating whether the plots should be printed in the R session. Defaults to TRUE}
 
-\item{sawtooth.age.max}{asdf}
+\item{save.plots}{A logical indicating whether the plots should be saved on the local file system. Defaults to TRUE}
 
-\item{Whipple.age.min}{asdf}
+\item{save.name.plots}{A character specifying a custom file name for the plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
-\item{Whipple.age.max}{asdf}
+\item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
 
-\item{Whipple.digit}{asdf}
+\item{roughness.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20}
 
-\item{Myers.age.min}{asdf}
+\item{roughness.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10}
 
-\item{Myers.age.max}{asdf}
+\item{sawtooth.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40}
 
-\item{fig.nrow}{asdf}
+\item{sawtooth.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10}
 
-\item{fig.ncol}{asdf}
+\item{Whipple.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25}
 
-\item{print.plots}{asdf}
+\item{Whipple.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 65}
 
-\item{save.plots}{asdf}
+\item{Whipple.digit=NULL}{Equivalent to the `digit` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of c(0, 5)}
 
-\item{save.name.plots}{asdf}
+\item{Myers.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10}
 
-\item{plots.dir}{asdf}
+\item{Myers.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89}
+
+\item{Noumbissi.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20}
+
+\item{Noumbissi.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64}
+
+\item{Noumbissi.digit=NULL}{Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0}
 }
 \description{
 asdf
+}
+\examples{
+age_heaping_plotting <- PlotAgeHeapingScores(data=ecuador_age_tabulation,
+                                                  name.disaggregations="province_name_short",
+                                                  name.males="m",
+                                                  name.females="f",
+                                                  name.age="age",
+                                                  name.sex="sex",
+                                                  name.date1="date1",
+                                                  name.date2="date2",
+                                                  name.population.year1="pop1",
+                                                  name.population.year2="pop2",
+                                                  plots.dir="Plots/")
+head(age_heaping_plotting)
 }
