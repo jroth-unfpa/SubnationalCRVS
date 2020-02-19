@@ -177,5 +177,15 @@ PlotAgeHeapingScores <- function(data,
   if (print.plots == TRUE) {
     print(overall)
   } 
-  return(data_with_age_heaping_long)
+  # arrange data to return
+  data_to_return <- data_with_age_heaping_long %>%
+                    select(name.disaggregations,
+                           date,
+                           name.sex,
+                           roughness,
+                           sawtooth,
+                           Whipple,
+                           Myers,
+                           Noumbissi)
+  return(data_to_return)
 }

@@ -185,3 +185,22 @@ GetOneAgeRatio <- function(vec_ages,
   }
   return(100*vec_age_ratios)
 }
+
+CheckSingleYearAges <- function(data,
+                                name.disaggregations,
+                                name.sex,
+                                confirm_single_year_ages) {
+   data_with_count_groups <- data %>%
+    group_by(get(name.disaggregations), get(name.sex)) %>%
+    summarise("count"=n())
+   if (max(data_with_count_groups$count, na.rm=TRUE) < 30) {
+    if ((23 %in% data[, name.age] == FALSE) & (37 %in% data[name.age] == FALSE)) {
+      if (confirm_single_year_ages == FALSE) {
+        stop("It looks like your age variable may not represent single-year ages, so we stopped the function from executing. 
+             To force the function run anyway, please manually set the argument have_single_year_ages=TRUE.")
+      } else {
+        warning("Function continuing to run because confirm_single_year_ages=TRUE")
+      }
+    }
+  } 
+}

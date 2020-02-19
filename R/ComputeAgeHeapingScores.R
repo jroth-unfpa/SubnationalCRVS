@@ -19,6 +19,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
 #' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param roughness.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
 #' @param sawtooth.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40
@@ -31,6 +32,7 @@
 #' @param Noumbissi.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param Noumbissi.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64
 #' @param Noumbissi.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0
+#' @param 
 #' @examples
 #' ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_age_tabulation,
 #'                                               name.disaggregations="province",
@@ -58,6 +60,7 @@ ComputeAgeHeapingScores <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          confirm_single_year_ages=FALSE,
                           roughness.age.min=NULL,
                           roughness.age.max=NULL,
                           sawtooth.age.min=NULL,
@@ -83,7 +86,10 @@ ComputeAgeHeapingScores <- function(data,
   
   # verify that the age variable is single-year ages and not groups of multiple ages (e.g. 5-year age groups)
   # and also emphasize that only the "deaths" column is actually not required
-  print("need to add a way to check for single-year ages")
+  CheckSingleYearAges(data,
+                      name.disaggregations=name.disaggregations,
+                      name.sex=name.sex,
+                      confirm_single_year_ages=confirm_single_year_ages) 
   
   # convert data into long format (more convenient for ggplot2)
   long_year1 <- data %>% 

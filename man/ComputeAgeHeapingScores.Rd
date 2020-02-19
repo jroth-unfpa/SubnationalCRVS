@@ -15,6 +15,7 @@ ComputeAgeHeapingScores(
   name.date2,
   name.population.year1,
   name.population.year2,
+  confirm_single_year_ages = FALSE,
   roughness.age.min = NULL,
   roughness.age.max = NULL,
   sawtooth.age.min = NULL,
@@ -54,6 +55,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{confirm_single_year_ages}{Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE}
 
 \item{roughness.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20}
 

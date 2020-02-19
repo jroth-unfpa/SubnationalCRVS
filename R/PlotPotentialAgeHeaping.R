@@ -16,9 +16,10 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
 #' @param mark_multiples_of_5_disaggregated Logical indicating whether dashed vertical lines should be overlaid on the disaggregated (i.e. separate plot within each level of disaggregation) plots at ages that are multiples of 5. Defaults to FALSE
 #' @param mark_multiples_of_5_overall Logical indicating whether dashed vertical lines should be overlaid on the overall (i.e. all levels of disaggregation are plotted on the same graph) plots at ages that are multiples of 5. Defaults to TRUE
-#' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age-specific population counts plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest counts within each level
+#' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age-specific population counts plotted on a separate graph within each level of disaggregation. Defaults to NULL, which uses the smallest and largest counts within each level
 #' @param ylim.overall A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall age-specific population counts where all levels of disaggregation are plotted on the same graph. Defaults to NULL, which uses the smallest and largest counts in the entire dataset
 #' @param line.size.disaggregated Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots. Defaults to 0.6
 #' @param line.size.overall Numeric fed into ggplot2::geom_line(size)) for the overall plot. Defaults to 0.6
@@ -59,6 +60,7 @@ PlotPotentialAgeHeaping <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          confirm_single_year_ages=FALSE,
                           mark_multiples_of_5_disaggregated=FALSE,
                           mark_multiples_of_5_overall=TRUE,
                           ylim.disaggregated=NULL,
@@ -89,8 +91,10 @@ PlotPotentialAgeHeaping <- function(data,
   
   # verify that the age variable is single-year ages and not groups of multiple ages (e.g. 5-year age groups)
   # and also emphasize that only the "deaths" column is actually not required
-  print("need to add a way to check for single-year ages")
-  
+  CheckSingleYearAges(data,
+                      name.disaggregations=name.disaggregations,
+                      name.sex=name.sex,
+                      confirm_single_year_ages=confirm_single_year_ages) 
   # convert data into long format (more convenient for ggplot2)
   long_year1 <- data %>% 
     select(name.disaggregations,
@@ -292,5 +296,4 @@ PlotPotentialAgeHeaping <- function(data,
   if (print.overall == TRUE) {
     print(overall)
   } 
-  return(NULL)
 }

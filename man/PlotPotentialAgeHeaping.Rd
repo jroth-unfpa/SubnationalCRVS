@@ -15,6 +15,7 @@ PlotPotentialAgeHeaping(
   name.date2,
   name.population.year1,
   name.population.year2,
+  confirm_single_year_ages = FALSE,
   mark_multiples_of_5_disaggregated = FALSE,
   mark_multiples_of_5_overall = TRUE,
   ylim.disaggregated = NULL,
@@ -60,11 +61,13 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
+\item{confirm_single_year_ages}{Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE}
+
 \item{mark_multiples_of_5_disaggregated}{Logical indicating whether dashed vertical lines should be overlaid on the disaggregated (i.e. separate plot within each level of disaggregation) plots at ages that are multiples of 5. Defaults to FALSE}
 
 \item{mark_multiples_of_5_overall}{Logical indicating whether dashed vertical lines should be overlaid on the overall (i.e. all levels of disaggregation are plotted on the same graph) plots at ages that are multiples of 5. Defaults to TRUE}
 
-\item{ylim.disaggregated}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age-specific population counts plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest counts within each level}
+\item{ylim.disaggregated}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age-specific population counts plotted on a separate graph within each level of disaggregation. Defaults to NULL, which uses the smallest and largest counts within each level}
 
 \item{ylim.overall}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall age-specific population counts where all levels of disaggregation are plotted on the same graph. Defaults to NULL, which uses the smallest and largest counts in the entire dataset}
 
