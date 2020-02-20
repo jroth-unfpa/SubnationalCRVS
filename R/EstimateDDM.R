@@ -48,6 +48,7 @@
 #'                            show.age.range.sensitivity=FALSE)
 #' ddm_results$ddm_estimates                            
 #' @import dplyr
+#' @import DDM
 #' @export
 
 EstimateDDM <- function(data, 
