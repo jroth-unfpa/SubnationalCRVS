@@ -19,16 +19,11 @@
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
 #' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param roughness.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
-#' @param sawtooth.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40
-#' @param sawtooth.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
 #' @param Whipple.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25
 #' @param Whipple.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 65
 #' @param Whipple.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of c(0, 5)
 #' @param Myers.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10
 #' @param Myers.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89
-#' @param Noumbissi.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20
-#' @param Noumbissi.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64
-#' @param Noumbissi.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0
 #' @param fig.nrow An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots
 #' @param print.plots A logical indicating whether the plots should be printed in the R session. Defaults to TRUE
@@ -66,8 +61,6 @@ PlotAgeHeapingScores <- function(data,
                           name.population.year2,
                           roughness.age.min=NULL,
                           roughness.age.max=NULL,
-                          sawtooth.age.min=NULL,
-                          sawtooth.age.max=NULL,
                           Whipple.age.min=NULL,
                           Whipple.age.max=NULL,
                           Whipple.digit=NULL,
@@ -93,8 +86,6 @@ PlotAgeHeapingScores <- function(data,
                                     name.population.year2=name.population.year2,
                                     roughness.age.min=roughness.age.min,
                                     roughness.age.max=roughness.age.max,
-                                    sawtooth.age.min=sawtooth.age.min,
-                                    sawtooth.age.max=sawtooth.age.max,
                                     Whipple.age.min=Whipple.age.min,
                                     Whipple.age.max=Whipple.age.max,
                                     Whipple.digit=Whipple.digit,
@@ -111,17 +102,8 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="roughness",
          title=paste0("roughness \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.sex)
-  ## sawtooth
-  g_sawtooth <- ggplot(data=data_with_age_heaping_long,
-                                  aes(x=get(name.disaggregations),
-                                      y=sawtooth)) +
-                          geom_point(aes(col=sex,
-                                         shape=date)) +
-    labs(x=name.disaggregations,
-         y="sawtooth",
-         title=paste0("sawtooth \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.sex)
+    scale_colour_discrete(name=name.sex) +
+    theme_classic()
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
                                  aes(x=get(name.disaggregations),
@@ -131,7 +113,8 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="Whipple's index",
          title=paste0("Whipple's index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.sex)
+    scale_colour_discrete(name=name.sex) +
+    theme_classic()
   ## Myers
   g_Myers <- ggplot(data=data_with_age_heaping_long,
                       aes(x=get(name.disaggregations),
@@ -141,22 +124,10 @@ PlotAgeHeapingScores <- function(data,
     labs(x=name.disaggregations,
          y="Myers' blendex index",
          title=paste0("Myers' blended index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.sex)
-  ## Noumbissi
-  g_Noumbissi <- ggplot(data=data_with_age_heaping_long,
-                    aes(x=get(name.disaggregations),
-                        y=Noumbissi)) +
-    geom_point(aes(col=sex,
-                   shape=date)) +
-    labs(x=name.disaggregations,
-         y="Noumbissi's digit heaping index",
-         title=paste0("Noumbissi's digit heaping index \n", "by ", name.disaggregations)) +
-    scale_colour_discrete(name=name.sex)
-  
+    scale_colour_discrete(name=name.sex) +
+    theme_classic()
   list_plots <- list(g_roughness,
-                     g_sawtooth,
                      g_Whipple,
-                     g_Noumbissi,
                      g_Myers)
   overall <- marrangeGrob(list_plots,
                           nrow=fig.nrow,
@@ -166,7 +137,8 @@ PlotAgeHeapingScores <- function(data,
   graphics.off()
   if (save.plots == TRUE) {
     if (is.null(save.name.plots) == FALSE) {
-      pdf(paste0(save.name.plots, ".pdf")) 
+      pdf(paste0(save.name.plots, 
+                 name.disaggregations, "_", Sys.Date(), ".pdf")) 
     } else {
       pdf(paste0(plots.dir, "age_heaping_scores_combined_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
@@ -183,9 +155,7 @@ PlotAgeHeapingScores <- function(data,
                            date,
                            name.sex,
                            roughness,
-                           sawtooth,
                            Whipple,
-                           Myers,
-                           Noumbissi)
+                           Myers)
   return(data_to_return)
 }

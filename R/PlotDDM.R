@@ -68,16 +68,24 @@ PlotDDM <- function(ddm_results,
   
   # plot DDM point estimates
   ddm_point_estimates <- ddm_results$ddm_estimates
-  g_point_estimate <- ggplot(data=ddm_point_estimates %>%
-                                  filter(cod != 90),
-                              aes(x=cod,
+  test <- ddm_point_estimates %>%
+          filter(sex == "Females") %>%
+          arrange(desc(ggbseg)) %>%
+          select(cod) %>%
+          pull() %>%
+          as.character()
+  ddm_point_estimates$cod <- factor(as.character(ddm_point_estimates$cod),
+                                    levels=test)
+  g_point_estimate <- ggplot(data=ddm_point_estimates,
+                             aes(x=cod,
                                  y=ggbseg))
   g_point_estimate <- g_point_estimate + 
                       geom_point(aes(col=sex),
                                  size=3,
                                  alpha=0.7) +
                       labs(x=name_disaggregations,
-                           y="Estimated death registration completeness (GGBSEG)")
+                           y="Estimated death registration completeness (GGBSEG)") +
+                      theme_classic()
   # plot DDM estimates for all possible age ranges considered in the search that generated the point estimate
   if (ddm_results$show.age.range.sensitivity == TRUE) {
     ddm_sensitivity_estimates <- ddm_results$sensitivity_ddm_estimates
@@ -91,8 +99,8 @@ PlotDDM <- function(ddm_results,
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
     for (i in 1:n_disaggregations) {
       one_level <- all_levels[i]
-      one_ylim <- c(0.9 * min(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"]),
-                    1.1 * max(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"]))
+      one_ylim <- c(0.9 * min(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE),
+                    1.1 * max(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE))
       ## women
       g_sensitivity_females <- ggplot(data=ddm_sensitivity_estimates %>%
                                            filter(cod == one_level & 
@@ -117,10 +125,10 @@ PlotDDM <- function(ddm_results,
                                               one_level,
                                               "-- Females"),
                                   col="Upper limit of age range") +
-                              theme(text = element_text(size=size.text.sensitivity),
-                                    legend.box="vertical",
-                                    legend.text=element_text(size=rel(0.8))) + 
-                              coord_cartesian(ylim=one_ylim)
+                             theme_classic(base_size=size.text.sensitivity) +
+                             theme(legend.box="vertical",
+                                   legend.text=element_text(size=rel(0.8))) +
+                             coord_cartesian(ylim=one_ylim) 
     
       ## men
       g_sensitivity_males <- ggplot(data=ddm_sensitivity_estimates %>%
@@ -146,9 +154,9 @@ PlotDDM <- function(ddm_results,
                                                 one_level,
                                                 "-- Males"),
                                     col="Upper limit of age range") +
-                              theme(text = element_text(size=size.text.sensitivity),
-                                    legend.box="vertical",
-                                    legend.text=element_text(size=rel(0.8))) + 
+                               theme_classic(base_size=size.text.sensitivity) +
+                               theme(legend.box="vertical",
+                                     legend.text=element_text(size=rel(0.8))) +
                               coord_cartesian(ylim=one_ylim)
     
     
@@ -164,7 +172,8 @@ PlotDDM <- function(ddm_results,
     graphics.off()
     if (save.plots.sensitivity == TRUE) {
       if (is.null(save.name.plots.sensitivity) == FALSE) {
-        pdf(paste0(save.name.plots.sensitivity, ".pdf")) 
+        pdf(paste0(save.name.plots.sensitivity, 
+                   "_by_", name_disaggregations, "_", Sys.Date(), ".pdf"))
       } else {
         pdf(paste0(plots.dir, "ddm_sensitivity_", 
                    name_disaggregations, "_", Sys.Date(), ".pdf"))
@@ -180,7 +189,8 @@ PlotDDM <- function(ddm_results,
   graphics.off()
   if (save.plot.point.estimates == TRUE) {
     if (is.null(save.name.plot.point.estimates) == FALSE) {
-      pdf(paste0(save.name.plots, ".pdf")) 
+      pdf(paste0(save.name.plots, 
+                 "_combined", name_disaggregations, "_", Sys.Date(), ".pdf")) 
     } else {
       pdf(paste0(plots.dir, "ddm_point_estimates_combined_", 
                  name_disaggregations, "_", Sys.Date(), ".pdf"))

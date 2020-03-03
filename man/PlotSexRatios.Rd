@@ -23,10 +23,10 @@ PlotSexRatios(
   fig.ncol = 2,
   print.disaggregated = TRUE,
   save.disaggregated = TRUE,
-  save.name_disaggregated = NULL,
+  save.name.disaggregated = NULL,
   print.overall = TRUE,
   save.overall = TRUE,
-  save.name_overall = NULL,
+  save.name.overall = NULL,
   plots.dir = ""
 )
 }
@@ -68,9 +68,13 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{save.disaggregated}{A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE}
 
+\item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
+
 \item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE}
 
 \item{save.overall}{A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE}
+
+\item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
 \item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
 
@@ -81,10 +85,6 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{fig.nrow.overall}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2}
 
 \item{fig.ncol.overall}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1}
-
-\item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
-
-\item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 }
 \description{
 asdf

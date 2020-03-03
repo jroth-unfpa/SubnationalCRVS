@@ -22,16 +22,14 @@
 #' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
 #' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param roughness.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
-#' @param sawtooth.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40
-#' @param sawtooth.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
 #' @param Whipple.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25
 #' @param Whipple.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 65
 #' @param Whipple.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of c(0, 5)
 #' @param Myers.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10
 #' @param Myers.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89
-#' @param Noumbissi.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20
+#' @param Noumbissi.display=FALSE Logical indicating whether 10 columns should be displayed with the results of `DemoTools::check_heaping_noumbissi()` with digits 0,1,...,9. Default is FALSE
+#' @param Noumbissi.age.min=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param Noumbissi.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64
-#' @param Noumbissi.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0
 #' @param 
 #' @examples
 #' ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_age_tabulation,
@@ -63,16 +61,14 @@ ComputeAgeHeapingScores <- function(data,
                           confirm_single_year_ages=FALSE,
                           roughness.age.min=NULL,
                           roughness.age.max=NULL,
-                          sawtooth.age.min=NULL,
-                          sawtooth.age.max=NULL,
                           Whipple.age.min=NULL,
                           Whipple.age.max=NULL,
                           Whipple.digit=NULL,
                           Myers.age.min=NULL,
                           Myers.age.max=NULL,
+                          Noumbissi.display=FALSE,
                           Noumbissi.age.min=NULL,
-                          Noumbissi.age.max=NULL,
-                          Noumbissi.digit=NULL) {
+                          Noumbissi.age.max=NULL) {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
   if (length(unique(data[, name.date1])) != 1) {
@@ -112,6 +108,7 @@ ComputeAgeHeapingScores <- function(data,
   data_long <- rbind(long_year1, long_year2)
   
   # compute age heaping statistics based on data in long format
+  if (Noumbissi.display == FALSE) {
   data_with_age_heaping_long <- data_long %>%
                            group_by(date, get(name.sex), get(name.disaggregations)) %>% 
                            summarise("roughness"= 
@@ -119,11 +116,6 @@ ComputeAgeHeapingScores <- function(data,
                                       Age=age,
                                       ageMin=roughness.age.min,
                                       ageMax=roughness.age.max),
-                                      "sawtooth"=
-                              mySawtooth(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
-                                      Age=age,
-                                      ageMin=sawtooth.age.min,
-                                      ageMax=sawtooth.age.max),
                                       "Whipple"=
                               myWhipple(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                                         Age=age,
@@ -134,14 +126,89 @@ ComputeAgeHeapingScores <- function(data,
                               myMyers(Value=pop,
                                       Age=age,
                                       ageMin=Myers.age.min,
-                                      ageMax=Myers.age.max),
-                             "Noumbissi"=
-                               myNoumbissi(Value=pop,
-                                       Age=age,
-                                       ageMin=Noumbissi.age.min,
-                                       ageMax=Noumbissi.age.max,
-                                       digit=Noumbissi.digit)) %>%
+                                      ageMax=Myers.age.max)) %>%
                               as.data.frame()
+  } else {
+    data_with_age_heaping_long <- data_long %>%
+      group_by(date, get(name.sex), get(name.disaggregations)) %>% 
+      summarise("roughness"= 
+                  myRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=roughness.age.min,
+                              ageMax=roughness.age.max),
+                "Whipple"=
+                  myWhipple(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                            Age=age,
+                            ageMin=Whipple.age.min,
+                            ageMax=Whipple.age.max,
+                            digit=Whipple.digit),
+                "Myers"=
+                  myMyers(Value=pop,
+                          Age=age,
+                          ageMin=Myers.age.min,
+                          ageMax=Myers.age.max),
+                "Noumbissi_0"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=0),
+                "Noumbissi_1"= 
+                   myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                               Age=age,
+                               ageMin=Noumbissi.age.min,
+                               ageMax=Noumbissi.age.max,
+                               digit=1),
+                "Noumbissi_2"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=2),
+                "Noumbissi_3"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=3),
+                "Noumbissi_4"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=4),
+                "Noumbissi_5"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=5),
+                "Noumbissi_6"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=6),
+                "Noumbissi_7"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=7),
+                "Noumbissi_8"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=8),
+                "Noumbissi_9"= 
+                  myNoumbissi(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
+                              Age=age,
+                              ageMin=Noumbissi.age.min,
+                              ageMax=Noumbissi.age.max,
+                              digit=9)) %>%
+      as.data.frame()
+  }
   names(data_with_age_heaping_long)[names(data_with_age_heaping_long) == "get(name.sex)"] = name.sex
   names(data_with_age_heaping_long)[names(data_with_age_heaping_long) == "get(name.disaggregations)"] = name.disaggregations
 

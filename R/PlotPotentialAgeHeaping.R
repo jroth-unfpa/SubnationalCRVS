@@ -74,7 +74,7 @@ PlotPotentialAgeHeaping <- function(data,
                           print.disaggregated=FALSE,
                           save.disaggregated=TRUE,
                           save.name_disaggregated=NULL,
-                          print.overall=TRUE,
+                          print.overall=FALSE,
                           save.overall=TRUE,
                           save.name_overall=NULL,
                           plots.dir="") {
@@ -149,7 +149,8 @@ PlotPotentialAgeHeaping <- function(data,
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
            y="estimated population",
-           title=paste("estimated population by age \n in", one_level))
+           title=paste("estimated population by age \n in", one_level)) + 
+       theme_classic()
     
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
@@ -185,7 +186,8 @@ PlotPotentialAgeHeaping <- function(data,
     labs(x=name.age,
          y="estimated population",
          title=paste0("males -- estimated population \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
    
    ### females
    g_year1_females <- ggplot(data=data_long %>%
@@ -208,7 +210,8 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("females -- estimated population \n", date.1)) +
-     scale_colour_discrete(name=name.disaggregations)
+     scale_colour_discrete(name=name.disaggregations) +
+     theme_classic()
   
    ## Census year 2
    ### males
@@ -232,7 +235,8 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("males -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=name.disaggregations)
+     scale_colour_discrete(name=name.disaggregations) +
+     theme_classic()
 
    ### females
    g_year2_females <- ggplot(data=data_long %>%
@@ -255,7 +259,8 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("females -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=name.disaggregations)
+     scale_colour_discrete(name=name.disaggregations) +
+     theme_classic()
    
    
     list_plots_overall <- list(g_year2_females, 
@@ -267,10 +272,10 @@ PlotPotentialAgeHeaping <- function(data,
                             ncol=fig.ncol.overall)
   
   # print/save plots according to specified arguments
-  graphics.off()
   if (save.disaggregated == TRUE) {
     if (is.null(save.name_disaggregated) == FALSE) {
-      pdf(paste0(save.name_disaggregated, ".pdf")) 
+      pdf(paste0(save.name_disaggregated, 
+                 "_by_", name.disaggregations, "_", Sys.Date(), ".pdf")) 
     } else {
       pdf(paste0(plots.dir, "potential_age_heaping_by_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
@@ -281,7 +286,8 @@ PlotPotentialAgeHeaping <- function(data,
   graphics.off()
   if (save.overall == TRUE) {
     if (is.null(save.name_overall) == FALSE) {
-      pdf(paste0(save.name_overall, ".pdf")) 
+      pdf(paste0(save.name_overall, 
+                 "_combined_", name.disaggregations, "_", Sys.Date(), ".pdf"))
     } else {
       pdf(paste0(plots.dir, "potential_age_heaping_combined_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))

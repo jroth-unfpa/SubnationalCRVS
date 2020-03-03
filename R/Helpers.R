@@ -68,28 +68,7 @@ myRoughness <- function(Value,
                          ageMin=ageMin,
                          ageMax=ageMax)
   }
-  return(result)
-}
-
-mySawtooth <- function(Value, 
-                       Age,
-                       ageMin,
-                       ageMax) {
-  if (sum(is.na(Value)) != 0) {
-    result <- NA 
-  } else {
-    if (is.null(ageMin)) {
-      ageMin <- 40  ## default from DemoTools::check_heaping_sawtooth()
-    } 
-    if (is.null(ageMax)) {
-      ageMax = max(Age[Age%%5== 0]) - 10 ## default from DemoTools::check_heaping_sawtooth()
-    }
-    result <- check_heaping_sawtooth(Value=Value,
-                                  Age=Age,
-                                  ageMin=ageMin,
-                                  ageMax=ageMax)
-  }
-  return(result)
+  return(round(result, 2))
 }
 
 myWhipple <- function(Value, 
@@ -115,7 +94,7 @@ myWhipple <- function(Value,
                                     ageMax=ageMax,
                                     digit=digit)
   }
-  return(result)
+  return(round(result, 2))
 }
 
 myMyers <- function(Value, 
@@ -136,7 +115,7 @@ myMyers <- function(Value,
                                   ageMin=ageMin,
                                   ageMax=ageMax)
   }
-  return(result)
+  return(round(result, 2))
 }
 
 myNoumbissi <- function(Value, 
@@ -162,7 +141,7 @@ myNoumbissi <- function(Value,
                                       ageMax=ageMax,
                                       digit=digit)
   }
-  return(result)
+  return(round(result, 2))
 }
 
 GetOneAgeRatio <- function(vec_ages,

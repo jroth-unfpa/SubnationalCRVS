@@ -29,7 +29,7 @@ PlotPotentialAgeHeaping(
   print.disaggregated = FALSE,
   save.disaggregated = TRUE,
   save.name_disaggregated = NULL,
-  print.overall = TRUE,
+  print.overall = FALSE,
   save.overall = TRUE,
   save.name_overall = NULL,
   plots.dir = ""

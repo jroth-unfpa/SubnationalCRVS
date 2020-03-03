@@ -70,10 +70,10 @@ PlotSexRatios <- function(data,
                           fig.ncol=2,
                           print.disaggregated=TRUE,
                           save.disaggregated=TRUE,
-                          save.name_disaggregated=NULL,
+                          save.name.disaggregated=NULL,
                           print.overall=TRUE,
                           save.overall=TRUE,
-                          save.name_overall=NULL,
+                          save.name.overall=NULL,
                           plots.dir="") {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
@@ -130,7 +130,8 @@ PlotSexRatios <- function(data,
                                       values=c("orange"="orange",
                                                "blue"="blue"), 
                                       labels = c(date.1,
-                                                 date.2))
+                                                 date.2)) +
+                  theme_classic()
     list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
   }
@@ -154,7 +155,8 @@ PlotSexRatios <- function(data,
       labs(x=name.age,
            y="Sex ratio",
            title=paste0("Sex ratio \n", date.1)) +
-      scale_colour_discrete(name=name.disaggregations)
+      scale_colour_discrete(name=name.disaggregations) +
+      theme_classic()
   
   g_year2 <- ggplot(data=data_with_sex_ratio,
                     aes(x=get(name.age),
@@ -167,7 +169,8 @@ PlotSexRatios <- function(data,
     labs(x=name.age,
          y="Sex ratio",
          title=paste0("Sex ratio \n",  date.2)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
 
   # print/save plots according to specified arguments
   graphics.off()
@@ -176,8 +179,10 @@ PlotSexRatios <- function(data,
     graphics.off()
   } 
   if (save.disaggregated == TRUE) {
-    if (is.null(save.name_disaggregated) == FALSE) {
-      pdf(paste0(save.name_disaggregated, ".pdf")) 
+    if (is.null(save.name.disaggregated) == FALSE) {
+            pdf(paste0(plots.dir, save.name.disaggregated, 
+                       "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"))
+
     } else {
       pdf(paste0(plots.dir, "sex_ratios_by_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
@@ -186,8 +191,9 @@ PlotSexRatios <- function(data,
     graphics.off()
   }
   if (save.overall == TRUE) {
-    if (is.null(save.name_overall) == FALSE) {
-      pdf(paste0(save.name_overall, ".pdf")) 
+    if (is.null(save.name.overall) == FALSE) {
+      pdf(paste0(plots.dir, save.name.overall, "_", 
+                 "combined_", name.disaggregations, Sys.Date(), ".pdf"))
     } else {
       pdf(paste0(plots.dir, "sex_ratios_combined_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))

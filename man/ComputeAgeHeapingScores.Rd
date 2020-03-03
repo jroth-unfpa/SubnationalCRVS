@@ -18,16 +18,14 @@ ComputeAgeHeapingScores(
   confirm_single_year_ages = FALSE,
   roughness.age.min = NULL,
   roughness.age.max = NULL,
-  sawtooth.age.min = NULL,
-  sawtooth.age.max = NULL,
   Whipple.age.min = NULL,
   Whipple.age.max = NULL,
   Whipple.digit = NULL,
   Myers.age.min = NULL,
   Myers.age.max = NULL,
+  Noumbissi.display = FALSE,
   Noumbissi.age.min = NULL,
-  Noumbissi.age.max = NULL,
-  Noumbissi.digit = NULL
+  Noumbissi.age.max = NULL
 )
 }
 \arguments{
@@ -62,10 +60,6 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{roughness.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10}
 
-\item{sawtooth.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of 40}
-
-\item{sawtooth.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_sawtooth`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10}
-
 \item{Whipple.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25}
 
 \item{Whipple.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 65}
@@ -76,11 +70,11 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{Myers.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89}
 
-\item{Noumbissi.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20}
+\item{Noumbissi.display=FALSE}{Logical indicating whether 10 columns should be displayed with the results of `DemoTools::check_heaping_noumbissi()` with digits 0,1,...,9. Default is FALSE}
+
+\item{Noumbissi.age.min=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20}
 
 \item{Noumbissi.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64}
-
-\item{Noumbissi.digit=NULL}{Equivalent to the `digit` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 0}
 }
 \description{
 This function serves as a wrapper for five DemoTools functions -- 

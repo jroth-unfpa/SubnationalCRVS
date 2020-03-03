@@ -151,7 +151,8 @@ PlotAgeRatios <- function(data,
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
            y="age ratio",
-           title=paste("age ratio in\n", one_level))
+           title=paste("age ratio in\n", one_level)) +
+      theme_classic()
     
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
@@ -178,7 +179,8 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("males -- age ratio \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
   
   g_year1_females <- ggplot(data=data_with_age_ratio_long %>%
                             filter(sex == name.females & date == date.1),
@@ -192,7 +194,8 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("females -- age ratio \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
   
 
   ## Census year 2
@@ -208,7 +211,8 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("males -- age ratio \n", date.2)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
   
   g_year2_females <- ggplot(data=data_with_age_ratio_long %>%
                               filter(sex == name.females & date == date.2),
@@ -222,7 +226,8 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("females -- age ratio \n", date.2)) +
-    scale_colour_discrete(name=name.disaggregations)
+    scale_colour_discrete(name=name.disaggregations) +
+    theme_classic()
   
     list_plots_overall <- list(g_year2_females, 
                                g_year2_males,
@@ -236,7 +241,8 @@ PlotAgeRatios <- function(data,
   graphics.off()
   if (save.disaggregated == TRUE) {
     if (is.null(save.name.disaggregated) == FALSE) {
-      pdf(paste0(save.name.disaggregated, ".pdf")) 
+      pdf(paste0(plots.dir, save.name.disaggregated, 
+                 "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"))
     } else {
       pdf(paste0(plots.dir, "age_ratios_by_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
@@ -247,7 +253,8 @@ PlotAgeRatios <- function(data,
   graphics.off()
   if (save.overall == TRUE) {
     if (is.null(save.name.overall) == FALSE) {
-      pdf(paste0(save.name.overall, ".pdf")) 
+      pdf(paste0(plots.dir, save.name_overall, "_", name.disaggregations, "_",
+                 Sys.Date(), ".pdf"))
     } else {
       pdf(paste0(plots.dir, "age_ratios_combined_", 
                  name.disaggregations, "_", Sys.Date(), ".pdf"))
