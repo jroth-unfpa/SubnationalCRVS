@@ -113,6 +113,18 @@ EstimateDDM <- function(data,
   # summarize and refomat results of call to ddm()
   ddm_estimates <- FormatOutputDDM(result_ddm_females=result_ddm_females,
                                    result_ddm_males=result_ddm_males)
+  # also provide total population counts
+  data_with_total_pop <- data %>%
+                         group_by(get(name.disaggregations)) %>%
+                         summarise("total_pop1"=sum(pop1),
+                                   "total_pop2"=sum(pop2)) %>%
+                         as.data.frame()
+  names(data_with_total_pop)[names(data_with_total_pop) == "get(name.disaggregations)"] <- "cod"
+  data_with_total_pop$cod <- as.factor(data_with_total_pop$cod)
+  ddm_estimates <- left_join(ddm_estimates,
+                             data_with_total_pop,
+                             by="cod")
+                             
   if (show.age.range.sensitivity == TRUE) {
     # perform DDM estimation for a sequence of age-range parameters to give a sense of estimation sensitivity
     # setting up before loop
@@ -153,6 +165,9 @@ EstimateDDM <- function(data,
                            eOpen=life.expectancy.in.open.group)
       one_ddm_estimates <- FormatOutputDDM(result_ddm_females=one_ddm_females,
                                            result_ddm_males=one_ddm_males)
+      one_ddm_estimates <- left_join(one_ddm_estimates,
+                                     data_with_total_pop,
+                                     by="cod")
       sensitivity_ddm_estimates <- rbind(sensitivity_ddm_estimates,
                                          one_ddm_estimates)
     }
@@ -161,11 +176,15 @@ EstimateDDM <- function(data,
                                          sex, cod)
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
+                "date1"=date.1,
+                "date2"=date.2,
                 "sensitivity_ddm_estimates"=sensitivity_ddm_estimates,
                 "ddm_estimates"=ddm_estimates))
   } else {
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
+                "date1"=date.1,
+                "date2"=date.2,
                 "ddm_estimates"=ddm_estimates))
   }
 }

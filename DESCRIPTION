@@ -9,7 +9,7 @@ Authors@R:
 Description: Visualize summaries of subnational demographic data quality assessment given a dataset with sex- and five-year-age- disaggregated population counts from two time points (usually consecutive Census years), within additional levels of subnational disaggregation (e.g. geographic regions and/or subnational characteristics such as education level). If the two time points do represent Census years and the data also reports registered deaths in the intracensal period, SubnationalCRVS also estimates and visualizes death registration completeness for the time period, within the included levels of subnational disaggregation.
 Depends: R (>= 3.5.0)
 License: GPL (>= 2)
-Imports: ggplot2, dplyr, DDM, devtools, ggpubr, gridExtra
+Imports: ggplot2, dplyr, DDM, devtools, ggpubr, gridExtra, scales
 Suggests: DemoTools, knitr, rmarkdown
 Additional_repositories: install_packages("DemoTools")
 Encoding: UTF-8

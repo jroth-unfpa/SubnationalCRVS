@@ -2,9 +2,14 @@
 #'
 #' asdf
 #' @param ddm_results The object returned by the `EstimateDDM()` function
-#' @param size.text.sensitivity An integer fed to `ggplot2::theme(text = element_text())` for the sensitivity plots. Defaults to 8
+#' @param base.size.point.estimates A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 13
+#' @param base.size.sensitivity A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 9
 #' @param fig.nrow An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows of plots should appear in the visualizations of the sensitivity results by level of disaggregation (males and females in a given level of disaggregation will always be included in the same row). Defaults to 2
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many times the side-by-side male/female sensitivity plots should appear in each of `fig.nrow` rows. Defaults to 1
+#' @param show.lines.sex.differential A logical indixating whether vertical lines connecting the estimated completenss for males and females should be drawn. Defaults to TRUE
+#' @param show.size.population A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
+#' @param label.completeness A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"
+#' @param label.subnational.level A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()
 #' @param print.plot.point.estimates A logical indicating whether the plot of point estimates across the levels of disaggregation should be printed in the R session. Defaults to TRUE
 #' @param save.plot.point.estimates  A logical indicating whether the plot of point estaimtes across the levels of disaggregation should be saved on the local file system. Defaults to TRUE
 #' @param save.name.plot.point.estimates A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
@@ -50,12 +55,18 @@
 #' @import ggplot2
 #' @import ggpubr
 #' @import gridExtra
+#' @import scales
 #' @export
 
 PlotDDM <- function(ddm_results,
-                    size.text.sensitivity=8,
+                    base.size.point.estimates=13,
+                    base.size.sensitivity=9,
                     fig.nrow=2,
                     fig.ncol=1,
+                    show.lines.sex.differential=TRUE,
+                    show.size.population=TRUE,
+                    label.completeness="Estimated death registration completeness (GGB-SEG)",
+                    label.subnational.levels=ddm_results$name_disaggregations,
                     print.plot.point.estimates=TRUE,
                     save.plot.point.estimates=TRUE,
                     save.name.plot.point.estimates=NULL,
@@ -65,30 +76,72 @@ PlotDDM <- function(ddm_results,
                     plots.dir="") {
   # setting up
   name_disaggregations <- ddm_results$name_disaggregations
+  date1 <- ddm_results$date1
+  date2 <- ddm_results$date2
   
   # plot DDM point estimates
   ddm_point_estimates <- ddm_results$ddm_estimates
+  ddm_point_estimates$ggbseg <- ddm_point_estimates$ggbseg * 100
   test <- ddm_point_estimates %>%
           filter(sex == "Females") %>%
-          arrange(desc(ggbseg)) %>%
+          arrange(ggbseg) %>%
           select(cod) %>%
           pull() %>%
           as.character()
   ddm_point_estimates$cod <- factor(as.character(ddm_point_estimates$cod),
                                     levels=test)
   g_point_estimate <- ggplot(data=ddm_point_estimates,
-                             aes(x=cod,
-                                 y=ggbseg))
-  g_point_estimate <- g_point_estimate + 
-                      geom_point(aes(col=sex),
-                                 size=3,
+                             aes(x=ggbseg,
+                                 y=cod))
+  if (show.size.population == TRUE) {
+    g_point_estimate <- g_point_estimate + 
+                      geom_point(aes(col=sex,
+                                     size=total_pop2),
                                  alpha=0.7) +
-                      labs(x=name_disaggregations,
-                           y="Estimated death registration completeness (GGBSEG)") +
-                      theme_classic()
+    scale_size_continuous(labels = comma,
+                          name=paste0("Pop. (", date2, ")"))
+  } else {
+    g_point_estimate <- g_point_estimate + 
+      geom_point(aes(col=sex),
+                 size=3,
+                 alpha=0.7)
+  }
+  g_point_estimate <- g_point_estimate + 
+                      labs(x=label.completeness,
+                           y=label.subnational.levels) +
+                      scale_color_discrete(name="Sex") +
+                      theme_classic(base_size=base.size.point.estimates)
+  if (show.lines.sex.differential == TRUE) {
+    g_build <- ggplot_build(g_point_estimate)
+    g_colors <- g_build$data[[1]]["colour"]$colour
+    g_color_males <- unique(g_colors[g_point_estimate$data$sex == "Males"])
+    g_color_females <- unique(g_colors[g_point_estimate$data$sex == "Females"])
+    
+    if (length(g_color_males) == 1 & length(g_color_females) == 1) {
+      identify_sex_larger_completeness <- ddm_point_estimates %>%
+        group_by(cod) %>%
+        summarise("males_larger"=ggbseg[sex == "Males"] >
+                    ggbseg[sex == "Females"])
+      ddm_point_estimates_larger <- left_join(x=ddm_point_estimates,
+                                              y=identify_sex_larger_completeness,
+                                              by="cod")
+      g_point_estimate <- g_point_estimate +
+                          geom_line(data=ddm_point_estimates_larger %>%
+                                       filter(males_larger == TRUE),
+                                    col=g_color_males) +
+                          geom_line(data=ddm_point_estimates_larger %>%
+                                       filter(males_larger == FALSE),
+                                    col=g_color_females)
+    } else {
+      g_point_estimate <- g_point_estimate +
+                          geom_line(data=ddm_point_estimates,
+                                    col="gray")
+    }
+  }
   # plot DDM estimates for all possible age ranges considered in the search that generated the point estimate
   if (ddm_results$show.age.range.sensitivity == TRUE) {
     ddm_sensitivity_estimates <- ddm_results$sensitivity_ddm_estimates
+    ddm_sensitivity_estimates$ggbseg <- ddm_sensitivity_estimates$ggbseg * 100
     ddm_sensitivity_estimates[, "lower_age_range"] <- 
       as.factor(ddm_sensitivity_estimates[, "lower_age_range"])
     ddm_sensitivity_estimates[, "upper_age_range"] <- 
@@ -120,12 +173,12 @@ PlotDDM <- function(ddm_results,
                               scale_linetype_manual(name=" Point estimate",
                                                     values=c(1,1)) +
                               labs(x="Lower limit of age range",
-                                  y="Estimated completeness (GGB-SEG)",
+                                  y=label.completeness,
                                   title=paste("Estimated completeness in\n",
                                               one_level,
                                               "-- Females"),
                                   col="Upper limit of age range") +
-                             theme_classic(base_size=size.text.sensitivity) +
+                             theme_classic(base_size=base.size.sensitivity) +
                              theme(legend.box="vertical",
                                    legend.text=element_text(size=rel(0.8))) +
                              coord_cartesian(ylim=one_ylim) 
@@ -149,12 +202,12 @@ PlotDDM <- function(ddm_results,
                               scale_linetype_manual(name=" Point estimate",
                                                      values=c(1,1)) +
                               labs(x="Lower limit of age range",
-                                    y="Estimated completeness (GGB-SEG)",
+                                    y=label.completeness,
                                     title=paste("Estimated completeness in\n",
                                                 one_level,
                                                 "-- Males"),
                                     col="Upper limit of age range") +
-                               theme_classic(base_size=size.text.sensitivity) +
+                               theme_classic(base_size=base.size.sensitivity) +
                                theme(legend.box="vertical",
                                      legend.text=element_text(size=rel(0.8))) +
                               coord_cartesian(ylim=one_ylim)
