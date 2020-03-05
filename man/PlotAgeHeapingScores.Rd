@@ -22,7 +22,9 @@ PlotAgeHeapingScores(
   Whipple.digit = NULL,
   Myers.age.min = NULL,
   Myers.age.max = NULL,
-  fig.nrow = 3,
+  label.subnational.levels = name.disaggregations,
+  base.size = 12,
+  fig.nrow = 1,
   fig.ncol = 1,
   print.plots = TRUE,
   save.plots = TRUE,
@@ -56,6 +58,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
+\item{base.size}{A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 12}
+
 \item{fig.nrow}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots}
 
 \item{fig.ncol}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots}
@@ -81,6 +85,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{Myers.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10}
 
 \item{Myers.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89}
+
+\item{label.subnational.level}{A character label for the axis showing the level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
 }
 \description{
 asdf

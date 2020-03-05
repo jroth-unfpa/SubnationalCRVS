@@ -24,6 +24,8 @@
 #' @param Whipple.digit=NULL Equivalent to the `digit` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of c(0, 5)
 #' @param Myers.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10
 #' @param Myers.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89
+#' @param label.subnational.level A character label for the axis showing the level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
+#' @param base.size A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 12
 #' @param fig.nrow An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots
 #' @param print.plots A logical indicating whether the plots should be printed in the R session. Defaults to TRUE
@@ -66,7 +68,9 @@ PlotAgeHeapingScores <- function(data,
                           Whipple.digit=NULL,
                           Myers.age.min=NULL,
                           Myers.age.max=NULL,
-                          fig.nrow=3,
+                          label.subnational.levels=name.disaggregations,
+                          base.size=12,
+                          fig.nrow=1,
                           fig.ncol=1,
                           print.plots=TRUE,
                           save.plots=TRUE,
@@ -91,41 +95,43 @@ PlotAgeHeapingScores <- function(data,
                                     Whipple.digit=Whipple.digit,
                                     Myers.age.min=Myers.age.min,
                                     Myers.age.max=Myers.age.max)
-  
+  data_with_age_heaping_long[, name.disaggregations] <- factor(data_with_age_heaping_long[, name.disaggregations],
+                                                               levels=rev(levels(data_with_age_heaping_long[, name.disaggregations])))
+
   # make plots
   ## roughness
   g_roughness <- ggplot(data=data_with_age_heaping_long,
-                                  aes(x=get(name.disaggregations),
-                                      y=roughness)) +
+                                  aes(x=roughness,
+                                      y=get(name.disaggregations))) +
                            geom_point(aes(col=get(name.sex),
                                           shape=date)) +
-    labs(x=name.disaggregations,
-         y="roughness",
-         title=paste0("roughness \n", "by ", name.disaggregations)) +
+    labs(x="roughness",
+         y=label.subnational.levels,
+         title=paste0("roughness by ", label.subnational.levels)) +
     scale_colour_discrete(name=name.sex) +
-    theme_classic()
+    theme_classic(base_size=base.size)
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
-                                 aes(x=get(name.disaggregations),
-                                     y=Whipple)) +
-    geom_point(aes(col=sex,
+                      aes(x=Whipple,
+                          y=get(name.disaggregations))) +
+    geom_point(aes(col=get(name.sex),
                    shape=date)) +
-    labs(x=name.disaggregations,
-         y="Whipple's index",
-         title=paste0("Whipple's index \n", "by ", name.disaggregations)) +
+    labs(x="Whipple's index",
+         y=label.subnational.levels,
+         title=paste0("Whipple's index by ", label.subnational.levels)) +
     scale_colour_discrete(name=name.sex) +
-    theme_classic()
+    theme_classic(base_size=base.size)
   ## Myers
   g_Myers <- ggplot(data=data_with_age_heaping_long,
-                      aes(x=get(name.disaggregations),
-                          y=Myers)) +
-    geom_point(aes(col=sex,
+                      aes(x=Myers,
+                          y=get(name.disaggregations))) +
+    geom_point(aes(col=get(name.sex),
                    shape=date)) +
-    labs(x=name.disaggregations,
-         y="Myers' blendex index",
-         title=paste0("Myers' blended index \n", "by ", name.disaggregations)) +
+    labs(x="Myers' blendex index",
+         y=label.subnational.levels,
+         title=paste0("Myers' blended index by ", label.subnational.levels)) +
     scale_colour_discrete(name=name.sex) +
-    theme_classic()
+    theme_classic(base_size=base.size)
   list_plots <- list(g_roughness,
                      g_Whipple,
                      g_Myers)
