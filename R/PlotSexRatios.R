@@ -21,7 +21,7 @@
 #' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the sex ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest sex ratios within each level
 #' @param ylim.overall A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall sex ratio where all levels of disaggregation are plotted on the same graph. Defaults to NULL,which uses the smallest and largest sex ratios in the entire dataset
 #' @param line.size.disaggregated Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. sex ratio plotted separately within each level). Defaults to 0.8
-#' @param line.size.overall Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. sex ratios from all levels plotted on the same graph). Defaults to 0.8
+#' @param line.size.overall Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. sex ratios from all levels plotted on the same graph). Defaults to 0.6
 #' @param fig.nrow.disaggregated An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the disaggregated plots. Defaults to 3
 #' @param fig.ncol.disaggregated An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the disaggregated plots. Defaults to 2
 #' @param fig.nrow.overall An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2
@@ -68,10 +68,10 @@ PlotSexRatios <- function(data,
                           ylim.disaggregated=NULL,
                           ylim.overall=NULL,
                           line.size.disaggregated=0.8,
-                          line.size.overall=0.8,
+                          line.size.overall=0.6,
                           fig.nrow=3,
                           fig.ncol=2,
-                          print.disaggregated=TRUE,
+                          print.disaggregated=FALSE,
                           save.disaggregated=TRUE,
                           save.name.disaggregated=NULL,
                           print.overall=TRUE,

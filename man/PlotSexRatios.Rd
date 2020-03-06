@@ -19,10 +19,10 @@ PlotSexRatios(
   ylim.disaggregated = NULL,
   ylim.overall = NULL,
   line.size.disaggregated = 0.8,
-  line.size.overall = 0.8,
+  line.size.overall = 0.6,
   fig.nrow = 3,
   fig.ncol = 2,
-  print.disaggregated = TRUE,
+  print.disaggregated = FALSE,
   save.disaggregated = TRUE,
   save.name.disaggregated = NULL,
   print.overall = TRUE,
@@ -65,7 +65,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{line.size.disaggregated}{Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. sex ratio plotted separately within each level). Defaults to 0.8}
 
-\item{line.size.overall}{Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. sex ratios from all levels plotted on the same graph). Defaults to 0.8}
+\item{line.size.overall}{Numeric fed into ggplot2::geom_line(size)) for the overall plot (i.e. sex ratios from all levels plotted on the same graph). Defaults to 0.6}
 
 \item{print.disaggregated}{A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE}
 
