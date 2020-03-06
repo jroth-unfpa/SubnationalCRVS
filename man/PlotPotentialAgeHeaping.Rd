@@ -15,6 +15,7 @@ PlotPotentialAgeHeaping(
   name.date2,
   name.population.year1,
   name.population.year2,
+  label.subnational.level = name.disaggregations,
   confirm_single_year_ages = FALSE,
   mark_multiples_of_5_disaggregated = FALSE,
   mark_multiples_of_5_overall = TRUE,
@@ -60,6 +61,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{label.subnational.level}{A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
 
 \item{confirm_single_year_ages}{Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE}
 
@@ -110,5 +113,6 @@ PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
                         name.date1="date1",
                         name.date2="date2",
                         name.population.year1="pop1",
-                        name.population.year2="pop2")
+                        name.population.year2="pop2",
+                        label.subnational.level="Province")
 }

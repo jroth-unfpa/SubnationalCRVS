@@ -17,6 +17,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
 #' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest age ratios within each level
 #' @param ylim.overall A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall age ratio where all levels of disaggregation are plotted on the same graph. Defaults to NULL,which uses the smallest and largest age ratios in the entire dataset
 #' @param line.size.disaggregated Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. age ratio plotted separately within each level). Defaults to 0.6
@@ -42,7 +43,8 @@
 #'                                          name.date1="date1",
 #'                                          name.date2="date2",
 #'                                          name.population.year1="pop1",
-#'                                          name.population.year2="pop2")
+#'                                          name.population.year2="pop2",
+#'                                          label.subnational.level="Province")
 #' head(ecuador_plot_age_ratios)
 #' tail(ecuador_plot_age_ratios)
 #' @import dplyr
@@ -61,6 +63,7 @@ PlotAgeRatios <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          label.subnational.level=name.disaggregations,
                           ylim.disaggregated=NULL,
                           ylim.overall=NULL,
                           line.size.disaggregated=0.6,
@@ -152,8 +155,9 @@ PlotAgeRatios <- function(data,
       labs(x=name.age,
            y="age ratio",
            title=paste("age ratio in\n", one_level)) +
-      theme_classic()
-    
+      theme_classic() +
+      scale_color_discrete(name="Sex") +
+      scale_linetype_discrete(name="Date")
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
   }
@@ -179,7 +183,7 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("males -- age ratio \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations) +
+    scale_colour_discrete(name=label.subnational.level) +
     theme_classic()
   
   g_year1_females <- ggplot(data=data_with_age_ratio_long %>%
@@ -194,7 +198,7 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("females -- age ratio \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations) +
+    scale_colour_discrete(name=label.subnational.level) +
     theme_classic()
   
 
@@ -211,7 +215,7 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("males -- age ratio \n", date.2)) +
-    scale_colour_discrete(name=name.disaggregations) +
+    scale_colour_discrete(name=label.subnational.level) +
     theme_classic()
   
   g_year2_females <- ggplot(data=data_with_age_ratio_long %>%
@@ -226,7 +230,7 @@ PlotAgeRatios <- function(data,
     labs(x=name.age,
          y="age ratio",
          title=paste0("females -- age ratio \n", date.2)) +
-    scale_colour_discrete(name=name.disaggregations) +
+    scale_colour_discrete(name=label.subnational.level) +
     theme_classic()
   
     list_plots_overall <- list(g_year2_females, 

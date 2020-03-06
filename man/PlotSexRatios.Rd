@@ -15,6 +15,7 @@ PlotSexRatios(
   name.date2,
   name.population.year1,
   name.population.year2,
+  label.subnational.level = name.disaggregations,
   ylim.disaggregated = NULL,
   ylim.overall = NULL,
   line.size.disaggregated = 0.8,
@@ -55,6 +56,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{label.subnational.level}{A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
 
 \item{ylim.disaggregated}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the sex ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest sex ratios within each level}
 
@@ -99,7 +102,8 @@ ecuador_plot_sex_ratios <- PlotSexRatios(data=example_data_ecuador,
                                          name.date1="date1",
                                          name.date2="date2",
                                          name.population.year1="pop1",
-                                         name.population.year2="pop2")
+                                         name.population.year2="pop2",
+                                         label.subnational.level="Province")
 head(ecuador_plot_sex_ratios)
 tail(ecuador_plot_sex_ratios)
 }

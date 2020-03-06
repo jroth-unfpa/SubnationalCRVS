@@ -109,7 +109,9 @@ PlotAgeHeapingScores <- function(data,
          y=label.subnational.levels,
          title=paste0("roughness by ", label.subnational.levels)) +
     scale_colour_discrete(name=name.sex) +
-    theme_classic(base_size=base.size)
+    theme_classic(base_size=base.size) +
+    scale_color_discrete(name="Sex") +
+    scale_shape_discrete(name="Date")
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
                       aes(x=Whipple,
@@ -120,7 +122,9 @@ PlotAgeHeapingScores <- function(data,
          y=label.subnational.levels,
          title=paste0("Whipple's index by ", label.subnational.levels)) +
     scale_colour_discrete(name=name.sex) +
-    theme_classic(base_size=base.size)
+    theme_classic(base_size=base.size) +
+    scale_color_discrete(name="Sex") +
+    scale_shape_discrete(name="Date")
   ## Myers
   g_Myers <- ggplot(data=data_with_age_heaping_long,
                       aes(x=Myers,
@@ -130,8 +134,9 @@ PlotAgeHeapingScores <- function(data,
     labs(x="Myers' blendex index",
          y=label.subnational.levels,
          title=paste0("Myers' blended index by ", label.subnational.levels)) +
-    scale_colour_discrete(name=name.sex) +
-    theme_classic(base_size=base.size)
+    theme_classic(base_size=base.size) +
+    scale_color_discrete(name="Sex") +
+    scale_shape_discrete(name="Date")
   list_plots <- list(g_roughness,
                      g_Whipple,
                      g_Myers)

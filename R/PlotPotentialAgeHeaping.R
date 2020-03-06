@@ -16,6 +16,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
 #' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
 #' @param mark_multiples_of_5_disaggregated Logical indicating whether dashed vertical lines should be overlaid on the disaggregated (i.e. separate plot within each level of disaggregation) plots at ages that are multiples of 5. Defaults to FALSE
 #' @param mark_multiples_of_5_overall Logical indicating whether dashed vertical lines should be overlaid on the overall (i.e. all levels of disaggregation are plotted on the same graph) plots at ages that are multiples of 5. Defaults to TRUE
@@ -44,7 +45,8 @@
 #'                         name.date1="date1",
 #'                         name.date2="date2",
 #'                         name.population.year1="pop1",
-#'                         name.population.year2="pop2")
+#'                         name.population.year2="pop2",
+#'                         label.subnational.level="Province")
 #' @import ggplot2
 #' @import ggpubr
 #' @import gridExtra
@@ -60,6 +62,7 @@ PlotPotentialAgeHeaping <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          label.subnational.level=name.disaggregations,
                           confirm_single_year_ages=FALSE,
                           mark_multiples_of_5_disaggregated=FALSE,
                           mark_multiples_of_5_overall=TRUE,
@@ -150,7 +153,10 @@ PlotPotentialAgeHeaping <- function(data,
       labs(x=name.age,
            y="estimated population",
            title=paste("estimated population by age \n in", one_level)) + 
-       theme_classic()
+       theme_classic() +
+       scale_color_discrete(name="Sex") +
+       scale_linetype_discrete(name="Date")
+       
     
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
@@ -186,8 +192,8 @@ PlotPotentialAgeHeaping <- function(data,
     labs(x=name.age,
          y="estimated population",
          title=paste0("males -- estimated population \n", date.1)) +
-    scale_colour_discrete(name=name.disaggregations) +
-    theme_classic()
+    scale_colour_discrete(name=label.subnational.level) +
+    theme_classic() 
    
    ### females
    g_year1_females <- ggplot(data=data_long %>%
@@ -210,7 +216,7 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("females -- estimated population \n", date.1)) +
-     scale_colour_discrete(name=name.disaggregations) +
+     scale_colour_discrete(name=label.subnational.level) +
      theme_classic()
   
    ## Census year 2
@@ -235,7 +241,7 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("males -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=name.disaggregations) +
+     scale_colour_discrete(name=label.subnational.level) +
      theme_classic()
 
    ### females
@@ -259,7 +265,7 @@ PlotPotentialAgeHeaping <- function(data,
      labs(x=name.age,
           y="estimated population",
           title=paste0("females -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=name.disaggregations) +
+     scale_colour_discrete(name=label.subnational.level) +
      theme_classic()
    
    
