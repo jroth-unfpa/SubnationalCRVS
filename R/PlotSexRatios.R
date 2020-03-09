@@ -29,12 +29,12 @@
 #' @param print.disaggregated A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE
 #' @param save.disaggregated A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.disaggregated A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
-#' @param print.overall A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE
+#' @param print.overall A logical indicating whether the overall plots should be printed in the R session. Defaults to FALSE
 #' @param save.overall A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.overall A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples 
-#' ecuador_plot_sex_ratios <- PlotSexRatios(data=example_data_ecuador,
+#' ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages,
 #'                                          name.disaggregations="province_name",
 #'                                          name.males="m",
 #'                                          name.females="f",
@@ -74,7 +74,7 @@ PlotSexRatios <- function(data,
                           print.disaggregated=FALSE,
                           save.disaggregated=TRUE,
                           save.name.disaggregated=NULL,
-                          print.overall=TRUE,
+                          print.overall=FALSE,
                           save.overall=TRUE,
                           save.name.overall=NULL,
                           plots.dir="") {

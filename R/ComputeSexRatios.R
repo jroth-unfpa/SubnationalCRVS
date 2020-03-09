@@ -18,8 +18,8 @@
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
 #' @examples
-#' ecuador_sex_ratios <- ComputeSexRatios(data=example_data_ecuador,
-#'                                        name.disaggregations="province",
+#' ecuador_sex_ratios <- ComputeSexRatios(data=ecuador_ecuador_single_year_ages,
+#'                                        name.disaggregations="province_name",
 #'                                        name.males="m",
 #'                                        name.females="f",
 #'                                        name.age="age",

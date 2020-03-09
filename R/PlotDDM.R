@@ -19,7 +19,7 @@
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples
 #' # It takes about 45 seconds to run this example with show.age.range.sensitivity=TRUE; to run in under 5 seconds please instead use show.age.range.sensitivity=FALSE
-#' ecuador_ddm_results_with_sensitivity <- EstimateDDM(data=example_data_ecuador, 
+#' ecuador_ddm_results_with_sensitivity <- EstimateDDM(data=ecuador_five_year_ages, 
 #'                                                     name.disaggregations="province_name",
 #'                                                     name.age="age",
 #'                                                     name.sex="sex",
@@ -35,7 +35,7 @@
 #' PlotDDM(ddm_results=ecuador_ddm_results_with_sensitivity,
 #'         save.plot.point.estimates=FALSE)
 #' # Example with show.age.range.sensitivity=FALSE. Also better to use "province_name_short" as disaggregations name here to prevent overcrowding of x-axis.
-#' ecuador_ddm_results_no_sensitivity <- EstimateDDM(data=example_data_ecuador, 
+#' ecuador_ddm_results_no_sensitivity <- EstimateDDM(data=ecuador_five_year_ages, 
 #'                                                   name.disaggregations="province_name_short",
 #'                                                   name.age="age",
 #'                                                   name.sex="sex",

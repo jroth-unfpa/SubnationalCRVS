@@ -32,8 +32,8 @@
 #' @param Noumbissi.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64
 #' @param 
 #' @examples
-#' ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_age_tabulation,
-#'                                               name.disaggregations="province",
+#' ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_single_year_ages,
+#'                                               name.disaggregations="province_name",
 #'                                               name.males="m",
 #'                                               name.females="f",
 #'                                               name.age="age",

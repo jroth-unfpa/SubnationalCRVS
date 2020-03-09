@@ -105,7 +105,7 @@ asdf
 }
 \examples{
 PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
-                        name.disaggregations="province_name_short",
+                        name.disaggregations="province_name",
                         name.males="m",
                         name.females="f",
                         name.age="age",

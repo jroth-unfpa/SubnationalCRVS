@@ -77,7 +77,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 asdf
 }
 \examples{
-ddm_results <- EstimateDDM(data=example_data_ecuador, 
+ddm_results <- EstimateDDM(data=ecuador_five_year_ages, 
                            name.disaggregations="province_name",
                            name.age="age",
                            name.sex="sex",

@@ -27,7 +27,7 @@ PlotAgeRatios(
   print.disaggregated = FALSE,
   save.disaggregated = TRUE,
   save.name.disaggregated = NULL,
-  print.overall = TRUE,
+  print.overall = FALSE,
   save.overall = TRUE,
   save.name.overall = NULL,
   plots.dir = ""
@@ -83,7 +83,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
-\item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE}
+\item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to FALSE}
 
 \item{save.overall}{A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE}
 
@@ -95,7 +95,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 asdf
 }
 \examples{
-ecuador_plot_age_ratios <- PlotAgeRatios(data=example_data_ecuador,
+ecuador_plot_age_ratios <- PlotAgeRatios(data=ecuador_five_year_ages,
                                          name.disaggregations="province_name",
                                          name.males="m",
                                          name.females="f",

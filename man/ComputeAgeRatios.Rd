@@ -18,37 +18,37 @@ ComputeAgeRatios(
 )
 }
 \arguments{
-\item{data}{data frame that contains at least seven columns representing: (1) five-year age groups,
+\item{data}{data frame that contains at least seven columns representing: (1) five-year age groups, 
 (2) sex,
 (3, 4) population counts collected at two different time points (typically adjacent Census years)
 (5, 6) dates of two different time points
-(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state,
+(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
 a sociodemographic category such as education level, or combinations thereof).}
 
-\item{name.disaggregations}{Character string providing the name of the variable in \code{data} that represents the levels of subnational disaggregation}
+\item{name.disaggregations}{Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation}
 
-\item{name.age}{Character string providing the name of the variable in \code{data} that represents age}
+\item{name.age}{Character string providing the name of the variable in `data` that represents age}
 
-\item{name.sex}{Character string providing the name of the variable in \code{data} that represents sex}
+\item{name.sex}{Character string providing the name of the variable in `data` that represents sex}
 
-\item{name.males}{Character string providing the name of the value of \code{name.sex} variable that represents males}
+\item{name.males}{Character string providing the name of the value of `name.sex` variable that represents males}
 
-\item{name.females}{Character string providing the name of the value of \code{name.sex} variable that represents females}
+\item{name.females}{Character string providing the name of the value of `name.sex` variable that represents females}
 
-\item{name.date1}{Character string providing the name of the variable in \code{data} that represents the earlier time period}
+\item{name.date1}{Character string providing the name of the variable in `data` that represents the earlier time period}
 
-\item{name.date2}{Character string providing the name of the variable in \code{data} that represents the later time period}
+\item{name.date2}{Character string providing the name of the variable in `data` that represents the later time period}
 
-\item{name.population.year1}{Character string providing the name of the variable in \code{data} that represents the population count in the earlier time period}
+\item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
-\item{name.population.year2}{Character string providing the name of the variable in \code{data} that represents the population count in the later time period}
+\item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 }
 \description{
 This function computes an age ratio, defined as asdf
 }
 \examples{
-ecuador_age_ratios <- ComputeAgeRatios(data=example_data_ecuador,
-                                       name.disaggregations="province_name_short",
+ecuador_age_ratios <- ComputeAgeRatios(data=ecuador_five_year_ages,
+                                       name.disaggregations="province_name",
                                        name.age="age",
                                        name.sex="sex",
                                        name.males="m",

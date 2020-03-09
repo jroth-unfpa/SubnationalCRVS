@@ -6,7 +6,7 @@
 #' (2) sex,
 #' (3, 4) population counts collected at two different time points (typically adjacent Census years)
 #' (5, 6) dates of two different time points
-#' (7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+#' (7) the level of subnational disaggregation in addition to sex (e.g. a geographic unit such as a province/state, 
 #' a sociodemographic category such as education level, or combinations thereof). 
 #' @param name.disaggregations Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation
 #' @param name.age Character string providing the name of the variable in `data` that represents age
@@ -28,13 +28,13 @@
 #' @param base.size A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 12
 #' @param fig.nrow An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots
-#' @param print.plots A logical indicating whether the plots should be printed in the R session. Defaults to TRUE
+#' @param print.plots A logical indicating whether the plots should be printed in the R session. Defaults to FALSE
 #' @param save.plots A logical indicating whether the plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.plots A character specifying a custom file name for the plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples
-#' age_heaping_plotting <- PlotAgeHeapingScores(data=ecuador_age_tabulation,
-#'                                                   name.disaggregations="province_name_short",
+#' age_heaping_plotting <- PlotAgeHeapingScores(data=ecuador_single_year_ages
+#'                                                   name.disaggregations="province_name",
 #'                                                   name.males="m",
 #'                                                   name.females="f",
 #'                                                   name.age="age",
@@ -72,7 +72,7 @@ PlotAgeHeapingScores <- function(data,
                           base.size=12,
                           fig.nrow=1,
                           fig.ncol=1,
-                          print.plots=TRUE,
+                          print.plots=FALSE,
                           save.plots=TRUE,
                           save.name.plots=NULL,
                           plots.dir="") {
@@ -108,7 +108,6 @@ PlotAgeHeapingScores <- function(data,
     labs(x="roughness",
          y=label.subnational.levels,
          title=paste0("roughness by ", label.subnational.levels)) +
-    scale_colour_discrete(name=name.sex) +
     theme_classic(base_size=base.size) +
     scale_color_discrete(name="Sex") +
     scale_shape_discrete(name="Date")
@@ -121,7 +120,6 @@ PlotAgeHeapingScores <- function(data,
     labs(x="Whipple's index",
          y=label.subnational.levels,
          title=paste0("Whipple's index by ", label.subnational.levels)) +
-    scale_colour_discrete(name=name.sex) +
     theme_classic(base_size=base.size) +
     scale_color_discrete(name="Sex") +
     scale_shape_discrete(name="Date")

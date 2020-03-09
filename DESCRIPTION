@@ -1,6 +1,6 @@
 Package: SubnationalCRVS
 Title: Assess Quality of Demographic Data and Estimate Death Registration Completeness at Subnational Levels
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person(given = "Jeremy",
            family = "Roth",

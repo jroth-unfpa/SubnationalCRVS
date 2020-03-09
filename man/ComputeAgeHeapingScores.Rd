@@ -83,8 +83,8 @@ and returns the five summary statistics within specified levels of disaggregatio
 (which must contain single-year age counts) separately for males and females.
 }
 \examples{
-ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_age_tabulation,
-                                              name.disaggregations="province",
+ecuador_age_heaping_scores <- ComputeAgeHeapingScores(data=ecuador_single_year_ages,
+                                              name.disaggregations="province_name",
                                               name.males="m",
                                               name.females="f",
                                               name.age="age",

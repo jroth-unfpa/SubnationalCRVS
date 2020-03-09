@@ -18,8 +18,8 @@
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
 #' @examples
-#' ecuador_age_ratios <- ComputeAgeRatios(data=example_data_ecuador,
-#'                                        name.disaggregations="province_name_short",
+#' ecuador_age_ratios <- ComputeAgeRatios(data=ecuador_five_year_ages,
+#'                                        name.disaggregations="province_name",
 #'                                        name.age="age",
 #'                                        name.sex="sex",
 #'                                        name.males="m",
@@ -32,7 +32,6 @@
 #' tail(ecuador_age_ratios)
 #' @import dplyr
 #' @export
-#' @md
 
 ComputeAgeRatios <- function(data, 
                              name.disaggregations,

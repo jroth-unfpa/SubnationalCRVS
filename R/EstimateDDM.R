@@ -28,7 +28,7 @@
 #' @param smallest.upper.limit.sensitivity A numeric the indicates the smallest value of `max.age.in.search` that should be considered in the sensitivity analysis (the largest one considered will be the one specified originally with `max.age.in.search`). Defaults to 50
 #' @param life.expectancy.in.open.group A numeric equivalent to the `eOpen` argument of `DDM:ddm()`. Defaults to NULL
 #' @examples
-#' ddm_results <- EstimateDDM(data=example_data_ecuador, 
+#' ddm_results <- EstimateDDM(data=ecuador_five_year_ages, 
 #'                            name.disaggregations="province_name",
 #'                            name.age="age",
 #'                            name.sex="sex",

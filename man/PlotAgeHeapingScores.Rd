@@ -26,7 +26,7 @@ PlotAgeHeapingScores(
   base.size = 12,
   fig.nrow = 1,
   fig.ncol = 1,
-  print.plots = TRUE,
+  print.plots = FALSE,
   save.plots = TRUE,
   save.name.plots = NULL,
   plots.dir = ""
@@ -37,7 +37,7 @@ PlotAgeHeapingScores(
 (2) sex,
 (3, 4) population counts collected at two different time points (typically adjacent Census years)
 (5, 6) dates of two different time points
-(7) the level of subnational disaggregation in additino to sex (e.g. a geographic unit such as a province/state, 
+(7) the level of subnational disaggregation in addition to sex (e.g. a geographic unit such as a province/state, 
 a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.disaggregations}{Character string providing the name of the variable in `data` that represents the levels of subnational disaggregation}
@@ -64,7 +64,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{fig.ncol}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots}
 
-\item{print.plots}{A logical indicating whether the plots should be printed in the R session. Defaults to TRUE}
+\item{print.plots}{A logical indicating whether the plots should be printed in the R session. Defaults to FALSE}
 
 \item{save.plots}{A logical indicating whether the plots should be saved on the local file system. Defaults to TRUE}
 
@@ -92,8 +92,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 asdf
 }
 \examples{
-age_heaping_plotting <- PlotAgeHeapingScores(data=ecuador_age_tabulation,
-                                                  name.disaggregations="province_name_short",
+age_heaping_plotting <- PlotAgeHeapingScores(data=ecuador_single_year_ages
+                                                  name.disaggregations="province_name",
                                                   name.males="m",
                                                   name.females="f",
                                                   name.age="age",

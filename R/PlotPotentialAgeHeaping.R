@@ -37,7 +37,7 @@
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples 
 #' PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
-#'                         name.disaggregations="province_name_short",
+#'                         name.disaggregations="province_name",
 #'                         name.males="m",
 #'                         name.females="f",
 #'                         name.age="age",
