@@ -18,6 +18,7 @@
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
 #' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
+#' @param show.disaggregated.population A logical indicated whether the population in date2 should be displayed on the disaggreagted plots (in the title of the plot). Defaults to TRUE#' 
 #' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest age ratios within each level
 #' @param ylim.overall A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the overall age ratio where all levels of disaggregation are plotted on the same graph. Defaults to NULL,which uses the smallest and largest age ratios in the entire dataset
 #' @param line.size.disaggregated Numeric fed into ggplot2::geom_line(size)) for the disaggregated plots (i.e. age ratio plotted separately within each level). Defaults to 0.6
@@ -64,6 +65,7 @@ PlotAgeRatios <- function(data,
                           name.population.year1,
                           name.population.year2,
                           label.subnational.level=name.disaggregations,
+                          show.disaggregated.population=TRUE,
                           ylim.disaggregated=NULL,
                           ylim.overall=NULL,
                           line.size.disaggregated=0.6,
@@ -153,11 +155,32 @@ PlotAgeRatios <- function(data,
                  size=line.size.disaggregated) +
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
-           y="age ratio",
-           title=paste("age ratio in\n", one_level)) +
+           y="Age ratio",
+           title=paste("Age ratio in\n", one_level)) +
       theme_classic() +
       scale_color_discrete(name="Sex") +
       scale_linetype_discrete(name="Date")
+    
+    if (show.disaggregated.population == TRUE) {
+      pop1_one_level <- comma(sum(data_with_age_ratio_long_one_level[data_with_age_ratio_long_one_level$date == date.1,
+                                         "pop"], 
+                                   na.rm=TRUE))
+      pop2_one_level <- comma(sum(data_with_age_ratio_long_one_level[data_with_age_ratio_long_one_level$date == date.2,
+                                                                     "pop"], 
+                                  na.rm=TRUE))
+      
+      x.sort <- sort(unique(g_one_level$data[, name.age]))
+      g_one_level <- g_one_level + 
+        labs(x=name.age,
+             y="Sex ratio",
+             title=paste0("Age ratio in\n", 
+                          one_level, 
+                          "\n",
+                          "(Pop: ",
+                          pop2_one_level,
+                          ")"))
+    }
+    
         list_plots[[i]] <- g_one_level
     ylim.disaggregated <- NULL
   }

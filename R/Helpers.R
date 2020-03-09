@@ -44,9 +44,9 @@ FormatOutputDDM <- function(result_ddm_females,
            lower_age_range=lower,
            upper_age_range=upper) %>%
     arrange(cod, sex)
-  result_ddm_combined_sexes_formatted$ggbseg <- round(result_ddm_combined_sexes_formatted$ggbseg, 3)
-  result_ddm_combined_sexes_formatted$ggb <- round(result_ddm_combined_sexes_formatted$ggb, 3)
-  result_ddm_combined_sexes_formatted$seg <- round(result_ddm_combined_sexes_formatted$seg, 3)
+  result_ddm_combined_sexes_formatted$ggbseg <- round(result_ddm_combined_sexes_formatted$ggbseg, 2)
+  result_ddm_combined_sexes_formatted$ggb <- round(result_ddm_combined_sexes_formatted$ggb, 2)
+  result_ddm_combined_sexes_formatted$seg <- round(result_ddm_combined_sexes_formatted$seg, 2)
   return(result_ddm_combined_sexes_formatted)
 }
 
@@ -165,7 +165,7 @@ GetOneAgeRatio <- function(vec_ages,
       vec_age_ratios[one_idx] <- NA
     }
   }
-  return(100*vec_age_ratios)
+  return(round(100*vec_age_ratios, 1))
 }
 
 CheckSingleYearAges <- function(data,

@@ -65,6 +65,8 @@ ComputeSexRatios <- function(data,
     as.data.frame()
   data_with_sex_ratio[, "get(name.age)"] <- NULL
   data_with_sex_ratio[, "get(name.disaggregations)"] <- NULL
+  data_with_sex_ratio$sex_ratio_1 <- round(data_with_sex_ratio$sex_ratio_1, 1)
+  data_with_sex_ratio$sex_ratio_2 <- round(data_with_sex_ratio$sex_ratio_2, 1)
   
   # each age group only needs to be represented once (not separately for males and females)
   # but it might end up being convenient to have separate rows for males and females

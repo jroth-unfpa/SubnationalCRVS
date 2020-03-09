@@ -16,6 +16,7 @@ PlotAgeRatios(
   name.population.year1,
   name.population.year2,
   label.subnational.level = name.disaggregations,
+  show.disaggregated.population = TRUE,
   ylim.disaggregated = NULL,
   ylim.overall = NULL,
   line.size.disaggregated = 0.6,
@@ -60,6 +61,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
 \item{label.subnational.level}{A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
+
+\item{show.disaggregated.population}{A logical indicated whether the population in date2 should be displayed on the disaggreagted plots (in the title of the plot). Defaults to TRUE#'}
 
 \item{ylim.disaggregated}{A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the age ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest age ratios within each level}
 
