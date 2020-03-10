@@ -52,6 +52,7 @@
 #' @import ggplot2
 #' @import ggpubr
 #' @import gridExtra
+#' @import scales
 #' @export
 
 PlotAgeRatios <- function(data, 

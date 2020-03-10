@@ -61,16 +61,25 @@ ComputeSexRatios <- function(data,
              get(name.population.year1)[get(name.sex) == name.females],
            "sex_ratio_2"= 100 * 
              get(name.population.year2)[get(name.sex) == name.males] / 
-             get(name.population.year2)[get(name.sex) == name.females]) %>%
+             get(name.population.year2)[get(name.sex) == name.females],
+           "pop1_both_sexes"=sum(pop1, na.rm=TRUE),
+           "pop2_both_sexes"=sum(pop2, na.rm=TRUE)) %>%
     as.data.frame()
-  data_with_sex_ratio[, "get(name.age)"] <- NULL
-  data_with_sex_ratio[, "get(name.disaggregations)"] <- NULL
   data_with_sex_ratio$sex_ratio_1 <- round(data_with_sex_ratio$sex_ratio_1, 1)
   data_with_sex_ratio$sex_ratio_2 <- round(data_with_sex_ratio$sex_ratio_2, 1)
-  
   # each age group only needs to be represented once (not separately for males and females)
-  # but it might end up being convenient to have separate rows for males and females
+  # but make sure population is summed across the sexes
   data_with_sex_ratio <- data_with_sex_ratio %>% filter(sex == "f")
+  data_with_sex_ratio[, name.population.year1] <- NULL
+  data_with_sex_ratio[, name.population.year2] <- NULL
+  names(data_with_sex_ratio)[names(data_with_sex_ratio) == "pop1_both_sexes"] <- name.population.year1
+  names(data_with_sex_ratio)[names(data_with_sex_ratio) == "pop2_both_sexes"] <- name.population.year2
+  data_with_sex_ratio[, "get(name.age)"] <- NULL
+  data_with_sex_ratio[, "get(name.disaggregations)"] <- NULL
   data_with_sex_ratio[, name.sex] <- NULL
+  
+  data_with_sex_ratio <- data_with_sex_ratio %>% select(-sex_ratio_1,
+                                                        -sex_ratio_2,
+                                                        everything())
   return(data_with_sex_ratio)
 }
