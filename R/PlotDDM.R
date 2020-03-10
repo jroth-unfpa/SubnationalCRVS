@@ -79,18 +79,18 @@ PlotDDM <- function(ddm_results,
   date1 <- ddm_results$date1
   date2 <- ddm_results$date2
   
-  # plot DDM point estimates
-  ddm_point_estimates <- ddm_results$ddm_estimates
-  ddm_point_estimates$ggbseg <- ddm_point_estimates$ggbseg * 100
-  test <- ddm_point_estimates %>%
+  # plot GGB-SEG point estimates
+  ggbseg_point_estimates <- ddm_results$ggbseg_estimates
+  ggbseg_point_estimates$ggbseg <- ggbseg_point_estimates$ggbseg * 100
+  test <- ggbseg_point_estimates %>%
           filter(sex == "Females") %>%
           arrange(ggbseg) %>%
           select(cod) %>%
           pull() %>%
           as.character()
-  ddm_point_estimates$cod <- factor(as.character(ddm_point_estimates$cod),
+  ggbseg_point_estimates$cod <- factor(as.character(ggbseg_point_estimates$cod),
                                     levels=test)
-  g_point_estimate <- ggplot(data=ddm_point_estimates,
+  g_point_estimate <- ggplot(data=ggbseg_point_estimates,
                              aes(x=ggbseg,
                                  y=cod))
   if (show.size.population == TRUE) {
@@ -118,44 +118,44 @@ PlotDDM <- function(ddm_results,
     g_color_females <- unique(g_colors[g_point_estimate$data$sex == "Females"])
     
     if (length(g_color_males) == 1 & length(g_color_females) == 1) {
-      identify_sex_larger_completeness <- ddm_point_estimates %>%
+      identify_sex_larger_completeness <- ggbseg_point_estimates %>%
         group_by(cod) %>%
         summarise("males_larger"=ggbseg[sex == "Males"] >
                     ggbseg[sex == "Females"])
-      ddm_point_estimates_larger <- left_join(x=ddm_point_estimates,
+      ggbseg_point_estimates_larger <- left_join(x=ggbseg_point_estimates,
                                               y=identify_sex_larger_completeness,
                                               by="cod")
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ddm_point_estimates_larger %>%
+                          geom_line(data=ggbseg_point_estimates_larger %>%
                                        filter(males_larger == TRUE),
                                     col=g_color_males) +
-                          geom_line(data=ddm_point_estimates_larger %>%
+                          geom_line(data=ggbseg_point_estimates_larger %>%
                                        filter(males_larger == FALSE),
                                     col=g_color_females)
     } else {
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ddm_point_estimates,
+                          geom_line(data=ggbseg_point_estimates,
                                     col="gray")
     }
   }
-  # plot DDM estimates for all possible age ranges considered in the search that generated the point estimate
+  # plot GGB-SEG estimates for all possible age ranges considered in the search that generated the point estimate
   if (ddm_results$show.age.range.sensitivity == TRUE) {
-    ddm_sensitivity_estimates <- ddm_results$sensitivity_ddm_estimates
-    ddm_sensitivity_estimates$ggbseg <- ddm_sensitivity_estimates$ggbseg * 100
-    ddm_sensitivity_estimates[, "lower_age_range"] <- 
-      as.factor(ddm_sensitivity_estimates[, "lower_age_range"])
-    ddm_sensitivity_estimates[, "upper_age_range"] <- 
-      as.factor(ddm_sensitivity_estimates[, "upper_age_range"])
+    ggbseg_sensitivity_estimates <- ddm_results$sensitivity_ggbseg_estimates
+    ggbseg_sensitivity_estimates$ggbseg <- ggbseg_sensitivity_estimates$ggbseg * 100
+    ggbseg_sensitivity_estimates[, "lower_age_range"] <- 
+      as.factor(ggbseg_sensitivity_estimates[, "lower_age_range"])
+    ggbseg_sensitivity_estimates[, "upper_age_range"] <- 
+      as.factor(ggbseg_sensitivity_estimates[, "upper_age_range"])
   
-    all_levels <- unique(ddm_sensitivity_estimates$cod)
+    all_levels <- unique(ggbseg_sensitivity_estimates$cod)
     n_disaggregations <- length(all_levels)
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
     for (i in 1:n_disaggregations) {
       one_level <- all_levels[i]
-      one_ylim <- c(0.9 * min(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE),
-                    1.1 * max(ddm_sensitivity_estimates[ddm_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE))
+      one_ylim <- c(0.9 * min(ggbseg_sensitivity_estimates[ggbseg_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE),
+                    1.1 * max(ggbseg_sensitivity_estimates[ggbseg_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE))
       ## women
-      g_sensitivity_females <- ggplot(data=ddm_sensitivity_estimates %>%
+      g_sensitivity_females <- ggplot(data=ggbseg_sensitivity_estimates %>%
                                            filter(cod == one_level & 
                                                 sex == "Females"),
                                       aes(x=lower_age_range,
@@ -164,12 +164,13 @@ PlotDDM <- function(ddm_results,
                               geom_point(aes(col=upper_age_range),
                                          size=1.5,
                                          alpha=0.9) +
-                              geom_hline(aes(yintercept=ddm_point_estimates %>% 
+                              geom_hline(aes(yintercept=ggbseg_point_estimates %>% 
                                                          filter(cod == one_level & 
                                                                 sex == "Females") %>% 
                                                          select(ggbseg) %>%
                                                          as.numeric(),
-                                          linetype="")) +
+                                          linetype="",
+                                          size=2)) +
                               scale_linetype_manual(name=" Point estimate",
                                                     values=c(1,1)) +
                               labs(x="Lower limit of age range",
@@ -184,7 +185,7 @@ PlotDDM <- function(ddm_results,
                              coord_cartesian(ylim=one_ylim) 
     
       ## men
-      g_sensitivity_males <- ggplot(data=ddm_sensitivity_estimates %>%
+      g_sensitivity_males <- ggplot(data=ggbseg_sensitivity_estimates %>%
                                         filter(cod == one_level & 
                                               sex == "Males"),
                                       aes(x=lower_age_range,
@@ -193,12 +194,13 @@ PlotDDM <- function(ddm_results,
                               geom_point(aes(col=upper_age_range),
                                           size=1.5,
                                           alpha=0.9) +
-                              geom_hline(aes(yintercept=ddm_point_estimates %>% 
+                              geom_hline(aes(yintercept=ggbseg_point_estimates %>% 
                                                         filter(cod == one_level & 
                                                                 sex == "Males") %>% 
                                                         select(ggbseg) %>%
                                                         as.numeric(),
-                                              linetype="")) +
+                                              linetype="",
+                                              size=2)) +
                               scale_linetype_manual(name=" Point estimate",
                                                      values=c(1,1)) +
                               labs(x="Lower limit of age range",
@@ -228,7 +230,7 @@ PlotDDM <- function(ddm_results,
         pdf(paste0(save.name.plots.sensitivity, 
                    "_by_", name_disaggregations, "_", Sys.Date(), ".pdf"))
       } else {
-        pdf(paste0(plots.dir, "ddm_sensitivity_", 
+        pdf(paste0(plots.dir, "ggbseg_sensitivity_", 
                    name_disaggregations, "_", Sys.Date(), ".pdf"))
       }
       print(overall)
@@ -245,7 +247,7 @@ PlotDDM <- function(ddm_results,
       pdf(paste0(save.name.plots, 
                  "_combined", name_disaggregations, "_", Sys.Date(), ".pdf")) 
     } else {
-      pdf(paste0(plots.dir, "ddm_point_estimates_combined_", 
+      pdf(paste0(plots.dir, "ggbseg_point_estimates_combined_", 
                  name_disaggregations, "_", Sys.Date(), ".pdf"))
     }
     print(g_point_estimate)

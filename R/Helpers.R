@@ -28,6 +28,25 @@ FormatVariablesDDM <- function(data,
               "data_for_ddm_females"=data_for_ddm_females))
 }
 
+FormatOutputGGBSEG <- function(result_ggbseg_females,
+                               result_ggbseg_males) {
+  result_ggbseg_females$sex <- "Females"
+  result_ggbseg_males$sex <- "Males"
+  result_ggbseg_combined_sexes <- as.data.frame(rbind(result_ggbseg_females,
+                                                   result_ggbseg_males))
+  result_ggbseg_combined_sexes_formatted <- 
+    result_ggbseg_combined_sexes %>%
+    select(cod, 
+           sex, 
+           ggbseg=coverage,
+           lower_age_range=lower,
+           upper_age_range=upper) %>%
+    arrange(cod, sex)
+  result_ggbseg_combined_sexes_formatted$ggbseg <- round(result_ggbseg_combined_sexes_formatted$ggbseg, 2)
+  return(result_ggbseg_combined_sexes_formatted)
+}
+
+
 FormatOutputDDM <- function(result_ddm_females,
                             result_ddm_males) {
   result_ddm_females$sex <- "Females"

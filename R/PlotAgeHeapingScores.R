@@ -104,7 +104,8 @@ PlotAgeHeapingScores <- function(data,
                                   aes(x=roughness,
                                       y=get(name.disaggregations))) +
                            geom_point(aes(col=get(name.sex),
-                                          shape=date)) +
+                                          shape=date),
+                                      size=3) +
     labs(x="roughness",
          y=label.subnational.levels,
          title=paste0("roughness by ", label.subnational.levels)) +
