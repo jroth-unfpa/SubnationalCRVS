@@ -111,7 +111,8 @@ ComputeAgeHeapingScores <- function(data,
   if (Noumbissi.display == FALSE) {
   data_with_age_heaping_long <- data_long %>%
                            group_by(date, get(name.sex), get(name.disaggregations)) %>% 
-                           summarise("roughness"= 
+                           summarise("total_pop"=sum(pop, na.rm=TRUE),
+                                     "roughness"= 
                              myRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                                       Age=age,
                                       ageMin=roughness.age.min,
@@ -131,7 +132,8 @@ ComputeAgeHeapingScores <- function(data,
   } else {
     data_with_age_heaping_long <- data_long %>%
       group_by(date, get(name.sex), get(name.disaggregations)) %>% 
-      summarise("roughness"= 
+      summarise("total_pop"=sum(pop, na.rm=TRUE),
+                "roughness"= 
                   myRoughness(Value=pop, ## missing values lead to an error here (just want to return NA, I think)
                               Age=age,
                               ageMin=roughness.age.min,

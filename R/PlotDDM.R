@@ -7,7 +7,7 @@
 #' @param fig.nrow An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows of plots should appear in the visualizations of the sensitivity results by level of disaggregation (males and females in a given level of disaggregation will always be included in the same row). Defaults to 2
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many times the side-by-side male/female sensitivity plots should appear in each of `fig.nrow` rows. Defaults to 1
 #' @param show.lines.sex.differential A logical indixating whether vertical lines connecting the estimated completenss for males and females should be drawn. Defaults to TRUE
-#' @param show.size.population A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
+#' @param show.size.population A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
 #' @param label.completeness A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"
 #' @param label.subnational.level A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()
 #' @param print.plot.point.estimates A logical indicating whether the plot of point estimates across the levels of disaggregation should be printed in the R session. Defaults to TRUE
@@ -98,7 +98,8 @@ PlotDDM <- function(ddm_results,
                       geom_point(aes(col=sex,
                                      size=total_pop2),
                                  alpha=0.7) +
-    scale_size_continuous(labels = comma,
+    scale_size_continuous(labels=comma,
+                          range=c(1.5, 7),
                           name=paste0("Pop. (", date2, ")"))
   } else {
     g_point_estimate <- g_point_estimate + 

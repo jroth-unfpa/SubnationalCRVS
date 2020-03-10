@@ -15,6 +15,7 @@ PlotAgeHeapingScores(
   name.date2,
   name.population.year1,
   name.population.year2,
+  show.size.population = TRUE,
   roughness.age.min = NULL,
   roughness.age.max = NULL,
   Whipple.age.min = NULL,
@@ -57,6 +58,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{show.size.population}{A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE}
 
 \item{base.size}{A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 12}
 

@@ -36,7 +36,7 @@ PlotDDM(
 
 \item{show.lines.sex.differential}{A logical indixating whether vertical lines connecting the estimated completenss for males and females should be drawn. Defaults to TRUE}
 
-\item{show.size.population}{A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE}
+\item{show.size.population}{A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE}
 
 \item{label.completeness}{A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"}
 

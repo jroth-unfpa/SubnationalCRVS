@@ -17,6 +17,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param show.size.population A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
 #' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
 #' @param roughness.age.max=NULL Equivalent to the `ageMax` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of the highest age that is a multiple of 10
 #' @param Whipple.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_whipple`. Defaults to NULL, which then uses the `DemoTools` default of 25
@@ -61,6 +62,7 @@ PlotAgeHeapingScores <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          show.size.population=TRUE,
                           roughness.age.min=NULL,
                           roughness.age.max=NULL,
                           Whipple.age.min=NULL,
@@ -102,10 +104,22 @@ PlotAgeHeapingScores <- function(data,
   ## roughness
   g_roughness <- ggplot(data=data_with_age_heaping_long,
                                   aes(x=roughness,
-                                      y=get(name.disaggregations))) +
-                           geom_point(aes(col=get(name.sex),
-                                          shape=date),
-                                      size=3) +
+                                      y=get(name.disaggregations)))
+  if (show.size.population == TRUE) {
+    g_roughness <-g_roughness + 
+                  geom_point(aes(col=sex,
+                                 shape=date,
+                                 size=total_pop)) +
+      scale_size_continuous(labels = comma,
+                            range=c(1.5, 7),
+                            name="Population")
+  } else {
+    g_roughness <- g_roughness + 
+                   geom_point(aes(col=sex,
+                                  shape=date),
+                              size=3)
+  }
+  g_roughness <- g_roughness +
     labs(x="roughness",
          y=label.subnational.levels,
          title=paste0("roughness by ", label.subnational.levels)) +
@@ -115,9 +129,22 @@ PlotAgeHeapingScores <- function(data,
   ## Whipple
   g_Whipple <- ggplot(data=data_with_age_heaping_long,
                       aes(x=Whipple,
-                          y=get(name.disaggregations))) +
-    geom_point(aes(col=get(name.sex),
-                   shape=date)) +
+                          y=get(name.disaggregations)))
+  if (show.size.population == TRUE) {
+      g_Whipple <- g_Whipple + 
+        geom_point(aes(col=sex,
+                       shape=date,
+                       size=total_pop)) +
+        scale_size_continuous(labels = comma,
+                              range=c(1.5, 7),
+                              name="Population")
+  } else {
+      g_Whipple <- g_Whipple + 
+        geom_point(aes(col=sex,
+                       shape=date),
+                   size=3)
+    }
+   g_Whipple <- g_Whipple + 
     labs(x="Whipple's index",
          y=label.subnational.levels,
          title=paste0("Whipple's index by ", label.subnational.levels)) +
@@ -127,10 +154,23 @@ PlotAgeHeapingScores <- function(data,
   ## Myers
   g_Myers <- ggplot(data=data_with_age_heaping_long,
                       aes(x=Myers,
-                          y=get(name.disaggregations))) +
-    geom_point(aes(col=get(name.sex),
-                   shape=date)) +
-    labs(x="Myers' blendex index",
+                          y=get(name.disaggregations)))
+  if (show.size.population == TRUE) {
+    g_Myers <-g_Myers + 
+      geom_point(aes(col=sex,
+                     shape=date,
+                     size=total_pop)) +
+      scale_size_continuous(labels = comma,
+                            range=c(1.5, 7),
+                            name="Population")
+  } else {
+    g_Myers <- g_Myers + 
+      geom_point(aes(col=sex,
+                     shape=date),
+                 size=3)
+  }
+  g_Myers <- g_Myers +
+    labs(x="Myers' blended index",
          y=label.subnational.levels,
          title=paste0("Myers' blended index by ", label.subnational.levels)) +
     theme_classic(base_size=base.size) +
@@ -163,6 +203,7 @@ PlotAgeHeapingScores <- function(data,
   data_to_return <- data_with_age_heaping_long %>%
                     select(name.disaggregations,
                            date,
+                           total_pop,
                            name.sex,
                            roughness,
                            Whipple,
