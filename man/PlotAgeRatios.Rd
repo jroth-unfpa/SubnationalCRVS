@@ -15,6 +15,7 @@ PlotAgeRatios(
   name.date2,
   name.population.year1,
   name.population.year2,
+  name.national = NULL,
   label.subnational.level = name.disaggregations,
   show.disaggregated.population = TRUE,
   ylim.disaggregated = NULL,
@@ -25,11 +26,7 @@ PlotAgeRatios(
   fig.ncol.disaggregated = 2,
   fig.nrow.overall = 2,
   fig.ncol.overall = 1,
-  print.disaggregated = FALSE,
-  save.disaggregated = TRUE,
   save.name.disaggregated = NULL,
-  print.overall = FALSE,
-  save.overall = TRUE,
   save.name.overall = NULL,
   plots.dir = ""
 )
@@ -60,6 +57,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
+\item{name.national}{A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL}
+
 \item{label.subnational.level}{A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
 
 \item{show.disaggregated.population}{A logical indicated whether the population in date2 should be displayed on the disaggreagted plots (in the title of the plot). Defaults to TRUE#'}
@@ -80,15 +79,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{fig.ncol.overall}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1}
 
-\item{print.disaggregated}{A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE}
-
-\item{save.disaggregated}{A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE}
-
 \item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
-
-\item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to FALSE}
-
-\item{save.overall}{A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE}
 
 \item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 

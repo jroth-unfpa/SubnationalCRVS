@@ -170,8 +170,8 @@ PlotDDM <- function(ddm_results,
                                                                 sex == "Females") %>% 
                                                          select(ggbseg) %>%
                                                          as.numeric(),
-                                          linetype="",
-                                          size=2)) +
+                                         linetype=""),
+                                         size=1.2) +
                               scale_linetype_manual(name=" Point estimate",
                                                     values=c(1,1)) +
                               labs(x="Lower limit of age range",
@@ -200,8 +200,8 @@ PlotDDM <- function(ddm_results,
                                                                 sex == "Males") %>% 
                                                         select(ggbseg) %>%
                                                         as.numeric(),
-                                              linetype="",
-                                              size=2)) +
+                                              linetype=""),
+                                         size=1.2) +
                               scale_linetype_manual(name=" Point estimate",
                                                      values=c(1,1)) +
                               labs(x="Lower limit of age range",
