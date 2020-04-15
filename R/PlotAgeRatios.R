@@ -177,17 +177,21 @@ PlotAgeRatios <- function(data,
                           pop2_one_level,
                           ")"))
     }
-    if (is.null(name.national) == FALSE & one_level == name.national) {
-      national_check <- TRUE
-      disaggregated_plot_national <- g_one_level
-      i_national <- i  # needed so the level corresponding to national-level results is completely removed, not just storing the value NULL which gives error in marrangeGrob() function
+    if (is.null(name.national) == FALSE) {
+      if (one_level == name.national) {
+        national_check <- TRUE
+        disaggregated_plot_national <- g_one_level
+        i_national <- i  # needed so the level corresponding to national-level results is completely removed, not just storing the value NULL which gives error in marrangeGrob() function
+      } else {
+        list_plots[[i]] <- g_one_level
+      } 
     } else {
       list_plots[[i]] <- g_one_level
     }
     ylim.disaggregated <- NULL
   }
   if (national_check == TRUE) {
-    list_plots[i_national] <- NULL ## removing the national level plot expected in the nlist 
+    list_plots[i_national] <- NULL ## removing the national level plot expected in the list 
   }
   if (n_disaggregations > 1) {
     arranged_plots <- marrangeGrob(list_plots, 
@@ -293,7 +297,7 @@ PlotAgeRatios <- function(data,
   graphics.off()
   if (is.null(save.name.disaggregated) == FALSE) {
     if (n_disaggregations > 1) {
-    ggsave(paste0(plots.dir, save.name.disaggregated, 
+      ggsave(paste0(plots.dir, save.name.disaggregated, 
                   "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"),
            arranged_plots)
     }

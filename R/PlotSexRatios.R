@@ -17,6 +17,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL
 #' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
 #' @param show.disaggregated.population A logical indicated whether the population in date2 should be displayed on the disaggreagted plots (in the title of the plot). Defaults to TRUE
 #' @param ylim.disaggregated A vector with two numeric entries indicating the minimum and maximum values of the y-axis for the sex ratios plotted on a separate graph within each level of disaggregation. Default to NULL, which uses the smallest and largest sex ratios within each level
@@ -27,11 +28,7 @@
 #' @param fig.ncol.disaggregated An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the disaggregated plots. Defaults to 2
 #' @param fig.nrow.overall An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2
 #' @param fig.ncol.overall An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1
-#' @param print.disaggregated A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE
-#' @param save.disaggregated A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.disaggregated A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
-#' @param print.overall A logical indicating whether the overall plots should be printed in the R session. Defaults to FALSE
-#' @param save.overall A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.overall A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples 
@@ -66,6 +63,7 @@ PlotSexRatios <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          name.national=NULL,
                           label.subnational.level=name.disaggregations,
                           show.disaggregated.population=TRUE,
                           ylim.disaggregated=NULL,
@@ -74,11 +72,7 @@ PlotSexRatios <- function(data,
                           line.size.overall=0.6,
                           fig.nrow=3,
                           fig.ncol=2,
-                          print.disaggregated=FALSE,
-                          save.disaggregated=TRUE,
                           save.name.disaggregated=NULL,
-                          print.overall=FALSE,
-                          save.overall=TRUE,
                           save.name.overall=NULL,
                           plots.dir="") {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
@@ -108,6 +102,8 @@ PlotSexRatios <- function(data,
   all_levels <- unique(levels(data[, name.disaggregations]))
   n_disaggregations <- length(all_levels)
   list_plots <- vector("list", length=n_disaggregations)
+  national_check <- FALSE
+  
   for (i in 1:n_disaggregations) {
     one_level <- all_levels[i]
     data_with_sex_ratio_one_level <- data_with_sex_ratio %>% 
@@ -152,76 +148,105 @@ PlotSexRatios <- function(data,
                                       pop2_one_level,
                                       ")"))
     }
-    list_plots[[i]] <- g_one_level
+    if (is.null(name.national) == FALSE) {
+      if (one_level == name.national) {
+        national_check <- TRUE
+        disaggregated_plot_national <- g_one_level
+        i_national <- i  # needed so the level corresponding to national-level results is completely removed, not just storing the value NULL which gives error in marrangeGrob() function
+      } else {
+        list_plots[[i]] <- g_one_level
+      }
+    } else {
+      list_plots[[i]] <- g_one_level
+    }
     ylim.disaggregated <- NULL
   }
-  arranged_plots <- marrangeGrob(list_plots, 
+  if (national_check == TRUE) {
+    list_plots[i_national] <- NULL ## removing the national level plot expected in the list 
+  }
+  if (n_disaggregations > 1) {
+    arranged_plots <- marrangeGrob(list_plots, 
                nrow=fig.nrow, 
                ncol=fig.ncol)
+  }
   
   # for each of the two Census years, create a plot showing sex ratios in the different levels of disaggregation
-  if (is.null(ylim.overall)) {
-    ylim.overall <- c(min(data_with_sex_ratio[, c("sex_ratio_1", "sex_ratio_2")], na.rm=TRUE),
-                      max(data_with_sex_ratio[, c("sex_ratio_1", "sex_ratio_2")], na.rm=TRUE))
-  }
-  g_year1 <- ggplot(data=data_with_sex_ratio,
-              aes(x=get(name.age),
-                  y=sex_ratio_1))
-  g_year1 <- g_year1 + geom_line(aes(col=get(name.disaggregations)),
-                                 size=line.size.overall) +
+  if (n_disaggregations > 1) {
+    if (is.null(name.national) == FALSE) {
+      data_with_sex_ratio_for_overall <- data_with_sex_ratio[data_with_sex_ratio[, name.disaggregations] != name.national, ]
+    } else {
+      data_with_sex_ratio_for_overall <-  data_with_sex_ratio
+    }
+    if (is.null(ylim.overall)) {
+      ylim.overall <- c(min(data_with_sex_ratio_for_overall[, c("sex_ratio_1", "sex_ratio_2")], na.rm=TRUE),
+                        max(data_with_sex_ratio_for_overall[, c("sex_ratio_1", "sex_ratio_2")], na.rm=TRUE))
+    }
+    g_year1 <- ggplot(data=data_with_sex_ratio_for_overall,
+                      aes(x=get(name.age),
+                          y=sex_ratio_1))
+    g_year1 <- g_year1 + geom_line(aes(col=get(name.disaggregations)),
+                                   size=line.size.overall) +
       geom_hline(yintercept=100,
                  size=line.size.overall) +
-    coord_cartesian(ylim=ylim.overall) +
+      coord_cartesian(ylim=ylim.overall) +
       labs(x=name.age,
            y="Sex ratio",
            title=paste0("Sex ratio \n", date.1)) +
       scale_colour_discrete(name=label.subnational.level) +
       theme_classic()
-  
-  g_year2 <- ggplot(data=data_with_sex_ratio,
-                    aes(x=get(name.age),
-                        y=sex_ratio_2))
-  g_year2 <- g_year2 + geom_line(aes(col=get(name.disaggregations)),
-                                 size=line.size.overall) +
-    geom_hline(yintercept=100,
-               size=line.size.overall) +
-    coord_cartesian(ylim=ylim.overall) +
-    labs(x=name.age,
-         y="Sex ratio",
-         title=paste0("Sex ratio \n",  date.2)) +
-    scale_colour_discrete(name=label.subnational.level) +
-    theme_classic()
+    
+    g_year2 <- ggplot(data=data_with_sex_ratio_for_overall,
+                      aes(x=get(name.age),
+                          y=sex_ratio_2))
+    g_year2 <- g_year2 + geom_line(aes(col=get(name.disaggregations)),
+                                   size=line.size.overall) +
+      geom_hline(yintercept=100,
+                 size=line.size.overall) +
+      coord_cartesian(ylim=ylim.overall) +
+      labs(x=name.age,
+           y="Sex ratio",
+           title=paste0("Sex ratio \n",  date.2)) +
+      scale_colour_discrete(name=label.subnational.level) +
+      theme_classic()
+    overall <- ggarrange(g_year2, g_year1,
+                         nrow=2, ncol=1)
+    graphics.off()
+    if (is.null(save.name.overall) == FALSE) {
+      ggsave(paste0(plots.dir, save.name.overall, "_", 
+                    "combined_", name.disaggregations, Sys.Date(), ".pdf"),
+             overall)
+    } else {
+      ggsave(paste0(plots.dir, "sex_ratios_combined_", 
+                    name.disaggregations, "_", Sys.Date(), ".pdf"),
+             overall)
+    }
+    graphics.off()
+  }
 
   # print/save plots according to specified arguments
   graphics.off()
-  if (print.disaggregated == TRUE) {
-    print(arranged_plots)
-    graphics.off()
-  } 
-  if (save.disaggregated == TRUE) {
-    if (is.null(save.name.disaggregated) == FALSE) {
-            pdf(paste0(plots.dir, save.name.disaggregated, 
-                       "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"))
-
-    } else {
-      pdf(paste0(plots.dir, "sex_ratios_by_", 
-                 name.disaggregations, "_", Sys.Date(), ".pdf"))
+  if (is.null(save.name.disaggregated) == FALSE) {
+    if (n_disaggregations > 1) {
+        ggsave(paste0(plots.dir, save.name.disaggregated, 
+                     "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"),
+                arranged_plots)
     }
-    print(arranged_plots)
-    graphics.off()
-  }
-  if (save.overall == TRUE) {
-    if (is.null(save.name.overall) == FALSE) {
-      pdf(paste0(plots.dir, save.name.overall, "_", 
-                 "combined_", name.disaggregations, Sys.Date(), ".pdf"))
-    } else {
-      pdf(paste0(plots.dir, "sex_ratios_combined_", 
-                 name.disaggregations, "_", Sys.Date(), ".pdf"))
+    if (national_check == TRUE) {
+      ggsave(paste0(plots.dir, save.name.disaggregated, 
+                    "_", name.national, "_", Sys.Date(), ".pdf"),
+             disaggregated_plot_national)
     }
-    overall <- ggarrange(g_year2, g_year1,
-                         nrow=2, ncol=1)
-    print(overall)
-    graphics.off()
+  } else {
+    if (n_disaggregations > 1) {
+      ggsave(paste0(plots.dir, "sex_ratios_by_", 
+                    name.disaggregations, "_", Sys.Date(), ".pdf"),
+             arranged_plots)
+    }
+    if (national_check == TRUE) {
+      ggsave(paste0(plots.dir, "sex_ratios_", 
+                    name.national, "_", Sys.Date(), ".pdf"),
+             disaggregated_plot_national) 
+    }
   }
   return(data_with_sex_ratio)
 }
