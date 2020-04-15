@@ -87,7 +87,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 asdf
 }
 \examples{
-ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages,
+ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages_combined,
                                          name.disaggregations="province_name",
                                          name.males="m",
                                          name.females="f",
@@ -97,6 +97,7 @@ ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages,
                                          name.date2="date2",
                                          name.population.year1="pop1",
                                          name.population.year2="pop2",
+                                         name.national="National",
                                          label.subnational.level="Province")
 head(ecuador_plot_sex_ratios)
 tail(ecuador_plot_sex_ratios)

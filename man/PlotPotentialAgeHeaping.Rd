@@ -15,6 +15,7 @@ PlotPotentialAgeHeaping(
   name.date2,
   name.population.year1,
   name.population.year2,
+  name.national = NULL,
   label.subnational.level = name.disaggregations,
   confirm_single_year_ages = FALSE,
   mark_multiples_of_5_disaggregated = FALSE,
@@ -27,12 +28,8 @@ PlotPotentialAgeHeaping(
   fig.ncol.disaggregated = 2,
   fig.nrow.overall = 2,
   fig.ncol.overall = 1,
-  print.disaggregated = FALSE,
-  save.disaggregated = TRUE,
-  save.name_disaggregated = NULL,
-  print.overall = FALSE,
-  save.overall = TRUE,
-  save.name_overall = NULL,
+  save.name.overall = NULL,
+  save.name.disaggregated = NULL,
   plots.dir = ""
 )
 }
@@ -62,6 +59,8 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
 
+\item{name.national}{A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL}
+
 \item{label.subnational.level}{A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations`}
 
 \item{confirm_single_year_ages}{Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE}
@@ -86,25 +85,17 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{fig.ncol.overall}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1}
 
-\item{print.disaggregated}{A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE}
-
-\item{save.disaggregated}{A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE}
-
-\item{print.overall}{A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE}
-
-\item{save.overall}{A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE}
-
-\item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
+\item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
 \item{save.name.disaggregated}{A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
-\item{save.name.overall}{A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
+\item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
 }
 \description{
 asdf
 }
 \examples{
-PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
+PlotPotentialAgeHeaping(data=ecuador_single_year_ages_combined,
                         name.disaggregations="province_name",
                         name.males="m",
                         name.females="f",
@@ -114,5 +105,6 @@ PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
                         name.date2="date2",
                         name.population.year1="pop1",
                         name.population.year2="pop2",
+                        name.national="National",
                         label.subnational.level="Province")
 }

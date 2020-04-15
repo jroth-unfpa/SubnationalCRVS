@@ -32,7 +32,7 @@
 #' @param save.name.overall A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples 
-#' ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages,
+#' ecuador_plot_sex_ratios <- PlotSexRatios(data=ecuador_single_year_ages_combined,
 #'                                          name.disaggregations="province_name",
 #'                                          name.males="m",
 #'                                          name.females="f",
@@ -42,6 +42,7 @@
 #'                                          name.date2="date2",
 #'                                          name.population.year1="pop1",
 #'                                          name.population.year2="pop2",
+#'                                          name.national="National",
 #'                                          label.subnational.level="Province")
 #' head(ecuador_plot_sex_ratios)
 #' tail(ecuador_plot_sex_ratios)
@@ -210,6 +211,7 @@ PlotSexRatios <- function(data,
       theme_classic()
     overall <- ggarrange(g_year2, g_year1,
                          nrow=2, ncol=1)
+    
     graphics.off()
     if (is.null(save.name.overall) == FALSE) {
       ggsave(paste0(plots.dir, save.name.overall, "_", 

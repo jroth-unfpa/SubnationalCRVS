@@ -16,6 +16,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL
 #' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
 #' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
 #' @param mark_multiples_of_5_disaggregated Logical indicating whether dashed vertical lines should be overlaid on the disaggregated (i.e. separate plot within each level of disaggregation) plots at ages that are multiples of 5. Defaults to FALSE
@@ -28,15 +29,11 @@
 #' @param fig.ncol.disaggregated An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the disaggregated plots. Defaults to 2
 #' @param fig.nrow.overall An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows should be used on each page to display the overall plot. Defaults to 2
 #' @param fig.ncol.overall An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns should be used on each page to display the overall plot. Defaults to 1
-#' @param print.disaggregated A logical indicating whether the disaggregated plots should be printed in the R session. Defaults to FALSE
-#' @param save.disaggregated A logical indicating whether the disaggregated plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.disaggregated A character specifying a custom file name for the disaggregated plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
-#' @param print.overall A logical indicating whether the overall plots should be printed in the R session. Defaults to TRUE
-#' @param save.overall A logical indicating whether the overall plots should be saved on the local file system. Defaults to TRUE
 #' @param save.name.overall A character specifying a custom file name for the overall plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples 
-#' PlotPotentialAgeHeaping(data=ecuador_age_tabulation,
+#' PlotPotentialAgeHeaping(data=ecuador_single_year_ages_combined,
 #'                         name.disaggregations="province_name",
 #'                         name.males="m",
 #'                         name.females="f",
@@ -46,6 +43,7 @@
 #'                         name.date2="date2",
 #'                         name.population.year1="pop1",
 #'                         name.population.year2="pop2",
+#'                         name.national="National",
 #'                         label.subnational.level="Province")
 #' @import ggplot2
 #' @import ggpubr
@@ -62,6 +60,7 @@ PlotPotentialAgeHeaping <- function(data,
                           name.date2,
                           name.population.year1,
                           name.population.year2,
+                          name.national=NULL,
                           label.subnational.level=name.disaggregations,
                           confirm_single_year_ages=FALSE,
                           mark_multiples_of_5_disaggregated=FALSE,
@@ -74,12 +73,8 @@ PlotPotentialAgeHeaping <- function(data,
                           fig.ncol.disaggregated=2,
                           fig.nrow.overall=2,
                           fig.ncol.overall=1,
-                          print.disaggregated=FALSE,
-                          save.disaggregated=TRUE,
-                          save.name_disaggregated=NULL,
-                          print.overall=FALSE,
-                          save.overall=TRUE,
-                          save.name_overall=NULL,
+                          save.name.overall=NULL,
+                          save.name.disaggregated=NULL,
                           plots.dir="") {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
@@ -124,6 +119,8 @@ PlotPotentialAgeHeaping <- function(data,
   all_levels <- unique(levels(data[, name.disaggregations]))
   n_disaggregations <- length(all_levels)
   list_plots <- vector("list", length=n_disaggregations)
+  national_check <- FALSE
+  
   for (i in 1:n_disaggregations) {
     one_level <- all_levels[i]
     data_one_level <- data_long %>% 
@@ -157,30 +154,50 @@ PlotPotentialAgeHeaping <- function(data,
        scale_color_discrete(name="Sex") +
        scale_linetype_discrete(name="Date")
        
-    
-        list_plots[[i]] <- g_one_level
+     if (is.null(name.national) == FALSE) {
+       if (one_level == name.national) {
+         national_check <- TRUE
+         disaggregated_plot_national <- g_one_level
+         i_national <- i  # needed so the level corresponding to national-level results is completely removed, not just storing the value NULL which gives error in marrangeGrob() function
+       } else {
+         list_plots[[i]] <- g_one_level
+       }
+     } else {
+       list_plots[[i]] <- g_one_level
+     }
     ylim.disaggregated <- NULL
   }
-  arranged_plots <- marrangeGrob(list_plots, 
-                                 nrow=fig.nrow.disaggregated, 
-                                 ncol=fig.ncol.disaggregated)
+  if (national_check == TRUE) {
+    list_plots[i_national] <- NULL ## removing the national level plot expected in the list 
+  }
+  if (n_disaggregations > 1) {
+    arranged_plots <- marrangeGrob(list_plots, 
+                                   nrow=fig.nrow.disaggregated, 
+                                   ncol=fig.ncol.disaggregated)
+  }
   
   # for each of the two Census years, create a plot for the different levels of disaggregation
-  if (is.null(ylim.overall)) {
-    ylim.overall <- c(min(data_long$pop, na.rm=TRUE),
-                      max(data_long$pop, na.rm=TRUE))
-  }
-  ## Census year 1
-  ### males
-  g_year1_males <- ggplot(data=data_long %>%
-                               filter(sex == name.males & date == date.1),
-                          aes(x=get(name.age),
-                          y=pop))
-  g_year1_males <- g_year1_males + 
-                  geom_line(aes(col=get(name.disaggregations)),
-                                size=line.size.overall)
-  if (mark_multiples_of_5_overall == TRUE) {
-     g_year1_males <- g_year1_males + 
+  if (n_disaggregations > 1) {
+    if (is.null(name.national) == FALSE) {
+      data_long_for_overall <- data_long[data_long[, name.disaggregations] != name.national, ]
+    } else {
+      data_long_for_overall <-  data_long
+    }
+    if (is.null(ylim.overall)) {
+      ylim.overall <- c(min(data_long_for_overall$pop, na.rm=TRUE),
+                        max(data_long_for_overall$pop, na.rm=TRUE))
+    }
+    ## Census year 1
+    ### males
+    g_year1_males <- ggplot(data=data_long_for_overall %>%
+                              filter(sex == name.males & date == date.1),
+                            aes(x=get(name.age),
+                                y=pop))
+    g_year1_males <- g_year1_males + 
+      geom_line(aes(col=get(name.disaggregations)),
+                size=line.size.overall)
+    if (mark_multiples_of_5_overall == TRUE) {
+      g_year1_males <- g_year1_males + 
         geom_vline(xintercept=seq(from=0, 
                                   to=round(max(data_one_level[, name.age]/5)*5), 
                                   by=5),
@@ -188,87 +205,87 @@ PlotPotentialAgeHeaping <- function(data,
                    linetype="dashed",
                    size=line.size.overall)
     }
-   g_year1_males <- g_year1_males + coord_cartesian(ylim=ylim.overall) +
-    labs(x=name.age,
-         y="estimated population",
-         title=paste0("males -- estimated population \n", date.1)) +
-    scale_colour_discrete(name=label.subnational.level) +
-    theme_classic() 
-   
-   ### females
-   g_year1_females <- ggplot(data=data_long %>%
-                             filter(sex == name.females & date == date.1),
-                           aes(x=get(name.age),
-                               y=pop))
-   g_year1_females <- g_year1_females + 
-     geom_line(aes(col=get(name.disaggregations)),
-               size=line.size.overall)
-   if (mark_multiples_of_5_overall == TRUE) {
-     g_year1_females <- g_year1_females + 
-       geom_vline(xintercept=seq(from=0, 
-                                 to=round(max(data_one_level[, name.age]/5)*5), 
-                                 by=5),
-                  col="darkgray",
-                  linetype="dashed",
-                  size=line.size.overall)
-   }
-   g_year1_females <- g_year1_females + coord_cartesian(ylim=ylim.overall) +
-     labs(x=name.age,
-          y="estimated population",
-          title=paste0("females -- estimated population \n", date.1)) +
-     scale_colour_discrete(name=label.subnational.level) +
-     theme_classic()
-  
-   ## Census year 2
-   ### males
-   g_year2_males <- ggplot(data=data_long %>%
-                             filter(sex == name.males & date == date.2),
-                           aes(x=get(name.age),
-                               y=pop))
-   g_year2_males <- g_year2_males + 
-     geom_line(aes(col=get(name.disaggregations)),
-               size=line.size.overall)
-   if (mark_multiples_of_5_overall == TRUE) {
-     g_year2_males <- g_year2_males + 
-       geom_vline(xintercept=seq(from=0, 
-                                 to=round(max(data_one_level[, name.age]/5)*5), 
-                                 by=5),
-                  col="darkgray",
-                  linetype="dashed",
-                  size=line.size.overall)
-   }
-   g_year2_males <- g_year2_males + coord_cartesian(ylim=ylim.overall) +
-     labs(x=name.age,
-          y="estimated population",
-          title=paste0("males -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=label.subnational.level) +
-     theme_classic()
-
-   ### females
-   g_year2_females <- ggplot(data=data_long %>%
-                               filter(sex == name.females & date == date.2),
-                             aes(x=get(name.age),
-                                 y=pop))
-   g_year2_females <- g_year2_females + 
-     geom_line(aes(col=get(name.disaggregations)),
-               size=line.size.overall)
-   if (mark_multiples_of_5_overall == TRUE) {
-     g_year2_females <- g_year2_females + 
-       geom_vline(xintercept=seq(from=0, 
-                                 to=round(max(data_one_level[, name.age]/5)*5), 
-                                 by=5),
-                  col="darkgray",
-                  linetype="dashed",
-                  size=line.size.overall)
-   }
-   g_year2_females <- g_year2_females + coord_cartesian(ylim=ylim.overall) +
-     labs(x=name.age,
-          y="estimated population",
-          title=paste0("females -- estimated population \n", date.2)) +
-     scale_colour_discrete(name=label.subnational.level) +
-     theme_classic()
-   
-   
+    g_year1_males <- g_year1_males + coord_cartesian(ylim=ylim.overall) +
+      labs(x=name.age,
+           y="estimated population",
+           title=paste0("males -- estimated population \n", date.1)) +
+      scale_colour_discrete(name=label.subnational.level) +
+      theme_classic() 
+    
+    ### females
+    g_year1_females <- ggplot(data=data_long_for_overall %>%
+                                filter(sex == name.females & date == date.1),
+                              aes(x=get(name.age),
+                                  y=pop))
+    g_year1_females <- g_year1_females + 
+      geom_line(aes(col=get(name.disaggregations)),
+                size=line.size.overall)
+    if (mark_multiples_of_5_overall == TRUE) {
+      g_year1_females <- g_year1_females + 
+        geom_vline(xintercept=seq(from=0, 
+                                  to=round(max(data_one_level[, name.age]/5)*5), 
+                                  by=5),
+                   col="darkgray",
+                   linetype="dashed",
+                   size=line.size.overall)
+    }
+    g_year1_females <- g_year1_females + coord_cartesian(ylim=ylim.overall) +
+      labs(x=name.age,
+           y="estimated population",
+           title=paste0("females -- estimated population \n", date.1)) +
+      scale_colour_discrete(name=label.subnational.level) +
+      theme_classic()
+    
+    ## Census year 2
+    ### males
+    g_year2_males <- ggplot(data=data_long_for_overall %>%
+                              filter(sex == name.males & date == date.2),
+                            aes(x=get(name.age),
+                                y=pop))
+    g_year2_males <- g_year2_males + 
+      geom_line(aes(col=get(name.disaggregations)),
+                size=line.size.overall)
+    if (mark_multiples_of_5_overall == TRUE) {
+      g_year2_males <- g_year2_males + 
+        geom_vline(xintercept=seq(from=0, 
+                                  to=round(max(data_one_level[, name.age]/5)*5), 
+                                  by=5),
+                   col="darkgray",
+                   linetype="dashed",
+                   size=line.size.overall)
+    }
+    g_year2_males <- g_year2_males + coord_cartesian(ylim=ylim.overall) +
+      labs(x=name.age,
+           y="estimated population",
+           title=paste0("males -- estimated population \n", date.2)) +
+      scale_colour_discrete(name=label.subnational.level) +
+      theme_classic()
+    
+    ### females
+    g_year2_females <- ggplot(data=data_long_for_overall %>%
+                                filter(sex == name.females & date == date.2),
+                              aes(x=get(name.age),
+                                  y=pop))
+    g_year2_females <- g_year2_females + 
+      geom_line(aes(col=get(name.disaggregations)),
+                size=line.size.overall)
+    if (mark_multiples_of_5_overall == TRUE) {
+      g_year2_females <- g_year2_females + 
+        geom_vline(xintercept=seq(from=0, 
+                                  to=round(max(data_one_level[, name.age]/5)*5), 
+                                  by=5),
+                   col="darkgray",
+                   linetype="dashed",
+                   size=line.size.overall)
+    }
+    g_year2_females <- g_year2_females + coord_cartesian(ylim=ylim.overall) +
+      labs(x=name.age,
+           y="estimated population",
+           title=paste0("females -- estimated population \n", date.2)) +
+      scale_colour_discrete(name=label.subnational.level) +
+      theme_classic()
+    
+    
     list_plots_overall <- list(g_year2_females, 
                                g_year2_males,
                                g_year1_females, 
@@ -276,36 +293,42 @@ PlotPotentialAgeHeaping <- function(data,
     overall <- marrangeGrob(list_plots_overall,
                             nrow=fig.nrow.overall,
                             ncol=fig.ncol.overall)
+    
+    if (is.null(save.name.overall) == FALSE) {
+      ggsave(paste0(save.name.overall, 
+                    "_combined_", name.disaggregations, "_", Sys.Date(), ".pdf"),
+             overall)
+    } else {
+      ggsave(paste0(plots.dir, "potential_age_heaping_combined_", 
+                    name.disaggregations, "_", Sys.Date(), ".pdf"),
+             overall)
+    }
+    graphics.off()
+  }
   
   # print/save plots according to specified arguments
-  if (save.disaggregated == TRUE) {
-    if (is.null(save.name_disaggregated) == FALSE) {
-      pdf(paste0(save.name_disaggregated, 
-                 "_by_", name.disaggregations, "_", Sys.Date(), ".pdf")) 
-    } else {
-      pdf(paste0(plots.dir, "potential_age_heaping_by_", 
-                 name.disaggregations, "_", Sys.Date(), ".pdf"))
+  if (is.null(save.name.disaggregated) == FALSE) {
+    if (n_disaggregations > 1) {
+      ggsave(paste0(save.name.disaggregated, 
+                    "_by_", name.disaggregations, "_", Sys.Date(), ".pdf"),
+             arranged_plots) 
     }
-    print(arranged_plots)
-    for (i in 1:10) graphics.off()
+    if (national_check == TRUE) {
+      ggsave(paste0(plots.dir, save.name.disaggregated, 
+                    "_", name.national, "_", Sys.Date(), ".pdf"),
+             disaggregated_plot_national)
+    }
+  } else {
+    if (n_disaggregations > 1) {
+      ggsave(paste0(plots.dir, "potential_age_heaping_by_", 
+                    name.disaggregations, "_", Sys.Date(), ".pdf"),
+             arranged_plots)
+    }
+    if (national_check == TRUE) {
+      ggsave(paste0(plots.dir, "potential_age_heaping_", 
+                    name.national, "_", Sys.Date(), ".pdf"),
+             disaggregated_plot_national)
+    }
   }
   graphics.off()
-  if (save.overall == TRUE) {
-    if (is.null(save.name_overall) == FALSE) {
-      pdf(paste0(save.name_overall, 
-                 "_combined_", name.disaggregations, "_", Sys.Date(), ".pdf"))
-    } else {
-      pdf(paste0(plots.dir, "potential_age_heaping_combined_", 
-                 name.disaggregations, "_", Sys.Date(), ".pdf"))
-    }
-    print(overall)
-    graphics.off()
-  }
-  if (print.disaggregated == TRUE) {
-    print(arranged_plots)
-    graphics.off()
-  } 
-  if (print.overall == TRUE) {
-    print(overall)
-  } 
 }
