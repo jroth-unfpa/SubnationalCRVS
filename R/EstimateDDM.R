@@ -17,7 +17,7 @@
 #' @param name.date2 Character string providing the name of the variable in `data` that represents the later time point
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time point
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time point
-#' @param name.deaths Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points
+#' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL#' @param name.deaths Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points
 #' @param deaths.summed A logical equivalent to the `deaths.summed` argument of `DDM::ddm()`, which indicates whether `name.deaths` provides the total count (TRUE) or annual average count (FALSE) of deaths between the two time points
 #' @param show.age.range.sensitivity A logical equal to TRUE if the DDM estimates are provided for every possible age range (obeying the `min.age.in.search`, `max.age.in.search`, and `min.number.of.ages` arguments) and equal to FALSE are only provided for the optimal age range based on the search performed by ddm(). Defaults to TRUE
 #' @param min.age.in.search A numeric equivalent to the `minA` argument of `DDM:ddm()`. Defaults to 15
@@ -61,6 +61,7 @@ EstimateDDM <- function(data,
                         name.date2,
                         name.population.year1,
                         name.population.year2,
+                        name.national=NULL,
                         name.deaths,
                         deaths.summed, # should not have a default
                         show.age.range.sensitivity=TRUE,
@@ -77,6 +78,11 @@ EstimateDDM <- function(data,
   }
   if (length(unique(data[, name.date2])) != 1) {
     stop("date2 variable must contain only one unique value")
+  }
+  if (is.null(name.national) == FALSE) {
+    if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
+      stop("The value of name.national was not found in the variable name.disaggregations") 
+    }
   }
   date.1 <- data[1, name.date1]
   date.2 <- data[1, name.date2]
@@ -176,6 +182,7 @@ EstimateDDM <- function(data,
                                          sex, cod)
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
+                "name.national"=name.national,
                 "date1"=date.1,
                 "date2"=date.2,
                 "sensitivity_ggbseg_estimates"=sensitivity_ggbseg_estimates,
@@ -183,6 +190,7 @@ EstimateDDM <- function(data,
   } else {
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
+                "name.national"=name.national,
                 "date1"=date.1,
                 "date2"=date.2,
                 "ggbseg_estimates"=ggbseg_estimates))

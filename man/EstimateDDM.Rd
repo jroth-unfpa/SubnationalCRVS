@@ -15,6 +15,7 @@ EstimateDDM(
   name.date2,
   name.population.year1,
   name.population.year2,
+  name.national = NULL,
   name.deaths,
   deaths.summed,
   show.age.range.sensitivity = TRUE,
@@ -53,7 +54,7 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time point}
 
-\item{name.deaths}{Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points}
+\item{name.national}{A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL#' @param name.deaths Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points}
 
 \item{deaths.summed}{A logical equivalent to the `deaths.summed` argument of `DDM::ddm()`, which indicates whether `name.deaths` provides the total count (TRUE) or annual average count (FALSE) of deaths between the two time points}
 

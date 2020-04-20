@@ -14,11 +14,7 @@ PlotDDM(
   show.size.population = TRUE,
   label.completeness = "Estimated death registration completeness (GGB-SEG)",
   label.subnational.levels = ddm_results$name_disaggregations,
-  print.plot.point.estimates = TRUE,
-  save.plot.point.estimates = TRUE,
   save.name.plot.point.estimates = NULL,
-  print.plots.sensitivity = FALSE,
-  save.plots.sensitivity = TRUE,
   save.name.plots.sensitivity = NULL,
   plots.dir = ""
 )
@@ -40,19 +36,11 @@ PlotDDM(
 
 \item{label.completeness}{A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"}
 
-\item{print.plot.point.estimates}{A logical indicating whether the plot of point estimates across the levels of disaggregation should be printed in the R session. Defaults to TRUE}
-
-\item{save.plot.point.estimates}{A logical indicating whether the plot of point estaimtes across the levels of disaggregation should be saved on the local file system. Defaults to TRUE}
-
 \item{save.name.plot.point.estimates}{A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
 \item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
 
 \item{label.subnational.level}{A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()}
-
-\item{print.plot.sensitivity}{A logical indicating whether the plots of sensitivity across the levels of disaggregation should be printed in the R session. Defaults to FALSE}
-
-\item{save.plot.point.sensitivity}{A logical indicating whether the plots of sensitivity estimates across the levels of disaggregation should be saved on the local file system. Defaults to TRUE}
 
 \item{save.name.plot.point.sensitivity}{A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 }

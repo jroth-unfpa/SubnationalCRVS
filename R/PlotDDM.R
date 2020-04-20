@@ -10,11 +10,7 @@
 #' @param show.size.population A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
 #' @param label.completeness A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"
 #' @param label.subnational.level A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()
-#' @param print.plot.point.estimates A logical indicating whether the plot of point estimates across the levels of disaggregation should be printed in the R session. Defaults to TRUE
-#' @param save.plot.point.estimates  A logical indicating whether the plot of point estaimtes across the levels of disaggregation should be saved on the local file system. Defaults to TRUE
 #' @param save.name.plot.point.estimates A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
-#' @param print.plot.sensitivity A logical indicating whether the plots of sensitivity across the levels of disaggregation should be printed in the R session. Defaults to FALSE
-#' @param save.plot.point.sensitivity  A logical indicating whether the plots of sensitivity estimates across the levels of disaggregation should be saved on the local file system. Defaults to TRUE
 #' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples
@@ -67,17 +63,14 @@ PlotDDM <- function(ddm_results,
                     show.size.population=TRUE,
                     label.completeness="Estimated death registration completeness (GGB-SEG)",
                     label.subnational.levels=ddm_results$name_disaggregations,
-                    print.plot.point.estimates=TRUE,
-                    save.plot.point.estimates=TRUE,
                     save.name.plot.point.estimates=NULL,
-                    print.plots.sensitivity=FALSE,
-                    save.plots.sensitivity=TRUE,
                     save.name.plots.sensitivity=NULL,
                     plots.dir="") {
   # setting up
   name_disaggregations <- ddm_results$name_disaggregations
   date1 <- ddm_results$date1
   date2 <- ddm_results$date2
+  name_national <- ddm_results$name.national
   
   # plot GGB-SEG point estimates
   ggbseg_point_estimates <- ddm_results$ggbseg_estimates
@@ -90,7 +83,13 @@ PlotDDM <- function(ddm_results,
           as.character()
   ggbseg_point_estimates$cod <- factor(as.character(ggbseg_point_estimates$cod),
                                     levels=test)
-  g_point_estimate <- ggplot(data=ggbseg_point_estimates,
+  if (is.null(name_national) == FALSE) {
+    ggbseg_point_estimates_for_plot <- ggbseg_point_estimates[ggbseg_point_estimates[, "cod"] != name_national, ]
+  } else {
+    ggbseg_point_estimates_for_plot <-  ggbseg_point_estimates
+  }
+  
+  g_point_estimate <- ggplot(data=ggbseg_point_estimates_for_plot,
                              aes(x=ggbseg,
                                  y=cod))
   if (show.size.population == TRUE) {
@@ -119,25 +118,49 @@ PlotDDM <- function(ddm_results,
     g_color_females <- unique(g_colors[g_point_estimate$data$sex == "Females"])
     
     if (length(g_color_males) == 1 & length(g_color_females) == 1) {
-      identify_sex_larger_completeness <- ggbseg_point_estimates %>%
+      identify_sex_larger_completeness <- ggbseg_point_estimates_for_plot %>%
         group_by(cod) %>%
         summarise("males_larger"=ggbseg[sex == "Males"] >
                     ggbseg[sex == "Females"])
-      ggbseg_point_estimates_larger <- left_join(x=ggbseg_point_estimates,
+      ggbseg_point_estimates_for_plot_larger <- left_join(x=ggbseg_point_estimates_for_plot,
                                               y=identify_sex_larger_completeness,
                                               by="cod")
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ggbseg_point_estimates_larger %>%
+                          geom_line(data=ggbseg_point_estimates_for_plot_larger %>%
                                        filter(males_larger == TRUE),
                                     col=g_color_males) +
-                          geom_line(data=ggbseg_point_estimates_larger %>%
+                          geom_line(data=ggbseg_point_estimates_for_plot_larger %>%
                                        filter(males_larger == FALSE),
                                     col=g_color_females)
     } else {
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ggbseg_point_estimates,
+                          geom_line(data=ggbseg_point_estimates_for_plot,
                                     col="gray")
     }
+  }
+  if (is.null(name_national) == FALSE) {
+    g_point_estimate <-      g_point_estimate + 
+      geom_vline(aes(xintercept=ggbseg_point_estimates %>% 
+                       filter(cod == name_national & 
+                                sex == "Males") %>% 
+                       select(ggbseg) %>%
+                       as.numeric()),
+                 linetype="dashed",
+                 col=g_color_males,
+                 alpha=0.8,
+                 size=1.2) +
+      geom_vline(aes(xintercept=ggbseg_point_estimates %>% 
+                       filter(cod == name_national & 
+                                sex == "Females") %>% 
+                       select(ggbseg) %>%
+                       as.numeric()),
+                 linetype="dashed",
+                 color=g_color_females,
+                 alpha=0.8,
+                 size=1.2) +
+      labs(caption=paste("*Dashed lines show",
+                         name_national,
+                         "sex-specific estimates of completeness"))
   }
   # plot GGB-SEG estimates for all possible age ranges considered in the search that generated the point estimate
   if (ddm_results$show.age.range.sensitivity == TRUE) {
@@ -151,6 +174,11 @@ PlotDDM <- function(ddm_results,
     all_levels <- unique(ggbseg_sensitivity_estimates$cod)
     n_disaggregations <- length(all_levels)
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
+    national_check <- FALSE
+    if (n_disaggregations == 1 & is.null(name_national) == TRUE) {
+      stop("Only one level of disaggregation was detected in ddm_results, but the name.national argument was not provided to EstimateDDM()")
+    }
+    
     for (i in 1:n_disaggregations) {
       one_level <- all_levels[i]
       one_ylim <- c(0.9 * min(ggbseg_sensitivity_estimates[ggbseg_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE),
@@ -219,42 +247,66 @@ PlotDDM <- function(ddm_results,
       g_sensitivity_combined <- ggarrange(g_sensitivity_females,
                                           g_sensitivity_males,
                                           nrow=1)  
-      list_plots_sensitivity[[i]] <- g_sensitivity_combined
+      
+      if (is.null(name_national) == FALSE) {
+        if (one_level == name_national) {
+          national_check <- TRUE
+          disaggregated_plot_national <- g_sensitivity_combined
+          i_national <- i 
+        } else {
+          list_plots_sensitivity[[i]] <- g_sensitivity_combined
+        }
+      } else {
+        list_plots_sensitivity[[i]] <- g_sensitivity_combined
+      }
     }
-    overall <- marrangeGrob(list_plots_sensitivity,
-                            nrow=fig.nrow,
-                            ncol=fig.ncol)
+    if (national_check == TRUE) {
+      list_plots_sensitivity[i_national] <- NULL ## removing the national level plot expected in the list 
+    }
+    if (n_disaggregations > 1) {
+     overall <- marrangeGrob(list_plots_sensitivity,
+                             nrow=fig.nrow,
+                             ncol=fig.ncol)
+    }
     ## print/save plots of sensitivity according to specified arguments 
     graphics.off()
-    if (save.plots.sensitivity == TRUE) {
-      if (is.null(save.name.plots.sensitivity) == FALSE) {
-        pdf(paste0(save.name.plots.sensitivity, 
-                   "_by_", name_disaggregations, "_", Sys.Date(), ".pdf"))
-      } else {
-        pdf(paste0(plots.dir, "ggbseg_sensitivity_", 
-                   name_disaggregations, "_", Sys.Date(), ".pdf"))
+    if (is.null(save.name.plots.sensitivity) == FALSE) {
+      if (n_disaggregations > 1) {
+        ggsave(paste0(save.name.plots.sensitivity, 
+                      "_by_", name_disaggregations, "_", Sys.Date(), ".pdf"),
+               overall)
       }
-      print(overall)
-      graphics.off()
-      if (print.plots.sensitivity == TRUE) {
-        print(overall)
-      } 
+      if (national_check == TRUE) {
+        ggsave(paste0(save.name.plots.sensitivity, 
+                      "_", name_national, "_", Sys.Date(), ".pdf"),
+               disaggregated_plot_national)
+      }
+    } else {
+      if (n_disaggregations > 1) {
+        ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
+                      name_disaggregations, "_", Sys.Date(), ".pdf"),
+               overall)
+      }
+      if (national_check == TRUE) {
+        ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
+                      name_national, "_", Sys.Date(), ".pdf"),
+               disaggregated_plot_national)
+      }
     }
   }
   # print/save plots of point estimates according to specified arguments
-  graphics.off()
-  if (save.plot.point.estimates == TRUE) {
-    if (is.null(save.name.plot.point.estimates) == FALSE) {
-      pdf(paste0(save.name.plots, 
-                 "_combined", name_disaggregations, "_", Sys.Date(), ".pdf")) 
-    } else {
-      pdf(paste0(plots.dir, "ggbseg_point_estimates_combined_", 
-                 name_disaggregations, "_", Sys.Date(), ".pdf"))
+  if (is.null(save.name.plot.point.estimates) == FALSE) {
+    if (n_disaggregations > 1) {
+      ggsave(paste0(plots.dir, save.name.plots, 
+                    "_combined", name_disaggregations, "_", Sys.Date(), ".pdf"),
+             g_point_estimate)
     }
-    print(g_point_estimate)
-    graphics.off()
+  } else {
+    if (n_disaggregations > 1) {
+      ggsave(paste0(plots.dir, "ggbseg_point_estimates_combined_", 
+                    name_disaggregations, "_", Sys.Date(), ".pdf"),
+             g_point_estimate)
+    }
   }
-  if (print.plot.point.estimates == TRUE) {
-    print(g_point_estimate)
-  }   
 }
+
