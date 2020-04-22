@@ -176,7 +176,20 @@ PlotDDM <- function(ddm_results,
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
     national_check <- FALSE
     if (n_disaggregations == 1 & is.null(name_national) == TRUE) {
-      stop("Only one level of disaggregation was detected in ddm_results, but the name.national argument was not provided to EstimateDDM()")
+      stop(paste("Only one level of disaggregation,",
+                 all_levels,
+                 ", was detected in the variable",
+                 name_disaggregations,
+                 "but its value is not",
+                 name_national))
+    }
+    if (is.null(name_national) == FALSE) {
+      if (name_national %in% unique(ggbseg_point_estimates[, "cod"]) == FALSE) {
+        stop(paste("The value",
+                   name.national,
+                   "was not found in the variable",
+                   name.disaggregations))
+      }
     }
     
     for (i in 1:n_disaggregations) {

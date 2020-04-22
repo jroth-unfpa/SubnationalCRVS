@@ -105,9 +105,29 @@ PlotAgeHeapingScores <- function(data,
   n_disaggregations <- length(all_levels)
   list_plots <- vector("list", length=n_disaggregations)
   national_check <- FALSE ## needed here?
+  if (n_disaggregations == 1 & is.null(name.national) == TRUE) {
+    stop(paste("Only one level of disaggregation,",
+              all_levels,
+              ", was detected in the variable",
+              name.disaggregations,
+              "but its value is not",
+              name.national))
+  }
+  if (is.null(name.national) == FALSE) {
+    if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
+      stop(paste("The value",
+                 name.national,
+                 "was not found in the variable",
+                 name.disaggregations))
+    }
+  }
+  
   max_roughness <- max( data_with_age_heaping_long$roughness, na.rm=TRUE)
+  min_roughness <- min( data_with_age_heaping_long$roughness, na.rm=TRUE)
   max_Whipple <- max(data_with_age_heaping_long$Whipple, na.rm=TRUE)
+  min_Whipple <- min(data_with_age_heaping_long$Whipple, na.rm=TRUE)
   max_Myers <- max(data_with_age_heaping_long$Myers, na.rm=TRUE)
+  min_Myers <- min(data_with_age_heaping_long$Myers, na.rm=TRUE)
       
   if (n_disaggregations > 1) { 
     if (is.null(name.national) == FALSE) {
@@ -143,6 +163,16 @@ PlotAgeHeapingScores <- function(data,
       scale_shape_discrete(name="Date") +
       coord_cartesian(xlim=c(0, max_roughness))
     
+    if (max_roughness > 0.5) {
+      g_roughness <- g_roughness +
+                     geom_vline(aes(xintercept=0.5),
+                                linetype="dashed",
+                                col="gray",
+                                size=1.2) +
+                     labs(caption=("*Gray dashed line shows threshold of 0.5 
+                                    above which smoothing is recommended if supported by plots of population counts"))
+    }
+    
     ## Whipple
     g_Whipple <- ggplot(data=data_with_age_heaping_long_for_overall,
                         aes(x=Whipple,
@@ -168,7 +198,17 @@ PlotAgeHeapingScores <- function(data,
       theme_classic(base_size=base.size) +
       scale_color_discrete(name="Sex") +
       scale_shape_discrete(name="Date") +
-      coord_cartesian(xlim=c(0, max_Whipple))
+      coord_cartesian(xlim=c(min(1, min_Whipple), max_Whipple))
+    
+    if (max_Whipple > 1.25) {
+      g_Whipple <- g_Whipple +
+        geom_vline(aes(xintercept=1.25),
+                   linetype="dashed",
+                   col="gray",
+                   size=1.2) +
+        labs(caption=("*Gray dashed line shows threshold of 1.25 
+                                    above which smoothing is recommended if supported by plots of population counts"))
+    }
       
     ## Myers
     g_Myers <- ggplot(data=data_with_age_heaping_long_for_overall,
@@ -195,7 +235,7 @@ PlotAgeHeapingScores <- function(data,
       theme_classic(base_size=base.size) +
       scale_color_discrete(name="Sex") +
       scale_shape_discrete(name="Date") + 
-      coord_cartesian(xlim=c(0, max_Myers))
+      coord_cartesian(xlim=c(min(min_Myers, 1), max_Myers))
     
     list_plots <- list(g_roughness,
                        g_Whipple,

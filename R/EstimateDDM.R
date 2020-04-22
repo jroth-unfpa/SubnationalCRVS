@@ -81,7 +81,10 @@ EstimateDDM <- function(data,
   }
   if (is.null(name.national) == FALSE) {
     if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
-      stop("The value of name.national was not found in the variable name.disaggregations") 
+      stop(paste("The value",
+                 name.national,
+                 "was not found in the variable",
+                 name.disaggregations))
     }
   }
   date.1 <- data[1, name.date1]

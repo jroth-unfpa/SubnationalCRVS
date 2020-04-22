@@ -120,6 +120,22 @@ PlotPotentialAgeHeaping <- function(data,
   n_disaggregations <- length(all_levels)
   list_plots <- vector("list", length=n_disaggregations)
   national_check <- FALSE
+  if (n_disaggregations == 1 & is.null(name.national) == TRUE) {
+    stop(paste("Only one level of disaggregation,",
+               all_levels,
+               ", was detected in the variable",
+               name.disaggregations,
+               "but its value is not",
+               name.national))
+  }
+  if (is.null(name.national) == FALSE) {
+    if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
+      stop(paste("The value",
+                 name.national,
+                 "was not found in the variable",
+                 name.disaggregations))
+    }
+  }
   
   for (i in 1:n_disaggregations) {
     one_level <- all_levels[i]
@@ -144,7 +160,18 @@ PlotPotentialAgeHeaping <- function(data,
                                   col="darkgray",
                                   linetype="dashed",
                                   size=line.size.disaggregated)
+    }
+    if (is.null(name.national) == FALSE) {
+      if (one_level == name.national & mark_multiples_of_5_disaggregated == FALSE) {
+        g_one_level <- g_one_level + 
+          geom_vline(xintercept=seq(from=0, 
+                                    to=round(max(data_one_level[, name.age]/5)*5), 
+                                    by=5),
+                     col="darkgray",
+                     linetype="dashed",
+                     size=line.size.disaggregated)
       }
+    }
      g_one_level <-  g_one_level + 
       coord_cartesian(ylim=ylim.disaggregated) +
       labs(x=name.age,
