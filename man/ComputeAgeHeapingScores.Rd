@@ -23,7 +23,6 @@ ComputeAgeHeapingScores(
   Whipple.digit = NULL,
   Myers.age.min = NULL,
   Myers.age.max = NULL,
-  Noumbissi.display = FALSE,
   Noumbissi.age.min = NULL,
   Noumbissi.age.max = NULL
 )
@@ -69,8 +68,6 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{Myers.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10}
 
 \item{Myers.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89}
-
-\item{Noumbissi.display=FALSE}{Logical indicating whether 10 columns should be displayed with the results of `DemoTools::check_heaping_noumbissi()` with digits 0,1,...,9. Default is FALSE}
 
 \item{Noumbissi.age.min=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20}
 

@@ -15,6 +15,7 @@ PlotAgeHeapingScores(
   name.date2,
   name.population.year1,
   name.population.year2,
+  show.population.counts = TRUE,
   name.national = NULL,
   show.size.population = TRUE,
   roughness.age.min = NULL,
@@ -24,6 +25,11 @@ PlotAgeHeapingScores(
   Whipple.digit = NULL,
   Myers.age.min = NULL,
   Myers.age.max = NULL,
+  Noumbissi.age.min = NULL,
+  Noumbissi.age.max = NULL,
+  fig.nrow.Noumbissi = 2,
+  fig.ncol.Noumbissi = 1,
+  show.thresholds.Noumbissi = TRUE,
   label.subnational.level = name.disaggregations,
   base.size = 12,
   fig.nrow = 1,
@@ -66,10 +72,6 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{base.size}{A numeric fed to `ggplot2::theme_classic(base_size)` for the plot of point estimates. Defaults to 12}
 
-\item{fig.nrow}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the 5 plots}
-
-\item{fig.ncol}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the 5 plots}
-
 \item{save.name.plots}{A character specifying a custom file name for the plots saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
 \item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
@@ -87,6 +89,18 @@ a sociodemographic category such as education level, or combinations thereof).}
 \item{Myers.age.min=NULL}{Equivalent to the `ageMin` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 10}
 
 \item{Myers.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_myers`. Defaults to NULL, which then uses the `DemoTools` default of 89}
+
+\item{Noumbissi.age.min=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 20}
+
+\item{Noumbissi.age.max=NULL}{Equivalent to the `ageMax` argument of `Demotools::check_heaping_noumbissi`. Defaults to NULL, which then uses the `DemoTools` default of 64}
+
+\item{show.population.counts=TRUE}{A logical indicated whether the population in date2 should be displayed in national plots and disaggregated plots (for Noumbissi indices). Defaults to TRUE}
+
+\item{fig.nrow.Noumbissi=2}{An integer fed to `gridExtra::arrangeGrob(nrow)` to indicate how many rows on each page should be used to display the disaggregated plots of Noumbissi indices. Defaults to 2}
+
+\item{fig.ncol.Noumbissi=1}{An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many columns on each page should be used to display the disaggregated plots of Noumbissi indices. Defaults to 1}
+
+\item{show.thresholds.Noumbissi=TRUE}{A logical indicating whether vertical lines at index values of 0.80 and 1.20 should be superimposed on the plots of indices plots. Defaults to TRUE}
 }
 \description{
 asdf
