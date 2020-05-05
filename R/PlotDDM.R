@@ -8,10 +8,12 @@
 #' @param fig.ncol An integer fed to `gridExtra::arrangeGrob(ncol)` to indicate how many times the side-by-side male/female sensitivity plots should appear in each of `fig.nrow` rows. Defaults to 1
 #' @param show.lines.sex.differential A logical indixating whether vertical lines connecting the estimated completenss for males and females should be drawn. Defaults to TRUE
 #' @param show.size.population A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
-#' @param label.completeness A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"
+#' @param label.completeness A character label for the axis showing estimated completeness of death registration (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"
+#' @param label.RMSE A character label for the axis showing RMSEs corresponding to different age-ranges during estimation completeness of death registration completeness. Default is "RMSE for age-range selection"
 #' @param label.subnational.level A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()
 #' @param save.name.plot.point.estimates A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
-#' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
+#' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of point estimates for possible age-ranges across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date #' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
+#' @param save.name.plot.point.RMSE A character specifying a custom file name for the plots of RMSE for possible age-ranges across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date #' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date
 #' @param plots.dir A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory
 #' @examples
 #' # It takes about 45 seconds to run this example with show.age.range.sensitivity=TRUE; to run in under 5 seconds please instead use show.age.range.sensitivity=FALSE
@@ -56,15 +58,17 @@
 
 PlotDDM <- function(ddm_results,
                     base.size.point.estimates=13,
-                    base.size.sensitivity=9,
+                    base.size.sensitivity=7,
                     fig.nrow=2,
                     fig.ncol=1,
                     show.lines.sex.differential=TRUE,
                     show.size.population=TRUE,
                     label.completeness="Estimated death registration completeness (GGB-SEG)",
-                    label.subnational.levels=ddm_results$name_disaggregations,
+                    label.RMSE="RMSE for age-range selection",
+                    label.subnational.level=ddm_results$name_disaggregations,
                     save.name.plot.point.estimates=NULL,
                     save.name.plots.sensitivity=NULL,
+                    save.name.plots.RMSE=NULL,
                     plots.dir="") {
   # setting up
   name_disaggregations <- ddm_results$name_disaggregations
@@ -108,7 +112,7 @@ PlotDDM <- function(ddm_results,
   }
   g_point_estimate <- g_point_estimate + 
                       labs(x=label.completeness,
-                           y=label.subnational.levels) +
+                           y=label.subnational.level) +
                       scale_color_discrete(name="Sex") +
                       theme_classic(base_size=base.size.point.estimates)
   if (show.lines.sex.differential == TRUE) {
@@ -170,10 +174,19 @@ PlotDDM <- function(ddm_results,
       as.factor(ggbseg_sensitivity_estimates[, "lower_age_range"])
     ggbseg_sensitivity_estimates[, "upper_age_range"] <- 
       as.factor(ggbseg_sensitivity_estimates[, "upper_age_range"])
-  
+    # compute sample mean and SD for the point estimates and RMSEs within a cod/sex combination
+    ggbseg_sensitivity_estimates <- ggbseg_sensitivity_estimates %>%
+                                    group_by(cod, sex) %>%
+                                    mutate("mean_ggbseg"=signif(mean(ggbseg, na.rm=TRUE), 3),
+                                              "sd_ggbseg"=signif(sd(ggbseg, na.rm=TRUE), 3),
+                                              "mean_RMSE"=signif(mean(RMSE, na.rm=TRUE), 3),
+                                              "sd_RMSE"=signif(sd(RMSE, na.rm=TRUE), 3)) %>%
+                                   as.data.frame()
+   
     all_levels <- unique(ggbseg_sensitivity_estimates$cod)
     n_disaggregations <- length(all_levels)
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
+    list_plots_RMSE <- vector("list", length=n_disaggregations)
     national_check <- FALSE
     if (n_disaggregations == 1 & is.null(name_national) == TRUE) {
       stop(paste("Only one level of disaggregation,",
@@ -194,92 +207,77 @@ PlotDDM <- function(ddm_results,
     
     for (i in 1:n_disaggregations) {
       one_level <- all_levels[i]
-      one_ylim <- c(0.9 * min(ggbseg_sensitivity_estimates[ggbseg_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE),
-                    1.1 * max(ggbseg_sensitivity_estimates[ggbseg_sensitivity_estimates$cod == one_level, "ggbseg"], na.rm=TRUE))
-      ## women
-      g_sensitivity_females <- ggplot(data=ggbseg_sensitivity_estimates %>%
-                                           filter(cod == one_level & 
-                                                sex == "Females"),
-                                      aes(x=lower_age_range,
-                                          y=ggbseg))
-      g_sensitivity_females <- g_sensitivity_females + 
-                              geom_point(aes(col=upper_age_range),
-                                         size=1.5,
-                                         alpha=0.9) +
-                              geom_hline(aes(yintercept=ggbseg_point_estimates %>% 
-                                                         filter(cod == one_level & 
-                                                                sex == "Females") %>% 
-                                                         select(ggbseg) %>%
-                                                         as.numeric(),
-                                         linetype=""),
-                                         size=1.2) +
-                              scale_linetype_manual(name=" Point estimate",
-                                                    values=c(1,1)) +
-                              labs(x="Lower limit of age range",
-                                  y=label.completeness,
-                                  title=paste("Estimated completeness in\n",
-                                              one_level,
-                                              "-- Females"),
-                                  col="Upper limit of age range") +
-                             theme_classic(base_size=base.size.sensitivity) +
-                             theme(legend.box="vertical",
-                                   legend.text=element_text(size=rel(0.8))) +
-                             coord_cartesian(ylim=one_ylim) 
-    
-      ## men
-      g_sensitivity_males <- ggplot(data=ggbseg_sensitivity_estimates %>%
-                                        filter(cod == one_level & 
-                                              sex == "Males"),
-                                      aes(x=lower_age_range,
-                                          y=ggbseg))
-     g_sensitivity_males <- g_sensitivity_males + 
-                              geom_point(aes(col=upper_age_range),
-                                          size=1.5,
-                                          alpha=0.9) +
-                              geom_hline(aes(yintercept=ggbseg_point_estimates %>% 
-                                                        filter(cod == one_level & 
-                                                                sex == "Males") %>% 
-                                                        select(ggbseg) %>%
-                                                        as.numeric(),
-                                              linetype=""),
-                                         size=1.2) +
-                              scale_linetype_manual(name=" Point estimate",
-                                                     values=c(1,1)) +
-                              labs(x="Lower limit of age range",
-                                    y=label.completeness,
-                                    title=paste("Estimated completeness in\n",
-                                                one_level,
-                                                "-- Males"),
-                                    col="Upper limit of age range") +
-                               theme_classic(base_size=base.size.sensitivity) +
-                               theme(legend.box="vertical",
-                                     legend.text=element_text(size=rel(0.8))) +
-                              coord_cartesian(ylim=one_ylim)
-    
-    
+      ## Females
+      g_sensitivity_females <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
+                                      point.estimates=ggbseg_point_estimates,
+                                      output.type="ggbseg",
+                                      one.sex="Females",
+                                      one.level=one_level,
+                                      label.completeness=label.completeness,
+                                      label.RMSE=label.RMSE,
+                                      base.size.sensitivity=base.size.sensitivity)
+      g_RMSE_females <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
+                                                      point.estimates=ggbseg_point_estimates,
+                                                      output.type="RMSE",
+                                                      one.sex="Females",
+                                                      one.level=one_level,
+                                                      label.completeness=label.completeness,
+                                                      label.RMSE=label.RMSE,
+                                                      base.size.sensitivity=base.size.sensitivity)
+      
+      ## Males
+      g_sensitivity_males <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
+                                                      point.estimates=ggbseg_point_estimates,
+                                                      output.type="ggbseg",
+                                                      one.sex="Males",
+                                                      one.level=one_level,
+                                                      label.completeness=label.completeness,
+                                                      label.RMSE=label.RMSE,
+                                                      base.size.sensitivity=base.size.sensitivity)
+      g_RMSE_males <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
+                                               point.estimates=ggbseg_point_estimates,
+                                               output.type="RMSE",
+                                               one.sex="Males",
+                                               one.level=one_level,
+                                               label.completeness=label.completeness,
+                                               label.RMSE=label.RMSE,
+                                               base.size.sensitivity=base.size.sensitivity)
+      
+      
+      # combine plots for males and females
       g_sensitivity_combined <- ggarrange(g_sensitivity_females,
                                           g_sensitivity_males,
                                           nrow=1)  
+      g_RMSE_combined <- ggarrange(g_RMSE_females,
+                                   g_RMSE_males,
+                                   nrow=1)  
       
       if (is.null(name_national) == FALSE) {
         if (one_level == name_national) {
           national_check <- TRUE
-          disaggregated_plot_national <- g_sensitivity_combined
+          disaggregated_plot_national_sensitivity <- g_sensitivity_combined
+          disaggregated_plot_national_RMSE <- g_RMSE_combined
           i_national <- i 
         } else {
           list_plots_sensitivity[[i]] <- g_sensitivity_combined
+          list_plots_RMSE[[i]] <- g_RMSE_combined
         }
       } else {
         list_plots_sensitivity[[i]] <- g_sensitivity_combined
+        list_plots_RMSE[[i]] <- g_RMSE_combined
       }
     }
     if (national_check == TRUE) {
       list_plots_sensitivity[i_national] <- NULL ## removing the national level plot expected in the list 
+      list_plots_RMSE[i_national] <- NULL ## removing the national level plot expected in the list       
     }
     if (n_disaggregations > 1) {
-     overall <- marrangeGrob(list_plots_sensitivity,
-                             nrow=fig.nrow,
-                             ncol=fig.ncol)
+     overall_sensitivity <- marrangeGrob(list_plots_sensitivity,
+                                         nrow=fig.nrow,
+                                         ncol=fig.ncol)
+     overall_RMSE <- marrangeGrob(list_plots_RMSE,
+                                  nrow=fig.nrow,
+                                  ncol=fig.ncol)
     }
     ## print/save plots of sensitivity according to specified arguments 
     graphics.off()
@@ -287,23 +285,35 @@ PlotDDM <- function(ddm_results,
       if (n_disaggregations > 1) {
         ggsave(paste0(save.name.plots.sensitivity, 
                       "_by_", name_disaggregations, "_", Sys.Date(), ".pdf"),
-               overall)
+               overall_sensitivity)
+        ggsave(paste0(save.name.plots.RMSE, 
+                      "by_", name_disaggregations, "_", Sys.Date(), ".pdf"),
+               overall_RMSE)
       }
       if (national_check == TRUE) {
         ggsave(paste0(save.name.plots.sensitivity, 
                       "_", name_national, "_", Sys.Date(), ".pdf"),
-               disaggregated_plot_national)
+               disaggregated_plot_national_sensitivity)
+        ggsave(paste0(save.name.plots.RMSE, 
+                      "_", name_national, "_", Sys.Date(), ".pdf"),
+               disaggregated_plot_national_RMSE)
       }
     } else {
       if (n_disaggregations > 1) {
         ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
                       name_disaggregations, "_", Sys.Date(), ".pdf"),
-               overall)
+               overall_sensitivity)
+        ggsave(paste0(plots.dir, "ggbseg_RMSE_", 
+                      name_disaggregations, "_", Sys.Date(), ".pdf"),
+               overall_RMSE)
       }
       if (national_check == TRUE) {
         ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
                       name_national, "_", Sys.Date(), ".pdf"),
-               disaggregated_plot_national)
+               disaggregated_plot_national_sensitivity)
+        ggsave(paste0(plots.dir, "ggbseg_RMSE_", 
+                      name_national, "_", Sys.Date(), ".pdf"),
+               disaggregated_plot_national_RMSE)
       }
     }
   }

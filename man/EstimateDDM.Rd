@@ -23,8 +23,8 @@ EstimateDDM(
   max.age.in.search = 75,
   min.number.of.ages = 8,
   exact.ages.to.use = NULL,
-  largest.lower.limit.sensitivity = 45,
-  smallest.upper.limit.sensitivity = 50,
+  largest.lower.limit.sensitivity = 35,
+  smallest.upper.limit.sensitivity = 40,
   life.expectancy.in.open.group = NULL
 )
 }

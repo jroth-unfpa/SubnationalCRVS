@@ -69,8 +69,8 @@ EstimateDDM <- function(data,
                         max.age.in.search=75,
                         min.number.of.ages=8,
                         exact.ages.to.use=NULL,
-                        largest.lower.limit.sensitivity=45,
-                        smallest.upper.limit.sensitivity=50,
+                        largest.lower.limit.sensitivity=35,
+                        smallest.upper.limit.sensitivity=40,
                         life.expectancy.in.open.group=NULL) {
   # variable checks -- again, this should call a common VariableChecks() function, maybe with an argument that can take the value "DDM"
   if (length(unique(data[, name.date1])) != 1) {
@@ -101,9 +101,11 @@ EstimateDDM <- function(data,
                      name.population.year1=name.population.year1,
                      name.population.year2=name.population.year2,
                      name.deaths=name.deaths)
+  data_for_ddm_females <- data_formatted$data_for_ddm_females
+  data_for_ddm_males <- data_formatted$data_for_ddm_males
   # estimate completeness with ggbseg() function from DDM package
   ## males
-  result_ggbseg_males <- ggbseg(X=data_formatted$data_for_ddm_males,
+  result_ggbseg_males <- ggbseg(X=data_for_ddm_males,
                     deaths.summed=deaths.summed,
                     minA=min.age.in.search,
                     maxA=max.age.in.search,
@@ -112,7 +114,7 @@ EstimateDDM <- function(data,
                     eOpen=life.expectancy.in.open.group)
   
   ## females
-  result_ggbseg_females <- ggbseg(X=data_formatted$data_for_ddm_females,
+  result_ggbseg_females <- ggbseg(X=data_for_ddm_females,
                           deaths.summed=deaths.summed,
                           minA=min.age.in.search,
                           maxA=max.age.in.search,
@@ -137,8 +139,6 @@ EstimateDDM <- function(data,
   if (show.age.range.sensitivity == TRUE) {
     # perform DDM estimation for a sequence of age-range parameters to give a sense of estimation sensitivity
     # setting up before loop
-    data_for_ddm_females <- data_formatted$data_for_ddm_females
-    data_for_ddm_males <- data_formatted$data_for_ddm_males
     lower.limits.age.sensitivity <- seq(from=min.age.in.search,
                                         to=largest.lower.limit.sensitivity,
                                         by=5)
@@ -153,32 +153,64 @@ EstimateDDM <- function(data,
                                                            to=x[2], 
                                                            by=5))
     idx_acceptable_age_range_sequences <- sapply(possible_age_range_sequences,
-                                                 function(x) length(x) >= 8)
+                                                 function(x) length(x) >= min.number.of.ages)
+                                                 #function(x) length(x) >= 8)
     acceptable_age_range_sequences <- possible_age_range_sequences[idx_acceptable_age_range_sequences]
     n_age_combinations <- length(acceptable_age_range_sequences)
-    sensitivity_ggbseg_estimates <- matrix(NA, nrow=1, ncol=ncol(ggbseg_estimates))
-    colnames(sensitivity_ggbseg_estimates) <- colnames(ggbseg_estimates)
+    
+    # storing summaries of sensitivity (point estinates and RMSE by possible age range)
+    sensitivity_ggbseg_estimates <- matrix(NA, 
+                                           nrow=1, 
+                                           ncol=(ncol(ggbseg_estimates) + 1))
+    colnames(sensitivity_ggbseg_estimates) <- c(colnames(ggbseg_estimates), "RMSE")
+    
     # performing GGB-SEG estimation across all combinations of exact.ages sequences
     print(paste("performing GGB-SEG estimation within each of", 
                  n_age_combinations, 
                  "possible age ranges..."))
     for (seq in 1:length(acceptable_age_range_sequences)) {
       one_exact_ages <- acceptable_age_range_sequences[[seq]]
-      one_ggbseg_females <- ggbseg(X=data_formatted$data_for_ddm_females,
+      ## point estimates for males and females
+      one_ggbseg_females <- ggbseg(X=data_for_ddm_females,
                              deaths.summed=deaths.summed,
                              exact.ages=one_exact_ages,
                              eOpen=life.expectancy.in.open.group)
-      one_ggbseg_males <- ggbseg(X=data_formatted$data_for_ddm_males,
+      one_ggbseg_males <- ggbseg(X=data_for_ddm_males,
                            deaths.summed=deaths.summed,
                            exact.ages=one_exact_ages,
                            eOpen=life.expectancy.in.open.group)
       one_ggbseg_estimates <- FormatOutputGGBSEG(result_ggbseg_females=one_ggbseg_females,
-                                           result_ggbseg_males=one_ggbseg_males)
-      one_ggbseg_estimates <- left_join(one_ggbseg_estimates,
-                                     data_with_total_pop,
-                                     by="cod")
+                                                 result_ggbseg_males=one_ggbseg_males)
+      
+      ## RMSEs for females and males
+      one_RMSE_females <- CallggbgetRMS(my.ddm.data=data_for_ddm_females,
+                                        age.range=one_exact_ages,
+                                        min.age.in.search=min.age.in.search,
+                                        max.age.in.searc=max.age.in.search,
+                                        deaths.summed=deaths.summed)
+      one_RMSE_males <- CallggbgetRMS(my.ddm.data=data_for_ddm_males,
+                                      age.range=one_exact_ages,
+                                      min.age.in.search=min.age.in.search,
+                                      max.age.in.search=max.age.in.search,
+                                      deaths.summed=deaths.summed)
+      one_RMSE_females$sex <- "Females" ## to match coding from FormatOutputGGBSEG
+      one_RMSE_males$sex <- "Males" ## to match coding from FormatOutputGGBSEG
+      one_RMSE <- rbind(one_RMSE_females,
+                        one_RMSE_males)
+      
+      ## merge together into final table
+      ### merge in populations
+      one_combined_estimates <- left_join(x=one_ggbseg_estimates,
+                                        y=data_with_total_pop,
+                                        by="cod")
+      ### merge in RMSEs
+      one_combined_estimates <- left_join(x=one_combined_estimates,
+                                          y=one_RMSE,
+                                          by=c("cod", "sex"))
+      
+      # stack up results for all acceptable age ranges
       sensitivity_ggbseg_estimates <- rbind(sensitivity_ggbseg_estimates,
-                                         one_ggbseg_estimates)
+                                            one_combined_estimates)
     }
     sensitivity_ggbseg_estimates <- as.data.frame(sensitivity_ggbseg_estimates[-1, ])
     sensitivity_ggbseg_estimates <- arrange(sensitivity_ggbseg_estimates,

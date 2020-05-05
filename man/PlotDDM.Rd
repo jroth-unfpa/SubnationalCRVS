@@ -7,15 +7,17 @@
 PlotDDM(
   ddm_results,
   base.size.point.estimates = 13,
-  base.size.sensitivity = 9,
+  base.size.sensitivity = 7,
   fig.nrow = 2,
   fig.ncol = 1,
   show.lines.sex.differential = TRUE,
   show.size.population = TRUE,
   label.completeness = "Estimated death registration completeness (GGB-SEG)",
-  label.subnational.levels = ddm_results$name_disaggregations,
+  label.RMSE = "RMSE for age-range selection",
+  label.subnational.level = ddm_results$name_disaggregations,
   save.name.plot.point.estimates = NULL,
   save.name.plots.sensitivity = NULL,
+  save.name.plots.RMSE = NULL,
   plots.dir = ""
 )
 }
@@ -34,15 +36,19 @@ PlotDDM(
 
 \item{show.size.population}{A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE}
 
-\item{label.completeness}{A character label for the axis showing estimated completeness of death registration completeness (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"}
+\item{label.completeness}{A character label for the axis showing estimated completeness of death registration (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"}
+
+\item{label.RMSE}{A character label for the axis showing RMSEs corresponding to different age-ranges during estimation completeness of death registration completeness. Default is "RMSE for age-range selection"}
+
+\item{label.subnational.level}{A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()}
 
 \item{save.name.plot.point.estimates}{A character specifying a custom file name for the plot of point estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
 \item{plots.dir}{A character specifying the directory where plots should be saved. Defaults to "", saving the plots in the working directory}
 
-\item{label.subnational.level}{A character label for the axis showing the level of subnational disaggregation present in the data. Default is the value of the `name.disaggregations` argument supplied to EstimateDDM()}
+\item{save.name.plot.point.sensitivity}{A character specifying a custom file name for the plots of point estimates for possible age-ranges across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date #' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 
-\item{save.name.plot.point.sensitivity}{A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
+\item{save.name.plot.point.RMSE}{A character specifying a custom file name for the plots of RMSE for possible age-ranges across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date #' @param save.name.plot.point.sensitivity A character specifying a custom file name for the plots of sensitivity estimates across the levels of disaggregation saved on the local file system. Defaults to NULL, which combines `name.disaggregations` and the current date}
 }
 \description{
 asdf
