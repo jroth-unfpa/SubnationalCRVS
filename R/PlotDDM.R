@@ -207,6 +207,7 @@ PlotDDM <- function(ddm_results,
     
     for (i in 1:n_disaggregations) {
       one_level <- all_levels[i]
+      
       ## Females
       g_sensitivity_females <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
                                       point.estimates=ggbseg_point_estimates,

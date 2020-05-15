@@ -13,10 +13,14 @@
 #' @param name.sex Character string providing the name of the variable in `data` that represents sex
 #' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
 #' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
-#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time period
-#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param name.year1 Character string providing the name of the variable in `data` that represents the year of the earlier of the two time periods (e.g. year of the earlier Census)
+#' @param name.month1 Character string providing the name of the variable in `data` that represents the month of the earlier of the two time periods (e.g. month of the earlier Census)
+#' @param name.day1 Character string providing the name of the variable in `data` that represents the day of the earlier of the two time periods (e.g. day of the earlier Census)
+#' @param name.year2 Character string providing the name of the variable in `data` that represents the year of the later of the two time periods (e.g. year of the later Census)
+#' @param name.month2 Character string providing the name of the variable in `data` that represents the month of the later of the two time periods (e.g. month of the later Census)
+#' @param name.day2 Character string providing the name of the variable in `data` that represents the day of the later of the two time periods (e.g. day of the later Census)
 #' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL
 #' @param show.size.population A logical indixating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE
 #' @param roughness.age.min=NULL Equivalent to the `ageMin` argument of `Demotools::check_heaping_roughness`. Defaults to NULL, which then uses the `DemoTools` default of 20
@@ -43,10 +47,14 @@
 #'                                                   name.females="f",
 #'                                                   name.age="age",
 #'                                                   name.sex="sex",
-#'                                                   name.date1="date1",
-#'                                                   name.date2="date2",
 #'                                                   name.population.year1="pop1",
 #'                                                   name.population.year2="pop2",
+#'                                                   name.year1="year1"
+#'                                                   name.month1="month1",
+#'                                                   name.day1="day1",
+#'                                                   name.year2="year2",
+#'                                                   name.month2="month2",
+#'                                                   name.day2="day2"
 #'                                                   plots.dir="Plots/")
 #' head(age_heaping_plotting)
 #' @import dplyr
@@ -62,10 +70,14 @@ PlotAgeHeapingScores <- function(data,
                           name.sex,
                           name.males,
                           name.females,
-                          name.date1,
-                          name.date2,
                           name.population.year1,
                           name.population.year2,
+                          name.year1,
+                          name.month1,
+                          name.day1,
+                          name.year2,
+                          name.month2,
+                          name.day2,
                           show.population.counts=TRUE,
                           name.national=NULL,
                           show.size.population=TRUE,
@@ -88,14 +100,16 @@ PlotAgeHeapingScores <- function(data,
                           save.name.plots=NULL,
                           plots.dir="") {
  data[, name.disaggregations] <- as.factor(data[, name.disaggregations])
- if (length(unique(data[, name.date1])) != 1) {
-   stop("date1 variable must contain only one unique value")
- }
- if (length(unique(data[, name.date2])) != 1) {
-   stop("date2 variable must contain only one unique value")
- }
- date.1 <- data[1, name.date1]
- date.2 <- data[1, name.date2]
+ data <- CreateDateVariable(data=data,
+                            name.disaggregations=name.disaggregations,
+                            name.year1=name.year1,
+                            name.month1=name.month1,
+                            name.day1=name.day1,
+                            name.year2=name.year2,
+                            name.month2=name.month2,
+                            name.day2=name.day2)
+ date.1 <- as.character(unique(data$date1))
+ date.2 <- as.character(unique(data$date2))
  
   # compute age heaping scores by calling ComputeAgeHeapingScores()
   ## variable checks performed within ComputeAgeHeapingScores() (should just call another function to do the checks that doesn't need to be documented)
@@ -105,10 +119,14 @@ PlotAgeHeapingScores <- function(data,
                                     name.sex=name.sex,
                                     name.males=name.males,
                                     name.females=name.females,
-                                    name.date1=name.date1,
-                                    name.date2=name.date2,
                                     name.population.year1=name.population.year1,
                                     name.population.year2=name.population.year2,
+                                    name.year1=name.year1,
+                                    name.month1=name.month1,
+                                    name.day1=name.day1,
+                                    name.year2=name.year2,
+                                    name.month2=name.month2,
+                                    name.day2=name.day2,
                                     roughness.age.min=roughness.age.min,
                                     roughness.age.max=roughness.age.max,
                                     Whipple.age.min=Whipple.age.min,
@@ -120,7 +138,7 @@ PlotAgeHeapingScores <- function(data,
                                     Noumbissi.age.max=Noumbissi.age.max)
   data_with_age_heaping_long[, name.disaggregations] <- factor(data_with_age_heaping_long[, name.disaggregations],
                                                                levels=rev(levels(data_with_age_heaping_long[, name.disaggregations])))
-
+    
   # make plots
   all_levels <- unique(levels(data[, name.disaggregations]))
   n_disaggregations <- length(all_levels)
@@ -161,6 +179,8 @@ PlotAgeHeapingScores <- function(data,
     } else {
       data_with_age_heaping_long_for_overall <-  data_with_age_heaping_long
     }
+    data_with_age_heaping_long_for_overall$orig_date <- data_with_age_heaping_long_for_overall$date 
+    data_with_age_heaping_long_for_overall$date <- as.factor(data_with_age_heaping_long_for_overall$date) # ggplot has issues with Date class
     ## roughness
     g_roughness <- ggplot(data=data_with_age_heaping_long_for_overall,
                           aes(x=roughness,
@@ -282,6 +302,7 @@ PlotAgeHeapingScores <- function(data,
   levels(data_for_Noumbissi$Noumbissi_digit) <- gsub(pattern="Noumbissi_", 
                                                      replacement="", 
                                                      x=levels(data_for_Noumbissi$Noumbissi_digit))
+  data_for_Noumbissi$date <- as.factor(data_for_Noumbissi$date) # ggplot has issues with Date class
   list_plots_Noumbissi <- vector("list", length=n_disaggregations_Noumbissi)
   for (i in 1:n_disaggregations_Noumbissi) {
       one_level <- all_levels_Noumbissi[i]

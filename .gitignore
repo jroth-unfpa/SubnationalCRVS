@@ -10,6 +10,7 @@ src/example_data_rabat.rda
 # History files
 .Rhistory
 .Rapp.history
+*~*
 
 # Session Data files
 .RData

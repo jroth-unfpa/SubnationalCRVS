@@ -11,10 +11,14 @@ PlotAgeRatios(
   name.sex,
   name.males,
   name.females,
-  name.date1,
-  name.date2,
   name.population.year1,
   name.population.year2,
+  name.year1,
+  name.month1,
+  name.day1,
+  name.year2,
+  name.month2,
+  name.day2,
   name.national = NULL,
   label.subnational.level = name.disaggregations,
   show.disaggregated.population = TRUE,
@@ -49,13 +53,21 @@ a sociodemographic category such as education level, or combinations thereof).}
 
 \item{name.females}{Character string providing the name of the value of `name.sex` variable that represents females}
 
-\item{name.date1}{Character string providing the name of the variable in `data` that represents the earlier time period}
-
-\item{name.date2}{Character string providing the name of the variable in `data` that represents the later time period}
-
 \item{name.population.year1}{Character string providing the name of the variable in `data` that represents the population count in the earlier time period}
 
 \item{name.population.year2}{Character string providing the name of the variable in `data` that represents the population count in the later time period}
+
+\item{name.year1}{Character string providing the name of the variable in `data` that represents the year of the earlier of the two time periods (e.g. year of the earlier Census)}
+
+\item{name.month1}{Character string providing the name of the variable in `data` that represents the month of the earlier of the two time periods (e.g. month of the earlier Census)}
+
+\item{name.day1}{Character string providing the name of the variable in `data` that represents the day of the earlier of the two time periods (e.g. day of the earlier Census)}
+
+\item{name.year2}{Character string providing the name of the variable in `data` that represents the year of the later of the two time periods (e.g. year of the later Census)}
+
+\item{name.month2}{Character string providing the name of the variable in `data` that represents the month of the later of the two time periods (e.g. month of the later Census)}
+
+\item{name.day2}{Character string providing the name of the variable in `data` that represents the day of the later of the two time periods (e.g. day of the later Census)}
 
 \item{name.national}{A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL}
 
@@ -95,10 +107,14 @@ ecuador_plot_age_ratios <- PlotAgeRatios(data=ecuador_five_year_ages,
                                          name.females="f",
                                          name.age="age",
                                          name.sex="sex",
-                                         name.date1="date1",
-                                         name.date2="date2",
                                          name.population.year1="pop1",
                                          name.population.year2="pop2",
+                                         name.year1="year1"
+                                         name.month1="month1",
+                                         name.day1="day1",
+                                         name.year2="year2",
+                                         name.month2="month2",
+                                         name.day2="day2"
                                          label.subnational.level="Province")
 head(ecuador_plot_age_ratios)
 tail(ecuador_plot_age_ratios)

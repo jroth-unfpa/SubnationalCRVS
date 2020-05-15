@@ -12,10 +12,14 @@
 #' @param name.sex Character string providing the name of the variable in `data` that represents sex
 #' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
 #' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
-#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time period
-#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time period
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time period
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time period
+#' @param name.year1 Character string providing the name of the variable in `data` that represents the year of the earlier of the two time periods (e.g. year of the earlier Census)
+#' @param name.month1 Character string providing the name of the variable in `data` that represents the month of the earlier of the two time periods (e.g. month of the earlier Census)
+#' @param name.day1 Character string providing the name of the variable in `data` that represents the day of the earlier of the two time periods (e.g. day of the earlier Census)
+#' @param name.year2 Character string providing the name of the variable in `data` that represents the year of the later of the two time periods (e.g. year of the later Census)
+#' @param name.month2 Character string providing the name of the variable in `data` that represents the month of the later of the two time periods (e.g. month of the later Census)
+#' @param name.day2 Character string providing the name of the variable in `data` that represents the day of the later of the two time periods (e.g. day of the later Census)
 #' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL
 #' @param label.subnational.level A character label for the legend showing level of subnational disaggregation present in the data. Defaults to `name.disaggregations` 
 #' @param confirm_single_year_ages Logical indicating whether (in contrast to result of variable checks) the `name.age` does in fact represent single-year ages and the error thrown by the variable checks should be overwritten. Default is FALSE
@@ -56,10 +60,14 @@ PlotPotentialAgeHeaping <- function(data,
                           name.sex,
                           name.males,
                           name.females,
-                          name.date1,
-                          name.date2,
                           name.population.year1,
                           name.population.year2,
+                          name.year1,
+                          name.month1,
+                          name.day1,
+                          name.year2,
+                          name.month2,
+                          name.day2,
                           name.national=NULL,
                           label.subnational.level=name.disaggregations,
                           confirm_single_year_ages=FALSE,
@@ -78,14 +86,16 @@ PlotPotentialAgeHeaping <- function(data,
                           plots.dir="") {
   # variable checks (should just call another function to do the checks that doesn't need to be documented)
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
-  if (length(unique(data[, name.date1])) != 1) {
-    stop("date1 variable must contain only one unique value")
-  }
-  if (length(unique(data[, name.date2])) != 1) {
-    stop("date2 variable must contain only one unique value")
-  }
-  date.1 <- data[1, name.date1]
-  date.2 <- data[1, name.date2]
+  data <- CreateDateVariable(data=data,
+                             name.disaggregations=name.disaggregations,
+                             name.year1=name.year1,
+                             name.month1=name.month1,
+                             name.day1=name.day1,
+                             name.year2=name.year2,
+                             name.month2=name.month2,
+                             name.day2=name.day2)
+  date.1 <- as.character(unique(data$date1))
+  date.2 <- as.character(unique(data$date2))
   
   # verify that the age variable is single-year ages and not groups of multiple ages (e.g. 5-year age groups)
   # and also emphasize that only the "deaths" column is actually not required
@@ -99,7 +109,7 @@ PlotPotentialAgeHeaping <- function(data,
            name.sex, 
            name.age,
            name.population.year1,
-           name.date1) %>%
+           date1) %>%
     rename(sex=name.sex,
            pop=pop1,
            date=date1)
@@ -109,11 +119,12 @@ PlotPotentialAgeHeaping <- function(data,
            name.sex, 
            name.age,
            name.population.year2,
-           name.date2) %>%
+           date2) %>%
     rename(sex=name.sex,
            pop=pop2,
            date=date2)
   data_long <- rbind(long_year1, long_year2)
+  data_long$date <- as.factor(data_long$date) # ggplot has issues with Date class
   
   # for each level of disaggregation, create a plot in year1 and year2
   all_levels <- unique(levels(data[, name.disaggregations]))

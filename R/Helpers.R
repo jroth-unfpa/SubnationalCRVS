@@ -7,18 +7,26 @@ FormatVariablesDDM <- function(data,
                               name.sex,
                               name.males,
                               name.females,
-                              name.date1,
-                              name.date2,
                               name.population.year1,
                               name.population.year2,
+                              name.year1,
+                              name.month1,
+                              name.day1,
+                              name.year2,
+                              name.month2,
+                              name.day2,
                               name.deaths) {
   # re-naming varaibles to match requirements of ddm()
   data_for_ddm <- data %>% select(cod=name.disaggregations,
                                  pop1=name.population.year1,
                                  pop2=name.population.year2,
                                  deaths=name.deaths,
-                                 date1=name.date1,
-                                 date2=name.date2,
+                                 year1=name.year1,
+                                 month1=name.month1,
+                                 day1=name.day1,
+                                 year2=name.year2,
+                                 month2=name.month2,
+                                 day2=name.day2,
                                  age=name.age,
                                  sex=name.sex)
   data_for_ddm_males <- data_for_ddm %>% filter(sex == name.males)
@@ -250,12 +258,14 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
   stopifnot(one.sex %in% c("Females", "Males"))
   
   # set up y-axis
+  sensitivity_estimates_both_sexes <- sensitivity.estimates[sensitivity.estimates$cod == one.level,
+                                                           ]
   sensitivity_estimates_one <- sensitivity.estimates[sensitivity.estimates$cod == one.level &
                                                      sensitivity.estimates$sex == one.sex, 
                                                      ]
-  one_ylim <- c(0.9 * min(sensitivity_estimates_one[, output.type],
+  one_ylim <- c(0.9 * min(sensitivity_estimates_both_sexes[, output.type],
                           na.rm=TRUE),
-                1.1 * max(sensitivity_estimates_one[, output.type], 
+                1.1 * max(sensitivity_estimates_both_sexes[, output.type], 
                           na.rm=TRUE))
   mean_outcome <- as.numeric(unique(sensitivity_estimates_one[, paste0("mean_", output.type)]))
   sd_outcome <- as.numeric(unique(sensitivity_estimates_one[, paste0("sd_", output.type)]))
@@ -339,6 +349,73 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
   return(g_sensitivity)
 }
 
+CreateDateVariable <- function(data,
+                             name.disaggregations,
+                             name.year1,
+                             name.month1,
+                             name.day1,
+                             name.year2,
+                             name.month2,
+                             name.day2) {
+  if (length(unique(data[, name.year1])) != 1) {
+    stop("year1 variable must contain only one unique value")
+    if (is.numeric(data[, name.year1]) == FALSE & is.integer(data[, name.year1]) == FALSE) {
+        stop("the value of the year1 variable must either be a numeric or an integer")
+    }
+  }
+  if (length(unique(data[, name.month1])) != 1) {
+    stop("month1 variable must contain only one unique value")
+    if (is.numeric(data[, name.month1]) == FALSE & is.integer(data[, name.month1]) == FALSE) {
+      stop("the value of the month1 variable must either be a numeric or an integer")
+    }
+  }
+  if (length(unique(data[, name.day1])) != 1) {
+    stop("day1 variable must contain only one unique value")
+    if (is.numeric(data[, name.day1]) == FALSE & is.integer(data[, name.day1]) == FALSE) {
+      stop("the value of the day1 variable must either be a numeric or an integer")
+    }
+  }
+  if (length(unique(data[, name.year2])) != 1) {
+    stop("year2 variable must contain only one unique value")
+    if (is.numeric(data[, name.year2]) == FALSE & is.integer(data[, name.year2]) == FALSE) {
+      stop("the value of the year2 variable must either be a numeric or an integer")
+    }
+  }
+  if (length(unique(data[, name.month2])) != 1) {
+    stop("month2 variable must contain only one unique value")
+    if (is.numeric(data[, name.month2]) == FALSE & is.integer(data[, name.month2]) == FALSE) {
+      stop("the value of the month2 variable must either be a numeric or an integer")
+    }
+  }
+  if (length(unique(data[, name.day2])) != 1) {
+    stop("day2 variable must contain only one unique value")
+    if (is.numeric(data[, name.day2]) == FALSE & is.integer(data[, name.day2]) == FALSE) {
+      stop("the value of the day2 variable must either be a numeric or an integer")
+    }
+  }
+  date.1 <- as.Date(x=paste(data[1, name.year1], 
+                            data[1, name.month1], 
+                            data[1, name.day1], 
+                            sep="-"),
+                    format="%Y-%m-%d")
+  data[, "date1"] <- date.1
+  
+  date.2 <- as.Date(x=paste(data[1, name.year2], 
+                            data[1, name.month2], 
+                            data[1, name.day2], 
+                            sep="-"),
+                    format="%Y-%m-%d")
+  data[, "date2"] <- date.2
+  
+  ## converting year1,month1,day1,year2,month2,day2 to integers (as required by ddm())
+  data[, name.year1] <- as.integer(data[, name.year1])
+  data[, name.month1] <- as.integer(data[, name.month1])
+  data[, name.day1] <- as.integer(data[, name.day1])
+  data[, name.year2] <- as.integer(data[, name.year2])
+  data[, name.month2] <- as.integer(data[, name.month2])
+  data[, name.day2] <- as.integer(data[, name.day2])
+  return(data)
+}
 
 
 

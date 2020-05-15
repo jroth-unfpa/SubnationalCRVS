@@ -13,10 +13,14 @@
 #' @param name.sex Character string providing the name of the variable in `data` that represents sex
 #' @param name.males Character string providing the name of the value of `name.sex` variable that represents males
 #' @param name.females Character string providing the name of the value of `name.sex` variable that represents females
-#' @param name.date1 Character string providing the name of the variable in `data` that represents the earlier time point
-#' @param name.date2 Character string providing the name of the variable in `data` that represents the later time point
 #' @param name.population.year1 Character string providing the name of the variable in `data` that represents the population count in the earlier time point
 #' @param name.population.year2 Character string providing the name of the variable in `data` that represents the population count in the later time point
+#' @param name.year1 Character string providing the name of the variable in `data` that represents the year of the earlier of the two time periods (e.g. year of the earlier Census)
+#' @param name.month1 Character string providing the name of the variable in `data` that represents the month of the earlier of the two time periods (e.g. month of the earlier Census)
+#' @param name.day1 Character string providing the name of the variable in `data` that represents the day of the earlier of the two time periods (e.g. day of the earlier Census)
+#' @param name.year2 Character string providing the name of the variable in `data` that represents the year of the later of the two time periods (e.g. year of the later Census)
+#' @param name.month2 Character string providing the name of the variable in `data` that represents the month of the later of the two time periods (e.g. month of the later Census)
+#' @param name.day2 Character string providing the name of the variable in `data` that represents the day of the later of the two time periods (e.g. day of the later Census)
 #' @param name.national A character string providing the value of `name.disaggregations` variable that indicates national-level results (e.g. "Overall" or "National"). Defaults to NULL, implying `name.disaggregations` variable in `data` only includes values for subnational levels. Defaults to NULL#' @param name.deaths Character string providing the name of the variable in `data` that represents the total count or annual average count of deaths between the earlier and later time points
 #' @param deaths.summed A logical equivalent to the `deaths.summed` argument of `DDM::ddm()`, which indicates whether `name.deaths` provides the total count (TRUE) or annual average count (FALSE) of deaths between the two time points
 #' @param show.age.range.sensitivity A logical equal to TRUE if the DDM estimates are provided for every possible age range (obeying the `min.age.in.search`, `max.age.in.search`, and `min.number.of.ages` arguments) and equal to FALSE are only provided for the optimal age range based on the search performed by ddm(). Defaults to TRUE
@@ -34,10 +38,14 @@
 #'                            name.sex="sex",
 #'                            name.males="m",
 #'                            name.females="f",
-#'                            name.date1="date1",
-#'                            name.date2="date2",
 #'                            name.population.year1="pop1",
 #'                            name.population.year2="pop2",
+#'                            name.year1="year1"
+#'                            name.month1="month1",
+#'                            name.day1="day1",
+#'                            name.year2="year2",
+#'                            name.month2="month2",
+#'                            name.day2="day2"
 #'                            name.deaths="deaths",
 #'                            deaths.summed=TRUE,
 #'                            min.age.in.search=15,
@@ -57,10 +65,14 @@ EstimateDDM <- function(data,
                         name.sex,
                         name.males,
                         name.females,
-                        name.date1,
-                        name.date2,
                         name.population.year1,
                         name.population.year2,
+                        name.year1,
+                        name.month1,
+                        name.day1,
+                        name.year2,
+                        name.month2,
+                        name.day2,
                         name.national=NULL,
                         name.deaths,
                         deaths.summed, # should not have a default
@@ -73,12 +85,6 @@ EstimateDDM <- function(data,
                         smallest.upper.limit.sensitivity=40,
                         life.expectancy.in.open.group=NULL) {
   # variable checks -- again, this should call a common VariableChecks() function, maybe with an argument that can take the value "DDM"
-  if (length(unique(data[, name.date1])) != 1) {
-    stop("date1 variable must contain only one unique value")
-  }
-  if (length(unique(data[, name.date2])) != 1) {
-    stop("date2 variable must contain only one unique value")
-  }
   if (is.null(name.national) == FALSE) {
     if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
       stop(paste("The value",
@@ -87,8 +93,14 @@ EstimateDDM <- function(data,
                  name.disaggregations))
     }
   }
-  date.1 <- data[1, name.date1]
-  date.2 <- data[1, name.date2]
+  data <- CreateDateVariable(data=data,
+                             name.disaggregations=name.disaggregations,
+                             name.year1=name.year1,
+                             name.month1=name.month1,
+                             name.day1=name.day1,
+                             name.year2=name.year2,
+                             name.month2=name.month2,
+                             name.day2=name.day2)
   # re-formatting variables (this is the key purpose because the ddm() function is very picky)
   data_formatted <- FormatVariablesDDM(data=data, 
                      name.disaggregations=name.disaggregations,
@@ -96,10 +108,14 @@ EstimateDDM <- function(data,
                      name.sex=name.sex,
                      name.males=name.males,
                      name.females=name.females,
-                     name.date1=name.date1,
-                     name.date2=name.date2,
                      name.population.year1=name.population.year1,
                      name.population.year2=name.population.year2,
+                     name.year1=name.year1,
+                     name.month1=name.month1,
+                     name.day1=name.day1,
+                     name.year2=name.year2,
+                     name.month2=name.month2,
+                     name.day2=name.day2,
                      name.deaths=name.deaths)
   data_for_ddm_females <- data_formatted$data_for_ddm_females
   data_for_ddm_males <- data_formatted$data_for_ddm_males
@@ -215,6 +231,10 @@ EstimateDDM <- function(data,
     sensitivity_ggbseg_estimates <- as.data.frame(sensitivity_ggbseg_estimates[-1, ])
     sensitivity_ggbseg_estimates <- arrange(sensitivity_ggbseg_estimates,
                                          sex, cod)
+    ## cleaning up date variables
+    date.1 <- unique(data[, "date1"])
+    date.2 <- unique(data[, "date2"])
+
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
                 "name.national"=name.national,
