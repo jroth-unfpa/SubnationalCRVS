@@ -6,12 +6,11 @@ Authors@R:
            family = "Roth",
            role = c("aut", "cre"),
            email = "jroth@unfpa.org")
-Description: Visualize summaries of subnational demographic data quality assessment given a dataset with sex- and five-year-age- disaggregated population counts from two time points (usually consecutive Census years), within additional levels of subnational disaggregation (e.g. geographic regions and/or subnational characteristics such as education level). If the two time points do represent Census years and the data also contain registered deaths in the intercensal period, SubnationalCRVS also estimates and visualizes death registration completeness for the time period, within the included levels of subnational disaggregation.
+Description: Visualizations of demographic data quality assessment given a dataset with sex- and five-year-age- disaggregated population counts from two time points (usually consecutive Census years), within additional levels of subnational disaggregation (e.g. geographic regions and/or subnational characteristics such as education level). If the two time points do represent Census years and the data also contain registered deaths in the intercensal period, SubnationalCRVS also estimates and visualizes death registration completeness for the time period, within the included levels of subnational disaggregation.
 Depends: R (>= 3.5.0)
-License: GPL (>= 2)
+License: CC BY-SA 3.0 IGO
 Imports: ggplot2, dplyr, DDM, devtools, ggpubr, gridExtra, scales
 Suggests: DemoTools, knitr, rmarkdown
-Additional_repositories: install_packages("DemoTools")
-Encoding: UTF-8
+Additional_repositories: remotes::install_github("timriffe/DemoTools")
 LazyData: true
 RoxygenNote: 7.0.2
