@@ -376,9 +376,17 @@ summary {
 <div id="package-license-cc-by-sa-3.0-igo" class="section level3">
 <h3>Package license: <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0 IGO</a></h3>
 </div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>We can install <code>SubnationalCRVS</code> using the R code shown below. Since <code>SubnationalCRVS</code> is hosted on GitHub instead of CRAN, it cannot be installed with the usual <code>install.packages()</code> function. Instead, <code>SubnationalCRVS</code> can be installed with the <code>install_github()</code> function from the <code>devtools</code> package. The key dependency <code>DemoTools</code> [Riffe et al. 2019] is also hosted on GitHub instead of CRAN and can also be installed with <code>install_github()</code>.</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)
+library(devtools)
+install_github(&quot;timriffe/DemoTools&quot;) # install the DemoTools dependency 
+install_github(&quot;ConVERGE-UNFPA/SubnationalCRVS&quot;) # install the SubnationalCRVS package</code></pre>
+</div>
 <div id="description" class="section level2">
 <h2>Description</h2>
-<p>The <code>SubnationalCRVS</code> R package produces visualizations of data quality (age ratios, sex ratios, age-heaping indicies) separately within subnational levels (if provided) based on a dataset that reports population estimates from two time points disaggregated by sex and age. Although subnational levels often represent distinct geographic regions (e.g. provinces/states/regions), they may also represent other characteristics that vary within countries (e.g. income levels or education levels). <code>SubnationalCRVS</code> also produces national-level visualizations if sex- and age-disaggregated population counts are provided in the dataset at the national level (either in addition to or instead of at the subnational level).</p>
+<p>The <code>SubnationalCRVS</code> R package produces visualizations of data quality (age ratios, sex ratios, age-heaping indices) separately within subnational levels (if provided) based on a dataset that reports population estimates from two time points disaggregated by sex and age. Although subnational levels often represent distinct geographic regions (e.g. provinces/states/regions), they may also represent other characteristics that vary within countries (e.g. income levels or education levels). <code>SubnationalCRVS</code> also produces national-level visualizations if sex- and age-disaggregated population counts are provided in the dataset at the national level (either in addition to or instead of at the subnational level).</p>
 <p>If the two time points in the dataset represent consecutive Censuses that provide the population estimates, age is coded in five-year categories, and the dataset includes the number of registered deaths in the inercensal period, <code>SubnationalCRVS</code> also provides a convenient wrapper to the <code>DDM</code> package [Riffe, Lima, Quieroz, 2017] to estimate death registration completeness between the two Census years within the included levels of subnational disaggregation. <code>SubnationalCRVS</code> also provides visualizations of the DDM estimates of completeness to give a sense of subnational variation and the sensitivity of estimation to the choice of age range during the underlying fitting procedure.</p>
 </div>
 <div id="key-dependencies" class="section level2">
@@ -386,7 +394,7 @@ summary {
 <p>Riffe T, Lima E, Queiroz B (2017). <strong>DDM</strong>: Death registration coverage estimation. URL: <a href="https://cran.r-project.org/package=DDM" class="uri">https://cran.r-project.org/package=DDM</a></p>
 <p>Riffe T, Aburto JM, Alexander M, Fennell S, Kashnitsky I, Pascariu M and Gerland P (2019). <strong>DemoTools</strong>: An R package of tools for aggregate demographic analysis URL: <a href="https://github.com/timriffe/DemoTools/" class="uri">https://github.com/timriffe/DemoTools/</a>.</p>
 <p>Wickham H, François R, Henry L, Müller K (2020). <strong>dplyr</strong>: A grammar of data manipulation. URL: <a href="https://cran.r-project.org/package=dplyr" class="uri">https://cran.r-project.org/package=dplyr</a></p>
-<p>Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C, Woo K, Yutani H, Dunnington D (2020). <strong>ggplot2</strong>: Create elegant data visualisations using the grammar of graphics. URL: <a href="https://cran.r-project.org/package=ggplot2" class="uri">https://cran.r-project.org/package=ggplot2</a></p>
+<p>Wickham H, Chang W, Henry L, Pedersen TL, Takahashi K, Wilke C, Woo K, Yutani H, Dunnington D (2020). <strong>ggplot2</strong>: Create elegant data visualizations using the grammar of graphics. URL: <a href="https://cran.r-project.org/package=ggplot2" class="uri">https://cran.r-project.org/package=ggplot2</a></p>
 </div>
 <div id="other-references" class="section level2">
 <h2>Other References</h2>
