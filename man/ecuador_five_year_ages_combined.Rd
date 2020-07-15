@@ -4,10 +4,12 @@
 \name{ecuador_five_year_ages_combined}
 \alias{ecuador_five_year_ages_combined}
 \title{Five-year age groups example dataset for package \code{SubNationalCRVS}}
-\format{A data frame with X rows and Y variables
+\format{
+A data frame with X rows and Y variables
 \itemize{
   \item asdf
-}}
+}
+}
 \usage{
 ecuador_five_year_ages_combined
 }

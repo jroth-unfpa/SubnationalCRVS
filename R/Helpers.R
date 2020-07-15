@@ -16,6 +16,14 @@ FormatVariablesDDM <- function(data,
                               name.month2,
                               name.day2,
                               name.deaths) {
+  # verifying/convering name.disaggregations variable to character
+  if (is.character(data[, name.disaggregations]) == FALSE) {
+    print(paste("convering the variable", 
+                name.disaggregations,
+                "to a character before proceeding"))
+    data[, name.disaggregations] <- as.character(data[, name.disaggregations])
+    
+  }
   # re-naming varaibles to match requirements of ddm()
   data_for_ddm <- data %>% select(cod=name.disaggregations,
                                  pop1=name.population.year1,

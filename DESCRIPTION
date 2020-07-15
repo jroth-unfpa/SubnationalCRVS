@@ -11,6 +11,5 @@ Depends: R (>= 3.5.0)
 License: CC BY-SA 3.0 IGO
 Imports: ggplot2, dplyr, DDM, devtools, ggpubr, gridExtra, scales
 Suggests: DemoTools, knitr, rmarkdown
-Additional_repositories: remotes::install_github("timriffe/DemoTools")
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1

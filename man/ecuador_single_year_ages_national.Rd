@@ -4,10 +4,12 @@
 \name{ecuador_single_year_ages_national}
 \alias{ecuador_single_year_ages_national}
 \title{Single-year-age example dataset for package \code{SubnationalCRVS}}
-\format{A data frame with X rows and Y variables
+\format{
+A data frame with X rows and Y variables
 \itemize{
   \item asdf
-}}
+}
+}
 \usage{
 ecuador_single_year_ages_national
 }
