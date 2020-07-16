@@ -2,7 +2,7 @@
 
 ### Package created by: Jeremy Roth
 
-### Package last updated: 7 July 2020
+### Package last updated: 20 July 2020
 
 ### Package license: [CC BY-SA 3.0 IGO](https://creativecommons.org/licenses/by-sa/3.0/)
 
@@ -18,7 +18,7 @@ install_github("ConVERGE-UNFPA/SubnationalCRVS") # install the SubnationalCRVS p
 ## Description
 The `SubnationalCRVS` R package produces visualizations of data quality (age ratios, sex ratios, age-heaping indices) separately within subnational levels (if provided) based on a dataset that reports population estimates from two time points disaggregated by sex and age. Although subnational levels often represent distinct geographic regions (e.g. provinces/states/regions), they may also represent other characteristics that vary within countries (e.g. income levels or education levels). `SubnationalCRVS` also produces national-level visualizations if sex- and age-disaggregated population counts are provided in the dataset at the national level (either in addition to or instead of at the subnational level).
 
-If the two time points in the dataset represent consecutive Censuses that provide the population estimates, age is coded in five-year categories, and the dataset includes the number of registered deaths in the inercensal period, `SubnationalCRVS` also provides a convenient wrapper to the `DDM` package [Riffe, Lima, Quieroz, 2017] to estimate death registration completeness between the two Census years within the included levels of subnational disaggregation. `SubnationalCRVS` also provides visualizations of the DDM estimates of completeness to give a sense of subnational variation and the sensitivity of estimation to the choice of age range during the underlying fitting procedure. 
+If the two time points in the dataset represent consecutive Censuses that provide the population estimates, age is coded in five-year categories, and the dataset includes the number of registered deaths in the inercensal period, `SubnationalCRVS` also provides a convenient wrapper to the `DDM` package [Riffe, Lima, Quieroz, 2017] to estimate death registration completeness between the two Census years within the included levels of subnational disaggregation. `SubnationalCRVS` also provides visualizations of the DDM estimates of completeness -- using the GGB, SEG, GGB-SEG methods [Moultrie et al. 2013] -- to give a sense of subnational variation and the sensitivity of estimation to the choice of age range during the underlying fitting procedure. 
 
 ## Key Dependencies
 Riffe T, Lima E, Queiroz B (2017). **DDM**: Death registration coverage estimation. URL: https://cran.r-project.org/package=DDM
