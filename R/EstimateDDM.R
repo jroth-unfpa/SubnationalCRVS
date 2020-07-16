@@ -119,9 +119,9 @@ EstimateDDM <- function(data,
                      name.deaths=name.deaths)
   data_for_ddm_females <- data_formatted$data_for_ddm_females
   data_for_ddm_males <- data_formatted$data_for_ddm_males
-  # estimate completeness with ggbseg() function from DDM package
+  # estimate completeness with ddm() function from DDM package
   ## males
-  result_ggbseg_males <- ggbseg(X=data_for_ddm_males,
+  result_ddm_males <- ddm(X=data_for_ddm_males,
                     deaths.summed=deaths.summed,
                     minA=min.age.in.search,
                     maxA=max.age.in.search,
@@ -130,16 +130,16 @@ EstimateDDM <- function(data,
                     eOpen=life.expectancy.in.open.group)
   
   ## females
-  result_ggbseg_females <- ggbseg(X=data_for_ddm_females,
+  result_ddm_females <- ddm(X=data_for_ddm_females,
                           deaths.summed=deaths.summed,
                           minA=min.age.in.search,
                           maxA=max.age.in.search,
                           minAges=min.number.of.ages,
                           exact.ages=exact.ages.to.use,
                           eOpen=life.expectancy.in.open.group)
-  # summarize and refomat results of call to ggbseg()
-  ggbseg_estimates <- FormatOutputGGBSEG(result_ggbseg_females=result_ggbseg_females,
-                                          result_ggbseg_males=result_ggbseg_males)
+  # summarize and refomat results of call to ddm()
+  ddm_estimates <- FormatOutputDDM(result_ddm_females=result_ddm_females,
+                                      result_ddm_males=result_ddm_males)
   # also provide total population counts
   data_with_total_pop <- data %>%
                          group_by(get(name.disaggregations)) %>%
@@ -148,7 +148,7 @@ EstimateDDM <- function(data,
                          as.data.frame()
   names(data_with_total_pop)[names(data_with_total_pop) == "get(name.disaggregations)"] <- "cod"
   data_with_total_pop$cod <- as.factor(data_with_total_pop$cod)
-  ggbseg_estimates <- left_join(ggbseg_estimates,
+  ddm_estimates <- left_join(ddm_estimates,
                              data_with_total_pop,
                              by="cod")
                              
@@ -175,28 +175,32 @@ EstimateDDM <- function(data,
     n_age_combinations <- length(acceptable_age_range_sequences)
     
     # storing summaries of sensitivity (point estinates and RMSE by possible age range)
-    sensitivity_ggbseg_estimates <- matrix(NA, 
-                                           nrow=1, 
-                                           ncol=(ncol(ggbseg_estimates) + 1))
-    colnames(sensitivity_ggbseg_estimates) <- c(colnames(ggbseg_estimates), "RMSE")
+    sensitivity_ddm_estimates <- matrix(NA, 
+                                        nrow=1, 
+                                        ncol=(ncol(ddm_estimates) + 1))
+    colnames(sensitivity_ddm_estimates) <- c(colnames(ddm_estimates), "RMSE")
     
     # performing GGB-SEG estimation across all combinations of exact.ages sequences
-    print(paste("performing GGB-SEG estimation within each of", 
-                 n_age_combinations, 
-                 "possible age ranges..."))
+    n_cod <- length(unique(ddm_estimates$cod))
+    print("estimating completeness of adult death registration completeness")
+    print("with GGB, SEG, and GGB-SEG methods within each of")
+    print(paste(n_age_combinations, 
+                "possible age ranges within each of",
+                n_cod,
+                "levels of subnational disaggregations"))
     for (seq in 1:length(acceptable_age_range_sequences)) {
       one_exact_ages <- acceptable_age_range_sequences[[seq]]
       ## point estimates for males and females
-      one_ggbseg_females <- ggbseg(X=data_for_ddm_females,
+      one_ddm_females <- ddm(X=data_for_ddm_females,
                              deaths.summed=deaths.summed,
                              exact.ages=one_exact_ages,
                              eOpen=life.expectancy.in.open.group)
-      one_ggbseg_males <- ggbseg(X=data_for_ddm_males,
+      one_ddm_males <- ddm(X=data_for_ddm_males,
                            deaths.summed=deaths.summed,
                            exact.ages=one_exact_ages,
                            eOpen=life.expectancy.in.open.group)
-      one_ggbseg_estimates <- FormatOutputGGBSEG(result_ggbseg_females=one_ggbseg_females,
-                                                 result_ggbseg_males=one_ggbseg_males)
+      one_ddm_estimates <- FormatOutputDDM(result_ddm_females=one_ddm_females,
+                                           result_ddm_males=one_ddm_males)
       
       ## RMSEs for females and males
       one_RMSE_females <- CallggbgetRMS(my.ddm.data=data_for_ddm_females,
@@ -209,14 +213,14 @@ EstimateDDM <- function(data,
                                       min.age.in.search=min.age.in.search,
                                       max.age.in.search=max.age.in.search,
                                       deaths.summed=deaths.summed)
-      one_RMSE_females$sex <- "Females" ## to match coding from FormatOutputGGBSEG
-      one_RMSE_males$sex <- "Males" ## to match coding from FormatOutputGGBSEG
+      one_RMSE_females$sex <- "Females" ## to match coding from FormatOutputDDM
+      one_RMSE_males$sex <- "Males" ## to match coding from FormatOutputDDM
       one_RMSE <- rbind(one_RMSE_females,
                         one_RMSE_males)
       
       ## merge together into final table
       ### merge in populations
-      one_combined_estimates <- left_join(x=one_ggbseg_estimates,
+      one_combined_estimates <- left_join(x=one_ddm_estimates,
                                         y=data_with_total_pop,
                                         by="cod")
       ### merge in RMSEs
@@ -225,12 +229,33 @@ EstimateDDM <- function(data,
                                           by=c("cod", "sex"))
       
       # stack up results for all acceptable age ranges
-      sensitivity_ggbseg_estimates <- rbind(sensitivity_ggbseg_estimates,
-                                            one_combined_estimates)
+      sensitivity_ddm_estimates <- rbind(sensitivity_ddm_estimates,
+                                          one_combined_estimates)
     }
-    sensitivity_ggbseg_estimates <- as.data.frame(sensitivity_ggbseg_estimates[-1, ])
-    sensitivity_ggbseg_estimates <- arrange(sensitivity_ggbseg_estimates,
+    sensitivity_ddm_estimates <- as.data.frame(sensitivity_ddm_estimates[-1, ])
+
+    # merge in indicator of optimal age range
+    ddm_estimates$optimal_age_range <- TRUE
+    sensitivity_ddm_estimates <- left_join(x=sensitivity_ddm_estimates,
+                                           y=ddm_estimates[, c("cod", "sex", 
+                                                               "lower_age_range", 
+                                                               "upper_age_range", 
+                                                               "optimal_age_range")],
+                                           by=c("cod", "sex", 
+                                                "lower_age_range", "upper_age_range"))
+    sensitivity_ddm_estimates[is.na(sensitivity_ddm_estimates$optimal_age_range), 
+                              "optimal_age_range"] <- FALSE
+    ddm_estimates$optimal_age_range <- NULL
+    
+    # sort/order columns    
+    sensitivity_ddm_estimates <- arrange(sensitivity_ddm_estimates,
                                          sex, cod)
+    sensitivity_ddm_estimates <- sensitivity_ddm_estimates %>%
+                                 select(cod, sex, 
+                                        ggbseg, ggb, seg,
+                                        total_pop1, total_pop2,
+                                        everything())
+    
     ## cleaning up date variables
     date.1 <- unique(data[, "date1"])
     date.2 <- unique(data[, "date2"])
@@ -240,14 +265,14 @@ EstimateDDM <- function(data,
                 "name.national"=name.national,
                 "date1"=date.1,
                 "date2"=date.2,
-                "sensitivity_ggbseg_estimates"=sensitivity_ggbseg_estimates,
-                "ggbseg_estimates"=ggbseg_estimates))
+                "sensitivity_ddm_estimates"=sensitivity_ddm_estimates,
+                "ddm_estimates"=ddm_estimates))
   } else {
     return(list("show.age.range.sensitivity"=show.age.range.sensitivity,
                 "name_disaggregations"=name.disaggregations,
                 "name.national"=name.national,
                 "date1"=date.1,
                 "date2"=date.2,
-                "ggbseg_estimates"=ggbseg_estimates))
+                "ddm_estimates"=ddm_estimates))
   }
 }

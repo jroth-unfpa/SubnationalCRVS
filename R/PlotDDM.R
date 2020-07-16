@@ -77,30 +77,30 @@ PlotDDM <- function(ddm_results,
   name_national <- ddm_results$name.national
   
   # plot GGB-SEG point estimates
-  ggbseg_point_estimates <- ddm_results$ggbseg_estimates
-  ggbseg_point_estimates$ggbseg <- ggbseg_point_estimates$ggbseg * 100
-  test <- ggbseg_point_estimates %>%
+  ddm_point_estimates <- ddm_results$ddm_estimates
+  ddm_point_estimates$ggbseg <- ddm_point_estimates$ggbseg * 100
+  test <- ddm_point_estimates %>%
           filter(sex == "Females") %>%
           arrange(ggbseg) %>%
           select(cod) %>%
           pull() %>%
           as.character()
-  ggbseg_point_estimates$cod <- factor(as.character(ggbseg_point_estimates$cod),
+  ddm_point_estimates$cod <- factor(as.character(ddm_point_estimates$cod),
                                     levels=test)
   if (is.null(name_national) == FALSE) {
-    ggbseg_point_estimates_for_plot <- ggbseg_point_estimates[ggbseg_point_estimates[, "cod"] != name_national, ]
+    ddm_point_estimates_for_plot <- ddm_point_estimates[ddm_point_estimates[, "cod"] != name_national, ]
   } else {
-    ggbseg_point_estimates_for_plot <-  ggbseg_point_estimates
+    ddm_point_estimates_for_plot <-  ddm_point_estimates
   }
   
-  g_point_estimate <- ggplot(data=ggbseg_point_estimates_for_plot,
+  g_point_estimate <- ggplot(data=ddm_point_estimates_for_plot,
                              aes(x=ggbseg,
                                  y=cod))
   if (show.size.population == TRUE) {
     g_point_estimate <- g_point_estimate + 
-                      geom_point(aes(col=sex,
+                        geom_point(aes(col=sex,
                                      size=total_pop2),
-                                 alpha=0.7) +
+                                   alpha=0.7) +
     scale_size_continuous(labels=comma,
                           range=c(1.5, 7),
                           name=paste0("Pop. (", date2, ")"))
@@ -122,29 +122,29 @@ PlotDDM <- function(ddm_results,
     g_color_females <- unique(g_colors[g_point_estimate$data$sex == "Females"])
     
     if (length(g_color_males) == 1 & length(g_color_females) == 1) {
-      identify_sex_larger_completeness <- ggbseg_point_estimates_for_plot %>%
+      identify_sex_larger_completeness <- ddm_point_estimates_for_plot %>%
         group_by(cod) %>%
         summarise("males_larger"=ggbseg[sex == "Males"] >
                     ggbseg[sex == "Females"])
-      ggbseg_point_estimates_for_plot_larger <- left_join(x=ggbseg_point_estimates_for_plot,
+      ddm_point_estimates_for_plot_larger <- left_join(x=ddm_point_estimates_for_plot,
                                               y=identify_sex_larger_completeness,
                                               by="cod")
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ggbseg_point_estimates_for_plot_larger %>%
+                          geom_line(data=ddm_point_estimates_for_plot_larger %>%
                                        filter(males_larger == TRUE),
                                     col=g_color_males) +
-                          geom_line(data=ggbseg_point_estimates_for_plot_larger %>%
+                          geom_line(data=ddm_point_estimates_for_plot_larger %>%
                                        filter(males_larger == FALSE),
                                     col=g_color_females)
     } else {
       g_point_estimate <- g_point_estimate +
-                          geom_line(data=ggbseg_point_estimates_for_plot,
+                          geom_line(data=ddm_point_estimates_for_plot,
                                     col="gray")
     }
   }
   if (is.null(name_national) == FALSE) {
     g_point_estimate <-      g_point_estimate + 
-      geom_vline(aes(xintercept=ggbseg_point_estimates %>% 
+      geom_vline(aes(xintercept=ddm_point_estimates %>% 
                        filter(cod == name_national & 
                                 sex == "Males") %>% 
                        select(ggbseg) %>%
@@ -153,7 +153,7 @@ PlotDDM <- function(ddm_results,
                  col=g_color_males,
                  alpha=0.8,
                  size=1.2) +
-      geom_vline(aes(xintercept=ggbseg_point_estimates %>% 
+      geom_vline(aes(xintercept=ddm_point_estimates %>% 
                        filter(cod == name_national & 
                                 sex == "Females") %>% 
                        select(ggbseg) %>%
@@ -168,14 +168,14 @@ PlotDDM <- function(ddm_results,
   }
   # plot GGB-SEG estimates for all possible age ranges considered in the search that generated the point estimate
   if (ddm_results$show.age.range.sensitivity == TRUE) {
-    ggbseg_sensitivity_estimates <- ddm_results$sensitivity_ggbseg_estimates
-    ggbseg_sensitivity_estimates$ggbseg <- ggbseg_sensitivity_estimates$ggbseg * 100
-    ggbseg_sensitivity_estimates[, "lower_age_range"] <- 
-      as.factor(ggbseg_sensitivity_estimates[, "lower_age_range"])
-    ggbseg_sensitivity_estimates[, "upper_age_range"] <- 
-      as.factor(ggbseg_sensitivity_estimates[, "upper_age_range"])
+    ddm_sensitivity_estimates <- ddm_results$sensitivity_ddm_estimates
+    ddm_sensitivity_estimates$ggbseg <- ddm_sensitivity_estimates$ggbseg * 100
+    ddm_sensitivity_estimates[, "lower_age_range"] <- 
+      as.factor(ddm_sensitivity_estimates[, "lower_age_range"])
+    ddm_sensitivity_estimates[, "upper_age_range"] <- 
+      as.factor(ddm_sensitivity_estimates[, "upper_age_range"])
     # compute sample mean and SD for the point estimates and RMSEs within a cod/sex combination
-    ggbseg_sensitivity_estimates <- ggbseg_sensitivity_estimates %>%
+    ddm_sensitivity_estimates <- ddm_sensitivity_estimates %>%
                                     group_by(cod, sex) %>%
                                     mutate("mean_ggbseg"=signif(mean(ggbseg, na.rm=TRUE), 3),
                                               "sd_ggbseg"=signif(sd(ggbseg, na.rm=TRUE), 3),
@@ -183,7 +183,7 @@ PlotDDM <- function(ddm_results,
                                               "sd_RMSE"=signif(sd(RMSE, na.rm=TRUE), 3)) %>%
                                    as.data.frame()
    
-    all_levels <- unique(ggbseg_sensitivity_estimates$cod)
+    all_levels <- unique(ddm_sensitivity_estimates$cod)
     n_disaggregations <- length(all_levels)
     list_plots_sensitivity <- vector("list", length=n_disaggregations)
     list_plots_RMSE <- vector("list", length=n_disaggregations)
@@ -197,7 +197,7 @@ PlotDDM <- function(ddm_results,
                  name_national))
     }
     if (is.null(name_national) == FALSE) {
-      if (name_national %in% unique(ggbseg_point_estimates[, "cod"]) == FALSE) {
+      if (name_national %in% unique(ddm_point_estimates[, "cod"]) == FALSE) {
         stop(paste("The value",
                    name.national,
                    "was not found in the variable",
@@ -209,16 +209,16 @@ PlotDDM <- function(ddm_results,
       one_level <- all_levels[i]
       
       ## Females
-      g_sensitivity_females <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
-                                      point.estimates=ggbseg_point_estimates,
+      g_sensitivity_females <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
+                                      point.estimates=ddm_point_estimates,
                                       output.type="ggbseg",
                                       one.sex="Females",
                                       one.level=one_level,
                                       label.completeness=label.completeness,
                                       label.RMSE=label.RMSE,
                                       base.size.sensitivity=base.size.sensitivity)
-      g_RMSE_females <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
-                                                      point.estimates=ggbseg_point_estimates,
+      g_RMSE_females <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
+                                                      point.estimates=ddm_point_estimates,
                                                       output.type="RMSE",
                                                       one.sex="Females",
                                                       one.level=one_level,
@@ -227,16 +227,16 @@ PlotDDM <- function(ddm_results,
                                                       base.size.sensitivity=base.size.sensitivity)
       
       ## Males
-      g_sensitivity_males <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
-                                                      point.estimates=ggbseg_point_estimates,
+      g_sensitivity_males <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
+                                                      point.estimates=ddm_point_estimates,
                                                       output.type="ggbseg",
                                                       one.sex="Males",
                                                       one.level=one_level,
                                                       label.completeness=label.completeness,
                                                       label.RMSE=label.RMSE,
                                                       base.size.sensitivity=base.size.sensitivity)
-      g_RMSE_males <- MakeOneSensitivityPlot(sensitivity.estimates=ggbseg_sensitivity_estimates,
-                                               point.estimates=ggbseg_point_estimates,
+      g_RMSE_males <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
+                                               point.estimates=ddm_point_estimates,
                                                output.type="RMSE",
                                                one.sex="Males",
                                                one.level=one_level,

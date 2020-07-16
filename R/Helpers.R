@@ -18,7 +18,7 @@ FormatVariablesDDM <- function(data,
                               name.deaths) {
   # verifying/convering name.disaggregations variable to character
   if (is.character(data[, name.disaggregations]) == FALSE) {
-    print(paste("convering the variable", 
+    print(paste("converting the variable", 
                 name.disaggregations,
                 "to a character before proceeding"))
     data[, name.disaggregations] <- as.character(data[, name.disaggregations])
