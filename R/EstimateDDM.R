@@ -184,7 +184,9 @@ EstimateDDM <- function(data,
     n_cod <- length(unique(ddm_estimates$cod))
     print("estimating completeness of adult death registration completeness")
     print("with GGB, SEG, and GGB-SEG methods within each of")
-    print(paste(n_age_combinations, 
+    print(paste("estimating completeness of adult death registration completeness",
+                "with GGB, SEG, and GGB-SEG methods within each of",
+                n_age_combinations, 
                 "possible age ranges within each of",
                 n_cod,
                 "levels of subnational disaggregations"))
