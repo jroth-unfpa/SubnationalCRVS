@@ -182,8 +182,6 @@ EstimateDDM <- function(data,
     
     # performing GGB-SEG estimation across all combinations of exact.ages sequences
     n_cod <- length(unique(ddm_estimates$cod))
-    print("estimating completeness of adult death registration completeness")
-    print("with GGB, SEG, and GGB-SEG methods within each of")
     print(paste("estimating completeness of adult death registration completeness",
                 "with GGB, SEG, and GGB-SEG methods within each of",
                 n_age_combinations, 
