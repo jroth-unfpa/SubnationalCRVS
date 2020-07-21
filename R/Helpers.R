@@ -236,7 +236,7 @@ CallggbgetRMS <- function(my.ddm.data,
   }
   n_cod <- length(unique_cod)
   df_cod <- as.data.frame(matrix(NA, nrow=n_cod, ncol=2))
-  names(df_cod) <- c("cod", "RMSE")
+  names(df_cod) <- c("cod", "RMSE_ggb")
   for (i in 1:n_cod) {
     one_ddm_data <- my.ddm.data[my.ddm.data$cod == unique_cod[i], ]
     one_codi <- ggbMakeColumns(codi=one_ddm_data, 
@@ -244,12 +244,13 @@ CallggbgetRMS <- function(my.ddm.data,
                            maxA=max.age.in.search,
                            deaths.summed=deaths.summed)
     df_cod[i, "cod"] <- unique_cod[i]
-    df_cod[i, "RMSE"] <- signif(ggbgetRMS(agesi=age.range,
+    df_cod[i, "RMSE_ggb"] <- signif(ggbgetRMS(agesi=age.range,
                                          codi=one_codi),
                                4)
     df_cod[i, ]
   }
-  df_cod$cod <- as.factor(df_cod$cod)
+  #df_cod$cod <- as.factor(df_cod$cod)
+  df_cod$cod <- as.character(df_cod$cod)
   return(df_cod)
 }
 
@@ -262,7 +263,7 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
                                    label.completeness,
                                    label.RMSE,
                                    base.size.sensitivity) {
-  stopifnot(output.type %in% c("ggbseg","RMSE"))
+  stopifnot(output.type %in% c("ggbseg","RMSE_ggb"))
   stopifnot(one.sex %in% c("Females", "Males"))
   
   # set up y-axis
@@ -291,9 +292,9 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
                       sd_outcome, 
                       ")")
 
-  } else if (output.type == "RMSE") {
+  } else if (output.type == "RMSE_ggb") {
     y_label <- label.RMSE
-    y_title <- paste0("RMSE for age-range selection in\n",
+    y_title <- paste0("RMSE from GGB age-range selection in\n",
                       one.level,
                       "--",
                       one.sex,
@@ -330,8 +331,8 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
                          sex == one.sex) %>% 
                   select(output.type) %>%
                   as.numeric() 
-  } else if (output.type == "RMSE") {
-    # computing RMSE corresponding to selected age range (should be the minimum)
+  } else if (output.type == "RMSE_ggb") {
+    # computing RMSE_ggb corresponding to selected age range (should be the minimum)
     selected_lower_age <- point.estimates %>% 
                           filter(cod == one.level & 
                                  sex == one.sex) %>%
@@ -347,7 +348,7 @@ MakeOneSensitivityPlot <- function(sensitivity.estimates,
                                 sex == one.sex &
                                 lower_age_range == selected_lower_age &
                                 upper_age_range == selected_upper_age) %>%
-                         select(RMSE) %>%
+                         select(RMSE_ggb) %>%
                          as.numeric()
   }
   g_sensitivity <- g_sensitivity + 

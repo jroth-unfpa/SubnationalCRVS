@@ -56,7 +56,9 @@ ComputeSexRatios <- function(data,
                              name.year2,
                              name.month2,
                              name.day2) {
-  # variable checks (should just call another function to do the checks that doesn't need to be documented)
+  if (!is.data.frame(data)) {
+    stop("the dataset provided in the 'data' argument needs to be a data frame")
+  }
   data <- CreateDateVariable(data=data,
                              name.disaggregations=name.disaggregations,
                              name.year1=name.year1,

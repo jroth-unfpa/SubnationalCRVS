@@ -99,6 +99,9 @@ PlotAgeHeapingScores <- function(data,
                           fig.ncol=1,
                           save.name.plots=NULL,
                           plots.dir="") {
+  if (!is.data.frame(data)) {
+    stop("the dataset provided in the 'data' argument needs to be a data frame")
+  }
  data[, name.disaggregations] <- as.factor(data[, name.disaggregations])
  data <- CreateDateVariable(data=data,
                             name.disaggregations=name.disaggregations,

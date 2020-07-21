@@ -64,7 +64,7 @@ PlotDDM <- function(ddm_results,
                     show.lines.sex.differential=TRUE,
                     show.size.population=TRUE,
                     label.completeness="Estimated death registration completeness (GGB-SEG)",
-                    label.RMSE="RMSE for age-range selection",
+                    label.RMSE="RMSE from GGB age-range selection",
                     label.subnational.level=ddm_results$name_disaggregations,
                     save.name.plot.point.estimates=NULL,
                     save.name.plots.sensitivity=NULL,
@@ -179,8 +179,8 @@ PlotDDM <- function(ddm_results,
                                     group_by(cod, sex) %>%
                                     mutate("mean_ggbseg"=signif(mean(ggbseg, na.rm=TRUE), 3),
                                               "sd_ggbseg"=signif(sd(ggbseg, na.rm=TRUE), 3),
-                                              "mean_RMSE"=signif(mean(RMSE, na.rm=TRUE), 3),
-                                              "sd_RMSE"=signif(sd(RMSE, na.rm=TRUE), 3)) %>%
+                                              "mean_RMSE_ggb"=signif(mean(RMSE_ggb, na.rm=TRUE), 3),
+                                              "sd_RMSE_ggb"=signif(sd(RMSE_ggb, na.rm=TRUE), 3)) %>%
                                    as.data.frame()
    
     all_levels <- unique(ddm_sensitivity_estimates$cod)
@@ -219,7 +219,7 @@ PlotDDM <- function(ddm_results,
                                       base.size.sensitivity=base.size.sensitivity)
       g_RMSE_females <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
                                                       point.estimates=ddm_point_estimates,
-                                                      output.type="RMSE",
+                                                      output.type="RMSE_ggb",
                                                       one.sex="Females",
                                                       one.level=one_level,
                                                       label.completeness=label.completeness,
@@ -237,7 +237,7 @@ PlotDDM <- function(ddm_results,
                                                       base.size.sensitivity=base.size.sensitivity)
       g_RMSE_males <- MakeOneSensitivityPlot(sensitivity.estimates=ddm_sensitivity_estimates,
                                                point.estimates=ddm_point_estimates,
-                                               output.type="RMSE",
+                                               output.type="RMSE_ggb",
                                                one.sex="Males",
                                                one.level=one_level,
                                                label.completeness=label.completeness,
@@ -304,7 +304,7 @@ PlotDDM <- function(ddm_results,
         ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
                       name_disaggregations, "_", Sys.Date(), ".pdf"),
                overall_sensitivity)
-        ggsave(paste0(plots.dir, "ggbseg_RMSE_", 
+        ggsave(paste0(plots.dir, "ggbseg_RMSE_ggb_", 
                       name_disaggregations, "_", Sys.Date(), ".pdf"),
                overall_RMSE)
       }
@@ -312,7 +312,7 @@ PlotDDM <- function(ddm_results,
         ggsave(paste0(plots.dir, "ggbseg_sensitivity_", 
                       name_national, "_", Sys.Date(), ".pdf"),
                disaggregated_plot_national_sensitivity)
-        ggsave(paste0(plots.dir, "ggbseg_RMSE_", 
+        ggsave(paste0(plots.dir, "ggbseg_RMSE_ggb_", 
                       name_national, "_", Sys.Date(), ".pdf"),
                disaggregated_plot_national_RMSE)
       }

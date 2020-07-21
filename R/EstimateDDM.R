@@ -84,7 +84,9 @@ EstimateDDM <- function(data,
                         largest.lower.limit.sensitivity=35,
                         smallest.upper.limit.sensitivity=40,
                         life.expectancy.in.open.group=NULL) {
-  # variable checks -- again, this should call a common VariableChecks() function, maybe with an argument that can take the value "DDM"
+  if (!is.data.frame(data)) {
+    stop("the dataset provided in the 'data' argument needs to be a data frame")
+  }
   if (is.null(name.national) == FALSE) {
     if (name.national %in% unique(data[, name.disaggregations]) == FALSE) {
       stop(paste("The value",
@@ -178,7 +180,7 @@ EstimateDDM <- function(data,
     sensitivity_ddm_estimates <- matrix(NA, 
                                         nrow=1, 
                                         ncol=(ncol(ddm_estimates) + 1))
-    colnames(sensitivity_ddm_estimates) <- c(colnames(ddm_estimates), "RMSE")
+    colnames(sensitivity_ddm_estimates) <- c(colnames(ddm_estimates), "RMSE_ggb")
     
     # performing GGB-SEG estimation across all combinations of exact.ages sequences
     n_cod <- length(unique(ddm_estimates$cod))
@@ -187,7 +189,7 @@ EstimateDDM <- function(data,
                 n_age_combinations, 
                 "possible age ranges within each of",
                 n_cod,
-                "levels of subnational disaggregations"))
+                "levels of subnational disaggregations..."))
     for (seq in 1:length(acceptable_age_range_sequences)) {
       one_exact_ages <- acceptable_age_range_sequences[[seq]]
       ## point estimates for males and females
@@ -234,18 +236,18 @@ EstimateDDM <- function(data,
     }
     sensitivity_ddm_estimates <- as.data.frame(sensitivity_ddm_estimates[-1, ])
 
-    # merge in indicator of optimal age range
-    ddm_estimates$optimal_age_range <- TRUE
+    # merge in indicator of "optimal" age range selected by GGB
+    ddm_estimates$selected_age_range_ggb <- TRUE
     sensitivity_ddm_estimates <- left_join(x=sensitivity_ddm_estimates,
                                            y=ddm_estimates[, c("cod", "sex", 
                                                                "lower_age_range", 
                                                                "upper_age_range", 
-                                                               "optimal_age_range")],
+                                                               "selected_age_range_ggb")],
                                            by=c("cod", "sex", 
                                                 "lower_age_range", "upper_age_range"))
-    sensitivity_ddm_estimates[is.na(sensitivity_ddm_estimates$optimal_age_range), 
-                              "optimal_age_range"] <- FALSE
-    ddm_estimates$optimal_age_range <- NULL
+    sensitivity_ddm_estimates[is.na(sensitivity_ddm_estimates$selected_age_range_ggb), 
+                              "selected_age_range_ggb"] <- FALSE
+    ddm_estimates$selected_age_range_ggb <- NULL
     
     # sort/order columns    
     sensitivity_ddm_estimates <- arrange(sensitivity_ddm_estimates,

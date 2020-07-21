@@ -84,7 +84,9 @@ PlotPotentialAgeHeaping <- function(data,
                           save.name.overall=NULL,
                           save.name.disaggregated=NULL,
                           plots.dir="") {
-  # variable checks (should just call another function to do the checks that doesn't need to be documented)
+  if (!is.data.frame(data)) {
+    stop("the dataset provided in the 'data' argument needs to be a data frame")
+  }
   data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
   data <- CreateDateVariable(data=data,
                              name.disaggregations=name.disaggregations,

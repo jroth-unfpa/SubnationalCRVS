@@ -13,7 +13,7 @@ PlotDDM(
   show.lines.sex.differential = TRUE,
   show.size.population = TRUE,
   label.completeness = "Estimated death registration completeness (GGB-SEG)",
-  label.RMSE = "RMSE for age-range selection",
+  label.RMSE = "RMSE from GGB age-range selection",
   label.subnational.level = ddm_results$name_disaggregations,
   save.name.plot.point.estimates = NULL,
   save.name.plots.sensitivity = NULL,

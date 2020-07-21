@@ -84,8 +84,10 @@ PlotSexRatios <- function(data,
                           save.name.disaggregated=NULL,
                           save.name.overall=NULL,
                           plots.dir="") {
-  # variable checks (should just call another function to do the checks that doesn't need to be documented)
-  data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we requrie that the disaggregations are a factor variable with informative labels?
+  if (!is.data.frame(data)) {
+    stop("the dataset provided in the 'data' argument needs to be a data frame")
+  }
+  data[, name.disaggregations] <- as.factor(data[, name.disaggregations]) # should we require that the disaggregations are a factor variable with informative labels?
   
   # compute sex ratio within age groups and levels of disaggregation
   data_with_sex_ratio <- ComputeSexRatios(data=data,
