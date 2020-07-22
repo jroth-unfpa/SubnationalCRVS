@@ -198,7 +198,7 @@ PlotAgeRatios <- function(data,
       x.sort <- sort(unique(g_one_level$data[, name.age]))
       g_one_level <- g_one_level + 
         labs(x=name.age,
-             y="Sex ratio",
+             y="Age ratio",
              title=paste0("Age ratio in\n", 
                           one_level, 
                           "\n",
