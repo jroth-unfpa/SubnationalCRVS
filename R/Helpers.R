@@ -59,7 +59,7 @@ FormatOutputGGBSEG <- function(result_ggbseg_females,
            upper_age_range=upper) %>%
     arrange(cod, sex)
   result_ggbseg_combined_sexes_formatted$ggbseg <- signif(result_ggbseg_combined_sexes_formatted$ggbseg, 
-                                                         2)
+                                                         3)
   return(result_ggbseg_combined_sexes_formatted)
 }
 
@@ -80,9 +80,9 @@ FormatOutputDDM <- function(result_ddm_females,
            lower_age_range=lower,
            upper_age_range=upper) %>%
     arrange(cod, sex)
-  result_ddm_combined_sexes_formatted$ggbseg <- signif(result_ddm_combined_sexes_formatted$ggbseg, 2)
-  result_ddm_combined_sexes_formatted$ggb <- signif(result_ddm_combined_sexes_formatted$ggb, 2)
-  result_ddm_combined_sexes_formatted$seg <- signif(result_ddm_combined_sexes_formatted$seg, 2)
+  result_ddm_combined_sexes_formatted$ggbseg <- signif(result_ddm_combined_sexes_formatted$ggbseg, 3)
+  result_ddm_combined_sexes_formatted$ggb <- signif(result_ddm_combined_sexes_formatted$ggb, 3)
+  result_ddm_combined_sexes_formatted$seg <- signif(result_ddm_combined_sexes_formatted$seg, 3)
   return(result_ddm_combined_sexes_formatted)
 }
 

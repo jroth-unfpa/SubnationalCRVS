@@ -12,7 +12,7 @@ PlotDDM(
   fig.ncol = 1,
   show.lines.sex.differential = TRUE,
   show.size.population = TRUE,
-  label.completeness = "Estimated death registration completeness (GGB-SEG)",
+  label.completeness = "Estimated adult death registration completeness (GGB-SEG)",
   label.RMSE = "RMSE from GGB age-range selection",
   label.subnational.level = ddm_results$name_disaggregations,
   save.name.plot.point.estimates = NULL,
@@ -36,7 +36,7 @@ PlotDDM(
 
 \item{show.size.population}{A logical indicating whether the size of plotted points should vary according to the total population size in the second data year. Defaults to TRUE}
 
-\item{label.completeness}{A character label for the axis showing estimated completeness of death registration (on a scale of 0 to 100). Default is "Estimated death registration completeness (GGB-SEG)"}
+\item{label.completeness}{A character label for the axis showing estimated completeness of death registration (on a scale of 0 to 100). Default is "Estimated adult death registration completeness (GGB-SEG)"}
 
 \item{label.RMSE}{A character label for the axis showing RMSEs corresponding to different age-ranges during estimation completeness of death registration completeness. Default is "RMSE for age-range selection"}
 
