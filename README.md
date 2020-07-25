@@ -1,5 +1,7 @@
 # The `SubnationalCRVS` R Package
 
+# **NOTE**: After July 2020, the SubnationalCRVS will be hosted and updated in the repository https://github.com/ConVERGE-UNFPA/SubnationalCRVS
+
 ### Package created by: Jeremy Roth
 
 ### Package last updated: 21 July 2020
